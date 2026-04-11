@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Guru;
 use App\Models\HasilClustering;
+use App\Exports\GuruEvaluasiExport;          // ← tambah ini
 use Maatwebsite\Excel\Facades\Excel;
+
 
 class KepalaController extends Controller
 {
@@ -77,7 +79,6 @@ class KepalaController extends Controller
 
     public function export()
     {
-        // Implementasi dengan maatwebsite/excel
-        // return Excel::download(new GuruEvaluasiExport, 'evaluasi-guru.xlsx');
+        return Excel::download(new GuruEvaluasiExport, 'evaluasi-guru.xlsx');
     }
 }
