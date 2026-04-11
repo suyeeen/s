@@ -72,11 +72,18 @@
                 ],
                 'admin' => [
                     [
-                        'route' => 'admin.index',
+                        'route' => 'admin.users.index',
                         'label' => 'Manajemen Pengguna',
                         'icon' => 'users',
                         'color' => 'text-indigo-400',
                         'bg' => 'bg-indigo-500/15',
+                    ],
+                    [
+                        'route' => 'admin.prestasi.index', // ✅ tambah ini
+                        'label' => 'Konfirmasi Prestasi',
+                        'icon' => 'award',
+                        'color' => 'text-amber-400',
+                        'bg' => 'bg-amber-500/15',
                     ],
                     [
                         'route' => 'admin.monitoring',

@@ -7,6 +7,7 @@ use App\Http\Controllers\KepalaController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PrestasiController;
 use App\Http\Controllers\KmeansController;
+use App\Http\Controllers\AdminPrestasiController;
 
 // ── Default redirect setelah login ───────────────────────────────────────
 Route::get('/', function () {
@@ -51,6 +52,10 @@ Route::middleware(['auth', 'role:kepsek'])->prefix('kepala')->name('kepala.')->g
 // ── ADMIN ─────────────────────────────────────────────────────────────────
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('/users', AdminController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::get('/prestasi', [AdminPrestasiController::class, 'index'])->name('prestasi.index');
+    Route::patch('/prestasi/{id}/verifikasi', [AdminPrestasiController::class, 'verifikasi'])->name('prestasi.verifikasi');
+    Route::patch('/prestasi/{id}/tolak', [AdminPrestasiController::class, 'tolak'])->name('prestasi.tolak');
+    Route::patch('/prestasi/{id}/reset', [AdminPrestasiController::class, 'reset'])->name('prestasi.reset');
     Route::get('/monitoring',    [AdminController::class, 'monitoring'])->name('monitoring');
     Route::get('/settings',      [AdminController::class, 'settings'])->name('settings');
     Route::post('/settings',     [AdminController::class, 'saveSettings'])->name('settings.save');
