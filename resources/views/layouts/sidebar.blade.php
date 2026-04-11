@@ -19,32 +19,32 @@
     {{-- Nav items --}}
     <nav class="flex-1 space-y-1">
         @php
-            $menus = match(auth()->user()->role) {
-                'siswa'  => [['route' => 'siswa.kuesioner',     'label' => 'Isi Kuesioner']],
-                'guru'   => [
-                    ['route' => 'guru.self-assessment', 'label' => 'Self Assessment'],
-                    ['route' => 'guru.absensi',         'label' => 'Data Kehadiran'],
-                    ['route' => 'guru.prestasi.index',  'label' => 'Data Prestasi'],
+            $menus = match (auth()->user()->role) {
+                'siswa' => [['route' => 'siswa.kuesioner', 'label' => 'Isi Kuesioner']],
+                'guru' => [
+                    ['route' => 'guru.kuesioner', 'label' => 'Penilaian Guru', 'icon' => 'clipboard'],
+                    ['route' => 'guru.absensi', 'label' => 'Data Kehadiran', 'icon' => 'calendar'],
+                    ['route' => 'guru.prestasi.index', 'label' => 'Data Prestasi', 'icon' => 'award'],
                 ],
                 'kepsek' => [
-                    ['route' => 'kepala.dashboard',  'label' => 'Dashboard'],
-                    ['route' => 'kepala.evaluasi',   'label' => 'Laporan Evaluasi'],
+                    ['route' => 'kepala.dashboard', 'label' => 'Dashboard'],
+                    ['route' => 'kepala.evaluasi', 'label' => 'Laporan Evaluasi'],
                 ],
-                'admin'  => [
-                    ['route' => 'admin.index',      'label' => 'Manajemen Pengguna'],
+                'admin' => [
+                    ['route' => 'admin.index', 'label' => 'Manajemen Pengguna'],
                     ['route' => 'admin.monitoring', 'label' => 'Monitoring'],
-                    ['route' => 'admin.settings',   'label' => 'Pengaturan'],
+                    ['route' => 'admin.settings', 'label' => 'Pengaturan'],
                 ],
-                default => []
+                default => [],
             };
         @endphp
 
-        @foreach($menus as $menu)
+        @foreach ($menus as $menu)
             <a href="{{ route($menu['route']) }}"
-               class="flex items-center gap-3 px-4 py-2.5 rounded-2xl text-sm transition-all
+                class="flex items-center gap-3 px-4 py-2.5 rounded-2xl text-sm transition-all
                       {{ request()->routeIs($menu['route'])
-                         ? 'bg-white/8 text-white font-medium border border-white/10'
-                         : 'text-gray-400 hover:text-white hover:bg-white/4' }}">
+                          ? 'bg-white/8 text-white font-medium border border-white/10'
+                          : 'text-gray-400 hover:text-white hover:bg-white/4' }}">
                 {{ $menu['label'] }}
             </a>
         @endforeach
@@ -53,7 +53,8 @@
     {{-- Logout --}}
     <form method="POST" action="{{ route('logout') }}" class="mt-4">
         @csrf
-        <button type="submit" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-2xl text-sm text-gray-500 hover:text-red-400 hover:bg-red-500/8 transition-all">
+        <button type="submit"
+            class="w-full flex items-center gap-3 px-4 py-2.5 rounded-2xl text-sm text-gray-500 hover:text-red-400 hover:bg-red-500/8 transition-all">
             Keluar
         </button>
     </form>

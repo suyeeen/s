@@ -13,9 +13,9 @@ Route::get('/', function () {
     if (!auth()->check()) return redirect()->route('login');
     return match (auth()->user()->role) {
         'siswa'  => redirect()->route('siswa.kuesioner'),
-        'guru'   => redirect()->route('guru.self-assessment'),
+        'guru'   => redirect()->route('guru.kuesioner'),       // ✅ diperbaiki
         'kepsek' => redirect()->route('kepala.dashboard'),
-        'admin'  => redirect()->route('admin.users'),
+        'admin'  => redirect()->route('admin.users.index'),    // ✅ diperbaiki
         default  => redirect()->route('login'),
     };
 });
@@ -31,11 +31,11 @@ Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->name('siswa.')->grou
 
 // ── GURU ──────────────────────────────────────────────────────────────────
 Route::middleware(['auth', 'role:guru'])->prefix('guru')->name('guru.')->group(function () {
-    Route::get('/self-assessment',         [GuruController::class, 'selfAssessment'])->name('self-assessment');
-    Route::post('/self-assessment/submit', [GuruController::class, 'submitSelf'])->name('self-assessment.submit');
+    Route::get('/kuesioner',         [GuruController::class, 'kuesioner'])->name('kuesioner');
+    Route::post('/kuesioner/submit', [GuruController::class, 'submitKuesioner'])->name('kuesioner.submit');
 
-    Route::get('/absensi',                 [GuruController::class, 'absensi'])->name('absensi');
-    Route::post('/absensi/scan',           [GuruController::class, 'scanRfid'])->name('absensi.scan');
+    Route::get('/absensi',           [GuruController::class, 'absensi'])->name('absensi');
+    Route::post('/absensi/scan',     [GuruController::class, 'scanRfid'])->name('absensi.scan');
 
     Route::resource('/prestasi', PrestasiController::class)->only(['index', 'store', 'destroy']);
 });
@@ -50,7 +50,7 @@ Route::middleware(['auth', 'role:kepsek'])->prefix('kepala')->name('kepala.')->g
 
 // ── ADMIN ─────────────────────────────────────────────────────────────────
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::resource('/users',    AdminController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('/users', AdminController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::get('/monitoring',    [AdminController::class, 'monitoring'])->name('monitoring');
     Route::get('/settings',      [AdminController::class, 'settings'])->name('settings');
     Route::post('/settings',     [AdminController::class, 'saveSettings'])->name('settings.save');
