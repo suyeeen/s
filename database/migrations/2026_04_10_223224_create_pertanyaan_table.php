@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('pertanyaan', function (Blueprint $table) {
             $table->id();
+            $table->text('teks_pertanyaan');
+            $table->enum('kategori', ['pedagogik', 'profesional', 'sosial', 'kepribadian']);
+            $table->decimal('bobot', 4, 2)->default(1.00)->comment('Bobot soal untuk perhitungan skor akhir');
+            $table->unsignedTinyInteger('urutan')->default(0)->comment('Urutan tampil dalam kuesioner');
             $table->timestamps();
         });
     }
