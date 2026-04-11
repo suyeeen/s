@@ -2,8 +2,8 @@
 
     {{-- Logo --}}
     <div class="flex items-center gap-3 px-2 py-4 mb-4 border-b" style="border-color: var(--border-color)">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 to-yellow-500 flex items-center justify-center">
-            <span class="text-white font-bold text-sm">S</span>
+        <div class="w-9 h-9 rounded-xl overflow-hidden shrink-0" style="box-shadow: 0 4px 12px rgba(249,115,22,0.3);">
+            <img src="{{ asset('images/logo.png') }}" alt="STQM Logo" class="w-full h-full object-cover">
         </div>
         <div>
             <p class="font-bold text-sm leading-tight" style="color: var(--text-main)">STQM</p>
