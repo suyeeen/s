@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>STQM - @yield('title', 'Smart Teacher Quality Mapping')</title>
 
-    {{-- Anti-flicker: jalankan SEBELUM render --}}
     <script>
         (function() {
             const saved = localStorage.getItem('stqm-theme') || 'dark';
@@ -16,6 +15,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         [data-theme="dark"] {
@@ -28,11 +28,12 @@
             --toggle-bg: rgba(255, 255, 255, 0.06);
             --toggle-border: rgba(255, 255, 255, 0.1);
             --toggle-color: #f59e0b;
-            /* ← tambah ini */
             --nav-active-bg: rgba(255, 255, 255, 0.08);
             --nav-hover-bg: rgba(255, 255, 255, 0.04);
             --icon-bg: rgba(255, 255, 255, 0.05);
             --user-bg: rgba(255, 255, 255, 0.04);
+            --swal-bg: #0e0e1a;
+            --swal-color: #ffffff;
         }
 
         [data-theme="light"] {
@@ -45,11 +46,12 @@
             --toggle-bg: rgba(0, 0, 0, 0.06);
             --toggle-border: rgba(0, 0, 0, 0.1);
             --toggle-color: #6366f1;
-            /* ← tambah ini */
             --nav-active-bg: rgba(0, 0, 0, 0.06);
             --nav-hover-bg: rgba(0, 0, 0, 0.03);
             --icon-bg: rgba(0, 0, 0, 0.05);
             --user-bg: rgba(0, 0, 0, 0.03);
+            --swal-bg: #ffffff;
+            --swal-color: #0f172a;
         }
 
         body {
@@ -78,6 +80,12 @@
         .theme-toggle:hover {
             opacity: 0.75;
             transform: rotate(20deg);
+        }
+
+        /* SweetAlert custom style */
+        .swal2-popup {
+            border-radius: 1.5rem !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
         }
     </style>
 </head>
@@ -108,7 +116,6 @@
             <header class="md:hidden flex items-center justify-between p-4 border-b backdrop-blur">
                 <span class="font-bold" style="color: var(--text-main)">STQM</span>
                 <div class="flex items-center gap-2">
-                    {{-- Toggle di mobile header --}}
                     <button onclick="toggleTheme()"
                         class="theme-toggle w-9 h-9 rounded-xl flex items-center justify-center">
                         <svg id="app-icon-sun" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -133,26 +140,136 @@
             </header>
 
             <div class="flex-1 p-4 md:p-8">
-                {{-- Flash messages --}}
-                @if (session('success'))
-                    <div
-                        class="mb-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm">
-                        {{ session('success') }}
-                    </div>
-                @endif
-                @if (session('error'))
-                    <div class="mb-6 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
-                        {{ session('error') }}
-                    </div>
-                @endif
-
                 @yield('content')
             </div>
         </main>
     </div>
 
     <script>
-        // Sinkronkan icon saat load
+        // ── Ambil warna tema saat ini ──────────────────────────────────────────
+        function getSwalTheme() {
+            const theme = localStorage.getItem('stqm-theme') || 'dark';
+            return {
+                background: theme === 'dark' ? '#0e0e1a' : '#ffffff',
+                color: theme === 'dark' ? '#ffffff' : '#0f172a',
+            };
+        }
+
+        // ── Flash session → SweetAlert ─────────────────────────────────────────
+        @if (session('success'))
+            document.addEventListener('DOMContentLoaded', function() {
+                const t = getSwalTheme();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: '{{ addslashes(session('success')) }}',
+                    confirmButtonColor: '#f97316',
+                    background: t.background,
+                    color: t.color,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    customClass: {
+                        popup: 'swal2-popup'
+                    },
+                });
+            });
+        @endif
+
+        @if (session('error'))
+            document.addEventListener('DOMContentLoaded', function() {
+                const t = getSwalTheme();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: '{{ addslashes(session('error')) }}',
+                    confirmButtonColor: '#f97316',
+                    background: t.background,
+                    color: t.color,
+                    customClass: {
+                        popup: 'swal2-popup'
+                    },
+                });
+            });
+        @endif
+
+        @if (session('warning'))
+            document.addEventListener('DOMContentLoaded', function() {
+                const t = getSwalTheme();
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Perhatian!',
+                    text: '{{ addslashes(session('warning')) }}',
+                    confirmButtonColor: '#f97316',
+                    background: t.background,
+                    color: t.color,
+                    customClass: {
+                        popup: 'swal2-popup'
+                    },
+                });
+            });
+        @endif
+
+        // ── Konfirmasi hapus (.swal-delete) ───────────────────────────────────
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.swal-delete').forEach(function(form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const nama = form.dataset.nama || 'data ini';
+                    const t = getSwalTheme();
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Hapus ' + nama + '?',
+                        text: 'Data yang dihapus tidak dapat dikembalikan!',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#6b7280',
+                        confirmButtonText: 'Ya, Hapus!',
+                        cancelButtonText: 'Batal',
+                        background: t.background,
+                        color: t.color,
+                        customClass: {
+                            popup: 'swal2-popup'
+                        },
+                    }).then((result) => {
+                        if (result.isConfirmed) form.submit();
+                    });
+                });
+            });
+
+            // ── Konfirmasi aksi (.swal-confirm) ───────────────────────────────
+            document.querySelectorAll('.swal-confirm').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const judul = btn.dataset.judul || 'Konfirmasi';
+                    const pesan = btn.dataset.pesan || 'Lanjutkan aksi ini?';
+                    const target = btn.dataset.target;
+                    const t = getSwalTheme();
+                    Swal.fire({
+                        icon: 'question',
+                        title: judul,
+                        text: pesan,
+                        showCancelButton: true,
+                        confirmButtonColor: '#f97316',
+                        cancelButtonColor: '#6b7280',
+                        confirmButtonText: 'Ya, Lanjutkan!',
+                        cancelButtonText: 'Batal',
+                        background: t.background,
+                        color: t.color,
+                        customClass: {
+                            popup: 'swal2-popup'
+                        },
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            if (target) document.getElementById(target).submit();
+                            else btn.closest('form').submit();
+                        }
+                    });
+                });
+            });
+        });
+
+        // ── Theme toggle ──────────────────────────────────────────────────────
         (function() {
             syncAppIcon(localStorage.getItem('stqm-theme') || 'dark');
         })();

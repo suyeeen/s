@@ -156,7 +156,7 @@
                         {{-- Hapus --}}
                         @if ($item->status === 'menunggu')
                             <form method="POST" action="{{ route('guru.prestasi.destroy', $item->id) }}"
-                                onsubmit="return confirm('Hapus prestasi ini?')">
+                                class="swal-delete" data-nama="prestasi ini">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit"

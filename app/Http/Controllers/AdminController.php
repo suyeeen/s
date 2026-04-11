@@ -44,13 +44,21 @@ class AdminController extends Controller
     public function update(Request $request, User $user)
     {
         $request->validate([
-            'name'  => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'role'  => 'required|in:admin,guru,siswa,kepsek',
+            'name'                  => 'required|string|max:255',
+            'email'                 => 'required|email|unique:users,email,' . $user->id,
+            'role'                  => 'required|in:admin,guru,siswa,kepsek',
+            'password'              => 'nullable|min:6|confirmed',
+            'password_confirmation' => 'nullable',
         ]);
 
-        $user->update($request->only('name', 'email', 'role'));
-        return back()->with('success', 'Data pengguna diperbarui.');
+        $data = $request->only('name', 'email', 'role');
+
+        if ($request->filled('password')) {
+            $data['password'] = bcrypt($request->password);
+        }
+
+        $user->update($data);
+        return back()->with('success', 'Data pengguna berhasil diperbarui.');
     }
 
     public function destroy(User $user)
@@ -65,7 +73,7 @@ class AdminController extends Controller
             'total_guru'   => Guru::count(),
             'total_siswa'  => \App\Models\Siswa::count(),
             'total_users'  => User::count(),
-            'sudah_dinilai'=> \App\Models\HasilClustering::distinct('guru_id')->count(),
+            'sudah_dinilai' => \App\Models\HasilClustering::distinct('guru_id')->count(),
         ];
 
         return view('admin.monitoring', compact('stats'));

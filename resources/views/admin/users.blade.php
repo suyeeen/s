@@ -131,7 +131,7 @@
                                         {{-- Hapus --}}
                                         @if ($user->id !== auth()->id())
                                             <form method="POST" action="{{ route('admin.users.destroy', $user->id) }}"
-                                                onsubmit="return confirm('Hapus pengguna {{ $user->name }}?')">
+                                                class="swal-delete" data-nama="{{ $user->name }}">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit"
@@ -249,11 +249,13 @@
                 </div>
 
                 {{-- Form Edit --}}
-                <div x-show="editUser">
+                <div x-show="editUser" x-data="{ gantiSandi: false, lihatSandi: false }">
                     <form method="POST" :action="`/admin/users/${editUser?.id}`">
                         @csrf
                         @method('PUT')
                         <div class="p-8 space-y-5">
+
+                            {{-- Nama --}}
                             <div>
                                 <label class="block text-sm font-medium text-gray-300 mb-2">Nama Lengkap</label>
                                 <input type="text" name="name" :value="editUser?.name" required
@@ -262,6 +264,8 @@
                                     onfocus="this.style.borderColor='rgba(249,115,22,0.5)'"
                                     onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
                             </div>
+
+                            {{-- Email --}}
                             <div>
                                 <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
                                 <input type="email" name="email" :value="editUser?.email" required
@@ -270,6 +274,8 @@
                                     onfocus="this.style.borderColor='rgba(249,115,22,0.5)'"
                                     onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
                             </div>
+
+                            {{-- Role --}}
                             <div>
                                 <label class="block text-sm font-medium text-gray-300 mb-2">Role</label>
                                 <select name="role" required
@@ -282,10 +288,85 @@
                                     @endforeach
                                 </select>
                             </div>
+
+                            {{-- Toggle Ubah Kata Sandi --}}
+                            <div>
+                                <button type="button" @click="gantiSandi = !gantiSandi"
+                                    class="w-full flex items-center justify-between px-4 py-3 rounded-2xl text-sm transition-all"
+                                    :style="gantiSandi
+                                        ?
+                                        'background: rgba(249,115,22,0.1); border: 1px solid rgba(249,115,22,0.3); color: #fb923c;' :
+                                        'background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: #9ca3af;'">
+                                    <span class="flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                                        </svg>
+                                        Ubah Kata Sandi
+                                    </span>
+                                    <svg class="w-4 h-4 transition-transform" :class="gantiSandi ? 'rotate-180' : ''"
+                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+
+                                {{-- Field Kata Sandi (muncul saat toggle aktif) --}}
+                                <div x-show="gantiSandi" x-transition:enter="transition ease-out duration-200"
+                                    x-transition:enter-start="opacity-0 -translate-y-2"
+                                    x-transition:enter-end="opacity-100 translate-y-0"
+                                    class="mt-3 space-y-3 p-4 rounded-2xl"
+                                    style="background: rgba(249,115,22,0.04); border: 1px solid rgba(249,115,22,0.15);">
+
+                                    <p class="text-xs text-gray-500">Kosongkan jika tidak ingin mengubah kata sandi.</p>
+
+                                    {{-- Password Baru --}}
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-400 mb-1.5">Kata Sandi
+                                            Baru</label>
+                                        <div class="relative">
+                                            <input :type="lihatSandi ? 'text' : 'password'" name="password"
+                                                placeholder="Minimal 6 karakter"
+                                                class="w-full pl-4 pr-10 py-3 rounded-2xl text-white text-sm outline-none placeholder-gray-600"
+                                                style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);"
+                                                onfocus="this.style.borderColor='rgba(249,115,22,0.5)'"
+                                                onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
+                                            <button type="button" @click="lihatSandi = !lihatSandi"
+                                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
+                                                <svg x-show="!lihatSandi" class="w-4 h-4" fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                                <svg x-show="lihatSandi" class="w-4 h-4" fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 4.411m0 0L21 21" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {{-- Konfirmasi Password --}}
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-400 mb-1.5">Konfirmasi Kata
+                                            Sandi</label>
+                                        <input :type="lihatSandi ? 'text' : 'password'" name="password_confirmation"
+                                            placeholder="Ulangi kata sandi baru"
+                                            class="w-full px-4 py-3 rounded-2xl text-white text-sm outline-none placeholder-gray-600"
+                                            style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);"
+                                            onfocus="this.style.borderColor='rgba(249,115,22,0.5)'"
+                                            onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                         <div class="p-6 flex justify-end gap-4"
                             style="border-top: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02);">
-                            <button type="button" @click="modalOpen = false"
+                            <button type="button" @click="modalOpen = false; gantiSandi = false"
                                 class="px-6 py-3 rounded-2xl text-sm font-medium text-gray-400"
                                 style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);">
                                 Batal

@@ -56,11 +56,12 @@
                 {{-- Tombol Run Clustering --}}
                 <div class="mt-6 pt-6" style="border-top: 1px solid rgba(255,255,255,0.06);">
                     <h4 class="text-sm font-medium text-gray-400 mb-4">Jalankan K-Means Clustering</h4>
-                    <form method="POST" action="{{ route('admin.clustering.run') }}"
-                        onsubmit="return confirm('Jalankan clustering sekarang? Proses ini akan memperbarui semua data cluster guru.')">
+                    <form method="POST" action="{{ route('admin.clustering.run') }}" id="form-clustering">
                         @csrf
-                        <button type="submit"
-                            class="w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-semibold text-white transition-all"
+                        <button type="button"
+                            class="swal-confirm w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-semibold text-white transition-all"
+                            data-judul="Jalankan Clustering?"
+                            data-pesan="Proses ini akan memperbarui semua data cluster guru." data-target="form-clustering"
                             style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); box-shadow: 0 8px 32px rgba(139,92,246,0.3);">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

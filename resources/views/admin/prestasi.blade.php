@@ -3,7 +3,7 @@
 @section('title', 'Konfirmasi Prestasi Guru')
 
 @section('content')
-    <div class="max-w-6xl mx-auto space-y-8" x-data="{ tab: 'menunggu', modalOpen: false, selectedPrestasi: null, aksi: '' }">
+    <div class="max-w-6xl mx-auto space-y-8" x-data="{ tab: 'menunggu' }">
 
         {{-- Header --}}
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
@@ -11,7 +11,6 @@
                 <h1 class="text-3xl font-bold text-white tracking-tight">Konfirmasi Prestasi</h1>
                 <p class="text-gray-400 mt-2">Verifikasi data prestasi guru sebelum masuk ke laporan.</p>
             </div>
-            {{-- Badge jumlah menunggu --}}
             @if ($prestasi_menunggu->total() > 0)
                 <div class="flex items-center gap-2 px-5 py-3 rounded-2xl text-sm font-semibold"
                     style="background: rgba(249,115,22,0.1); border: 1px solid rgba(249,115,22,0.25); color: #fb923c;">
@@ -78,11 +77,9 @@
                                         <div class="flex items-center gap-3">
                                             <div class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm shrink-0"
                                                 style="background: linear-gradient(135deg, rgba(249,115,22,0.3), rgba(234,179,8,0.3)); color: #fbbf24;">
-                                                {{ strtoupper(substr($item->guru->nama_guru ?? '?', 0, 1)) }}
+                                                {{ strtoupper(substr($item->guru->nama ?? '?', 0, 1)) }}
                                             </div>
-                                            <span class="font-medium text-white">
-                                                {{ $item->guru->nama_guru ?? '-' }}
-                                            </span>
+                                            <span class="font-medium text-white">{{ $item->guru->nama ?? '-' }}</span>
                                         </div>
                                     </td>
                                     <td class="p-5 text-gray-300 max-w-xs">
@@ -167,7 +164,7 @@
                                     <td class="p-5">
                                         @if ($item->file_bukti)
                                             <a href="{{ asset('storage/' . $item->file_bukti) }}" target="_blank"
-                                                class="flex items-center gap-1.5 text-xs font-medium transition-colors hover:text-amber-400"
+                                                class="flex items-center gap-1.5 text-xs font-medium hover:text-amber-400 transition-colors"
                                                 style="color: #60a5fa;">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
@@ -182,17 +179,21 @@
                                     </td>
                                     <td class="p-5">
                                         <div class="flex items-center justify-end gap-2">
-                                            {{-- Tombol Verifikasi --}}
+
+                                            {{-- Tombol Setujui → SweetAlert konfirmasi --}}
                                             <form method="POST"
-                                                action="{{ route('admin.prestasi.verifikasi', $item->id) }}">
+                                                action="{{ route('admin.prestasi.verifikasi', $item->id) }}"
+                                                class="swal-confirm-form" data-judul="Setujui Prestasi?"
+                                                data-pesan="Prestasi {{ $item->nama_prestasi }} akan diverifikasi dan dianggap valid."
+                                                data-icon="success" data-confirm-color="#10b981"
+                                                data-confirm-text="Ya, Setujui!">
                                                 @csrf
                                                 @method('PATCH')
-                                                <button type="submit"
-                                                    class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all"
+                                                <button type="button"
+                                                    class="swal-form-trigger flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all"
                                                     style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); color: #34d399;"
                                                     onmouseover="this.style.background='rgba(16,185,129,0.2)'"
-                                                    onmouseout="this.style.background='rgba(16,185,129,0.1)'"
-                                                    onclick="return confirm('Verifikasi prestasi ini?')">
+                                                    onmouseout="this.style.background='rgba(16,185,129,0.1)'">
                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -202,17 +203,18 @@
                                                 </button>
                                             </form>
 
-                                            {{-- Tombol Tolak --}}
-                                            <button
-                                                @click="modalOpen = true; selectedPrestasi = {{ $item->id }}; aksi = 'tolak'"
-                                                class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all"
+                                            {{-- Tombol Tolak → SweetAlert dengan textarea --}}
+                                            <button type="button"
+                                                class="swal-tolak flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all"
+                                                data-id="{{ $item->id }}" data-nama="{{ $item->nama_prestasi }}"
+                                                data-url="{{ route('admin.prestasi.tolak', $item->id) }}"
                                                 style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: #f87171;"
                                                 onmouseover="this.style.background='rgba(239,68,68,0.2)'"
                                                 onmouseout="this.style.background='rgba(239,68,68,0.1)'">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                                        d="M6 18L18 6M6 6l12 12" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
                                                 </svg>
                                                 Tolak
                                             </button>
@@ -277,11 +279,9 @@
                                         <div class="flex items-center gap-3">
                                             <div class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm shrink-0"
                                                 style="background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(59,130,246,0.2)); color: #6ee7b7;">
-                                                {{ strtoupper(substr($item->guru->nama_guru ?? '?', 0, 1)) }}
+                                                {{ strtoupper(substr($item->guru->nama ?? '?', 0, 1)) }}
                                             </div>
-                                            <span class="font-medium text-white">
-                                                {{ $item->guru->nama_guru ?? '-' }}
-                                            </span>
+                                            <span class="font-medium text-white">{{ $item->guru->nama ?? '-' }}</span>
                                         </div>
                                     </td>
                                     <td class="p-5 text-gray-300 max-w-xs">
@@ -291,23 +291,21 @@
                                     <td class="p-5 text-gray-400 text-xs capitalize">{{ $item->tingkat }}</td>
                                     <td class="p-5 text-gray-400 text-xs">{{ $item->tahun }}</td>
                                     <td class="p-5 text-gray-500 text-xs">
-                                        @if ($item->divalidasi_at)
-                                            {{ \Carbon\Carbon::parse($item->divalidasi_at)->format('d M Y') }}
-                                        @else
-                                            -
-                                        @endif
+                                        {{ $item->divalidasi_at ? \Carbon\Carbon::parse($item->divalidasi_at)->format('d M Y') : '-' }}
                                     </td>
                                     <td class="p-5 text-right">
-                                        {{-- Reset ke menunggu --}}
-                                        <form method="POST" action="{{ route('admin.prestasi.reset', $item->id) }}">
+                                        <form method="POST" action="{{ route('admin.prestasi.reset', $item->id) }}"
+                                            class="swal-confirm-form" data-judul="Reset Prestasi?"
+                                            data-pesan="Prestasi ini akan dikembalikan ke status menunggu."
+                                            data-icon="warning" data-confirm-color="#f59e0b"
+                                            data-confirm-text="Ya, Reset!">
                                             @csrf
                                             @method('PATCH')
-                                            <button type="submit"
-                                                class="px-3 py-2 rounded-xl text-xs font-semibold transition-all"
+                                            <button type="button"
+                                                class="swal-form-trigger px-3 py-2 rounded-xl text-xs font-semibold transition-all"
                                                 style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: #6b7280;"
                                                 onmouseover="this.style.color='#f59e0b'; this.style.borderColor='rgba(245,158,11,0.3)'"
-                                                onmouseout="this.style.color='#6b7280'; this.style.borderColor='rgba(255,255,255,0.08)'"
-                                                onclick="return confirm('Reset prestasi ini ke menunggu?')">
+                                                onmouseout="this.style.color='#6b7280'; this.style.borderColor='rgba(255,255,255,0.08)'">
                                                 Reset
                                             </button>
                                         </form>
@@ -359,11 +357,9 @@
                                         <div class="flex items-center gap-3">
                                             <div class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm shrink-0"
                                                 style="background: rgba(239,68,68,0.15); color: #fca5a5;">
-                                                {{ strtoupper(substr($item->guru->nama_guru ?? '?', 0, 1)) }}
+                                                {{ strtoupper(substr($item->guru->nama ?? '?', 0, 1)) }}
                                             </div>
-                                            <span class="font-medium text-white">
-                                                {{ $item->guru->nama_guru ?? '-' }}
-                                            </span>
+                                            <span class="font-medium text-white">{{ $item->guru->nama ?? '-' }}</span>
                                         </div>
                                     </td>
                                     <td class="p-5 text-gray-300 max-w-xs">
@@ -373,23 +369,21 @@
                                     <td class="p-5 text-gray-400 text-xs capitalize">{{ $item->tingkat }}</td>
                                     <td class="p-5 text-gray-400 text-xs">{{ $item->tahun }}</td>
                                     <td class="p-5 text-gray-500 text-xs">
-                                        @if ($item->divalidasi_at)
-                                            {{ \Carbon\Carbon::parse($item->divalidasi_at)->format('d M Y') }}
-                                        @else
-                                            -
-                                        @endif
+                                        {{ $item->divalidasi_at ? \Carbon\Carbon::parse($item->divalidasi_at)->format('d M Y') : '-' }}
                                     </td>
                                     <td class="p-5 text-right">
-                                        {{-- Reset ke menunggu supaya guru bisa revisi --}}
-                                        <form method="POST" action="{{ route('admin.prestasi.reset', $item->id) }}">
+                                        <form method="POST" action="{{ route('admin.prestasi.reset', $item->id) }}"
+                                            class="swal-confirm-form" data-judul="Kembalikan Prestasi?"
+                                            data-pesan="Prestasi ini akan dikembalikan ke antrian menunggu agar guru dapat merevisi."
+                                            data-icon="question" data-confirm-color="#f97316"
+                                            data-confirm-text="Ya, Kembalikan!">
                                             @csrf
                                             @method('PATCH')
-                                            <button type="submit"
-                                                class="px-3 py-2 rounded-xl text-xs font-semibold transition-all"
+                                            <button type="button"
+                                                class="swal-form-trigger px-3 py-2 rounded-xl text-xs font-semibold transition-all"
                                                 style="background: rgba(249,115,22,0.1); border: 1px solid rgba(249,115,22,0.2); color: #fb923c;"
                                                 onmouseover="this.style.background='rgba(249,115,22,0.2)'"
-                                                onmouseout="this.style.background='rgba(249,115,22,0.1)'"
-                                                onclick="return confirm('Kembalikan ke antrian menunggu?')">
+                                                onmouseout="this.style.background='rgba(249,115,22,0.1)'">
                                                 Kembalikan
                                             </button>
                                         </form>
@@ -413,73 +407,115 @@
             </div>
         </div>
 
-        {{-- ═══ MODAL KONFIRMASI TOLAK ═══ --}}
-        <div x-show="modalOpen" x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-            class="fixed inset-0 z-50 flex items-center justify-center p-4"
-            style="background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);">
-
-            <div x-show="modalOpen" x-transition:enter="transition ease-out duration-200"
-                x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
-                class="w-full max-w-md rounded-3xl overflow-hidden shadow-2xl"
-                style="background: #0e0e1a; border: 1px solid rgba(255,255,255,0.08);">
-
-                {{-- Header modal --}}
-                <div class="p-6 flex justify-between items-center"
-                    style="border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02);">
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl flex items-center justify-center"
-                            style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2);">
-                            <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </div>
-                        <h3 class="font-bold text-white text-lg">Tolak Prestasi</h3>
-                    </div>
-                    <button @click="modalOpen = false" class="p-2 rounded-xl text-gray-400 hover:text-white"
-                        style="background: rgba(255,255,255,0.05);">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-
-                {{-- Form tolak --}}
-                <form method="POST" :action="`/admin/prestasi/${selectedPrestasi}/tolak`">
-                    @csrf
-                    @method('PATCH')
-                    <div class="p-6 space-y-4">
-                        <p class="text-sm text-gray-400">Prestasi ini akan ditolak. Guru dapat mengajukan ulang setelah
-                            diperbaiki.</p>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">
-                                Alasan Penolakan <span class="text-gray-600">(opsional)</span>
-                            </label>
-                            <textarea name="alasan" rows="3" placeholder="Contoh: Bukti kurang jelas, mohon upload ulang..."
-                                class="w-full px-4 py-3 rounded-2xl text-white text-sm outline-none placeholder-gray-600 resize-none"
-                                style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);"
-                                onfocus="this.style.borderColor='rgba(239,68,68,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'"></textarea>
-                        </div>
-                    </div>
-                    <div class="p-6 flex justify-end gap-3"
-                        style="border-top: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02);">
-                        <button type="button" @click="modalOpen = false"
-                            class="px-5 py-2.5 rounded-2xl text-sm font-medium text-gray-400"
-                            style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);">
-                            Batal
-                        </button>
-                        <button type="submit" class="px-5 py-2.5 rounded-2xl text-sm font-semibold"
-                            style="background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #f87171;"
-                            onmouseover="this.style.background='rgba(239,68,68,0.25)'"
-                            onmouseout="this.style.background='rgba(239,68,68,0.15)'">
-                            Ya, Tolak
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
     </div>
+
+    {{-- ── Form tolak tersembunyi (disubmit via SweetAlert) ── --}}
+    <form id="form-tolak-hidden" method="POST" action="" style="display:none;">
+        @csrf
+        @method('PATCH')
+        <input type="hidden" name="alasan" id="input-alasan-tolak">
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            function getSwalTheme() {
+                const theme = localStorage.getItem('stqm-theme') || 'dark';
+                return {
+                    background: theme === 'dark' ? '#0e0e1a' : '#ffffff',
+                    color: theme === 'dark' ? '#ffffff' : '#0f172a',
+                };
+            }
+
+            // ── Konfirmasi umum (Setujui, Reset, Kembalikan) ──────────────────
+            document.querySelectorAll('.swal-form-trigger').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const form = btn.closest('.swal-confirm-form');
+                    const judul = form.dataset.judul || 'Konfirmasi';
+                    const pesan = form.dataset.pesan || 'Lanjutkan aksi ini?';
+                    const icon = form.dataset.icon || 'question';
+                    const confirmColor = form.dataset.confirmColor || '#f97316';
+                    const confirmText = form.dataset.confirmText || 'Ya, Lanjutkan!';
+                    const t = getSwalTheme();
+
+                    Swal.fire({
+                        icon: icon,
+                        title: judul,
+                        text: pesan,
+                        showCancelButton: true,
+                        confirmButtonColor: confirmColor,
+                        cancelButtonColor: '#6b7280',
+                        confirmButtonText: confirmText,
+                        cancelButtonText: 'Batal',
+                        background: t.background,
+                        color: t.color,
+                        customClass: {
+                            popup: 'swal2-popup'
+                        },
+                    }).then((result) => {
+                        if (result.isConfirmed) form.submit();
+                    });
+                });
+            });
+
+            // ── Tombol Tolak → SweetAlert dengan input alasan ─────────────────
+            document.querySelectorAll('.swal-tolak').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const url = btn.dataset.url;
+                    const nama = btn.dataset.nama || 'prestasi ini';
+                    const t = getSwalTheme();
+
+                    Swal.fire({
+                        title: 'Tolak Prestasi?',
+                        html: `
+                            <p style="color: ${t.color === '#ffffff' ? '#9ca3af' : '#64748b'}; font-size: 14px; margin-bottom: 16px;">
+                                Prestasi <strong style="color: ${t.color}">${nama}</strong> akan ditolak.
+                                Guru dapat mengajukan ulang setelah diperbaiki.
+                            </p>
+                            <textarea id="swal-alasan" rows="3"
+                                placeholder="Alasan penolakan (opsional)..."
+                                style="
+                                    width: 100%;
+                                    padding: 12px 16px;
+                                    border-radius: 16px;
+                                    background: rgba(255,255,255,0.05);
+                                    border: 1px solid rgba(255,255,255,0.12);
+                                    color: ${t.color};
+                                    font-size: 13px;
+                                    outline: none;
+                                    resize: none;
+                                    box-sizing: border-box;
+                                "
+                                onfocus="this.style.borderColor='rgba(239,68,68,0.5)'"
+                                onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+                            </textarea>
+                        `,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#6b7280',
+                        confirmButtonText: 'Ya, Tolak!',
+                        cancelButtonText: 'Batal',
+                        background: t.background,
+                        color: t.color,
+                        customClass: {
+                            popup: 'swal2-popup'
+                        },
+                        preConfirm: () => {
+                            return document.getElementById('swal-alasan').value;
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const formTolak = document.getElementById('form-tolak-hidden');
+                            formTolak.action = url;
+                            document.getElementById('input-alasan-tolak').value = result
+                                .value || '';
+                            formTolak.submit();
+                        }
+                    });
+                });
+            });
+
+        });
+    </script>
 @endsection
