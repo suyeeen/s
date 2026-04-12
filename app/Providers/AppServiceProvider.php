@@ -3,22 +3,23 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Cache;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        //
+        // Inject settings dari cache ke config app
+        // Sehingga config('app.tahun_ajaran') di semua controller otomatis terbaca
+        config([
+            'app.tahun_ajaran' => Cache::get('stqm_tahun_ajaran', '2024/2025'),
+            'app.semester'     => Cache::get('stqm_semester', 'ganjil'),
+            'app.rfid_aktif'   => Cache::get('stqm_rfid_aktif', false),
+        ]);
     }
 }

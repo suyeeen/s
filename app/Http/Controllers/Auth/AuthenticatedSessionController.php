@@ -30,9 +30,9 @@ class AuthenticatedSessionController extends Controller
 
         return redirect()->intended(match (auth()->user()->role) {
             'siswa'  => route('siswa.kuesioner'),
-            'guru'   => route('guru.self-assessment'),
+            'guru'   => route('guru.kuesioner'),
             'kepsek' => route('kepala.dashboard'),
-            'admin'  => route('admin.index'),
+            'admin'  => route('admin.users.index'),
             default  => '/',
         });
     }

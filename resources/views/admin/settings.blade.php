@@ -37,8 +37,9 @@
                             <select name="tahun_ajaran" class="w-full px-4 py-3 rounded-2xl text-white text-sm outline-none"
                                 style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);">
                                 @foreach (['2024/2025', '2025/2026', '2023/2024'] as $ta)
-                                    <option value="{{ $ta }}" style="background: #0a0a14;">{{ $ta }}
-                                    </option>
+                                    <option value="{{ $ta }}" style="background: #0a0a14;"
+                                        {{ ($settings['tahun_ajaran'] ?? '2024/2025') === $ta ? 'selected' : '' }}>
+                                        {{ $ta }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -46,19 +47,21 @@
                             <label class="block text-sm font-medium text-gray-300 mb-2">Semester Aktif</label>
                             <select name="semester" class="w-full px-4 py-3 rounded-2xl text-white text-sm outline-none"
                                 style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);">
-                                <option value="ganjil" style="background: #0a0a14;">Ganjil</option>
-                                <option value="genap" style="background: #0a0a14;">Genap</option>
+                                <option value="ganjil" style="background: #0a0a14;"
+                                    {{ ($settings['semester'] ?? 'ganjil') === 'ganjil' ? 'selected' : '' }}>Ganjil</option>
+                                <option value="genap" style="background: #0a0a14;"
+                                    {{ ($settings['semester'] ?? 'ganjil') === 'genap' ? 'selected' : '' }}>Genap</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Buka Akses Kuesioner</label>
-                            <input type="date" name="buka_kuesioner"
+                            <input type="date" name="buka_kuesioner" value="{{ $settings['buka_kuesioner'] ?? '' }}"
                                 class="w-full px-4 py-3 rounded-2xl text-white text-sm outline-none"
                                 style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Tutup Akses Kuesioner</label>
-                            <input type="date" name="tutup_kuesioner"
+                            <input type="date" name="tutup_kuesioner" value="{{ $settings['tutup_kuesioner'] ?? '' }}"
                                 class="w-full px-4 py-3 rounded-2xl text-white text-sm outline-none"
                                 style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);">
                         </div>
@@ -79,7 +82,7 @@
                         </div>
                         <h3 class="font-semibold text-white text-lg">Integrasi Hardware RFID</h3>
                     </div>
-                    <div class="p-8" x-data="{ rfid: true }">
+                    <div class="p-8" x-data="{ rfid: {{ $settings['rfid_aktif'] ?? false ? 'true' : 'false' }} }">
                         <div class="flex items-center justify-between p-6 rounded-2xl"
                             style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);">
                             <div>
