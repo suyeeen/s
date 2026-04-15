@@ -102,6 +102,7 @@ class DatabaseSeeder extends Seeder
         // ── Seeder lainnya ────────────────────────────────────────
         $this->call([
             PertanyaanSeeder::class,
+            SiswaSeeder::class,
         ]);
 
         $this->command->info('');

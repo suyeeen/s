@@ -60,4 +60,5 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/settings',      [AdminController::class, 'settings'])->name('settings');
     Route::post('/settings',     [AdminController::class, 'saveSettings'])->name('settings.save');
     Route::post('/run-clustering', [KmeansController::class, 'run'])->name('clustering.run');
+    Route::get('/preview-nilai',   [KmeansController::class, 'preview'])->name('clustering.preview');
 });
