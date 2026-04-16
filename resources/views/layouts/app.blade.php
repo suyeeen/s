@@ -7,7 +7,7 @@
     <title>STQM - @yield('title', 'Smart Teacher Quality Mapping')</title>
 
     <script>
-        (function() {
+        (function () {
             const saved = localStorage.getItem('stqm-theme') || 'dark';
             document.documentElement.setAttribute('data-theme', saved);
         })();
@@ -34,6 +34,16 @@
             --user-bg: rgba(255, 255, 255, 0.04);
             --swal-bg: #0e0e1a;
             --swal-color: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --card-bg-soft: rgba(255, 255, 255, 0.02);
+            --card-border-soft: rgba(255, 255, 255, 0.05);
+            --card-footer-bg: rgba(255, 255, 255, 0.02);
+            --card-divider: rgba(255, 255, 255, 0.06);
+            --input-bg: rgba(255, 255, 255, 0.05);
+            --input-border: rgba(255, 255, 255, 0.08);
+            --btn-bg: rgba(255, 255, 255, 0.05);
+            --btn-border: rgba(255, 255, 255, 0.08);
         }
 
         [data-theme="light"] {
@@ -52,6 +62,16 @@
             --user-bg: rgba(0, 0, 0, 0.03);
             --swal-bg: #ffffff;
             --swal-color: #0f172a;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --card-border: rgba(0, 0, 0, 0.08);
+            --card-bg-soft: rgba(0, 0, 0, 0.02);
+            --card-border-soft: rgba(0, 0, 0, 0.06);
+            --card-footer-bg: rgba(0, 0, 0, 0.02);
+            --card-divider: rgba(0, 0, 0, 0.06);
+            --input-bg: rgba(0, 0, 0, 0.05);
+            --input-border: rgba(0, 0, 0, 0.1);
+            --btn-bg: rgba(0, 0, 0, 0.05);
+            --btn-border: rgba(0, 0, 0, 0.1);
         }
 
         body {
@@ -157,7 +177,7 @@
 
         // ── Flash session → SweetAlert ─────────────────────────────────────────
         @if (session('success'))
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 const t = getSwalTheme();
                 Swal.fire({
                     icon: 'success',
@@ -177,7 +197,7 @@
         @endif
 
         @if (session('error'))
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 const t = getSwalTheme();
                 Swal.fire({
                     icon: 'error',
@@ -194,7 +214,7 @@
         @endif
 
         @if (session('warning'))
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 const t = getSwalTheme();
                 Swal.fire({
                     icon: 'warning',
@@ -211,9 +231,9 @@
         @endif
 
         // ── Konfirmasi hapus (.swal-delete) ───────────────────────────────────
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.swal-delete').forEach(function(form) {
-                form.addEventListener('submit', function(e) {
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.swal-delete').forEach(function (form) {
+                form.addEventListener('submit', function (e) {
                     e.preventDefault();
                     const nama = form.dataset.nama || 'data ini';
                     const t = getSwalTheme();
@@ -238,8 +258,8 @@
             });
 
             // ── Konfirmasi aksi (.swal-confirm) ───────────────────────────────
-            document.querySelectorAll('.swal-confirm').forEach(function(btn) {
-                btn.addEventListener('click', function(e) {
+            document.querySelectorAll('.swal-confirm').forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
                     e.preventDefault();
                     const judul = btn.dataset.judul || 'Konfirmasi';
                     const pesan = btn.dataset.pesan || 'Lanjutkan aksi ini?';
@@ -270,7 +290,7 @@
         });
 
         // ── Theme toggle ──────────────────────────────────────────────────────
-        (function() {
+        (function () {
             syncAppIcon(localStorage.getItem('stqm-theme') || 'dark');
         })();
 

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Guru;
 use App\Models\Siswa;
+use App\Models\Kuesioner;
 use Illuminate\Support\Facades\Cache;
 
 class AdminController extends Controller
@@ -32,7 +33,6 @@ class AdminController extends Controller
             'password' => bcrypt($request->password),
         ]);
 
-        // Buat profil sesuai role
         if ($request->role === 'guru') {
             Guru::create(['user_id' => $user->id, 'nama' => $user->name, 'nip' => '-', 'mata_pelajaran' => '-']);
         } elseif ($request->role === 'siswa') {
@@ -53,7 +53,6 @@ class AdminController extends Controller
         ]);
 
         $data = $request->only('name', 'email', 'role');
-
         if ($request->filled('password')) {
             $data['password'] = bcrypt($request->password);
         }
@@ -68,16 +67,33 @@ class AdminController extends Controller
         return back()->with('success', 'Pengguna dihapus.');
     }
 
-    public function monitoring()
+    public function monitoring(Request $request)
     {
+        $roleFilter = $request->get('role', 'semua');
+
+        // Stats umum
         $stats = [
-            'total_guru'   => Guru::count(),
-            'total_siswa'  => \App\Models\Siswa::count(),
-            'total_users'  => User::count(),
+            'total_guru'    => Guru::count(),
+            'total_siswa'   => Siswa::count(),
+            'total_users'   => User::count(),
             'sudah_dinilai' => \App\Models\HasilClustering::distinct('guru_id')->count(),
         ];
 
-        return view('admin.monitoring', compact('stats'));
+        // Daftar user dengan filter role
+        $query = User::latest();
+        if ($roleFilter !== 'semua') {
+            $query->where('role', $roleFilter);
+        }
+        $users = $query->paginate(10)->withQueryString();
+
+        // Statistik kuesioner per role
+        $kuesionerStats = [
+            'dari_siswa' => Kuesioner::where('tipe', 'siswa')->count(),
+            'dari_guru'  => Kuesioner::where('tipe', 'guru')->count(),
+            'total'      => Kuesioner::count(),
+        ];
+
+        return view('admin.monitoring', compact('stats', 'users', 'roleFilter', 'kuesionerStats'));
     }
 
     public function settings()
@@ -88,6 +104,7 @@ class AdminController extends Controller
             'buka_kuesioner'  => Cache::get('stqm_buka_kuesioner', ''),
             'tutup_kuesioner' => Cache::get('stqm_tutup_kuesioner', ''),
             'rfid_aktif'      => Cache::get('stqm_rfid_aktif', false),
+            'maks_penilaian'  => Cache::get('stqm_maks_penilaian', 1),
         ];
 
         return view('admin.settings', compact('settings'));
@@ -100,6 +117,7 @@ class AdminController extends Controller
             'semester'        => 'required|in:ganjil,genap',
             'buka_kuesioner'  => 'nullable|date',
             'tutup_kuesioner' => 'nullable|date|after_or_equal:buka_kuesioner',
+            'maks_penilaian'  => 'required|integer|min:1|max:10',
         ]);
 
         Cache::forever('stqm_tahun_ajaran',    $request->tahun_ajaran);
@@ -107,6 +125,7 @@ class AdminController extends Controller
         Cache::forever('stqm_buka_kuesioner',  $request->buka_kuesioner ?? '');
         Cache::forever('stqm_tutup_kuesioner', $request->tutup_kuesioner ?? '');
         Cache::forever('stqm_rfid_aktif',      $request->boolean('rfid_aktif'));
+        Cache::forever('stqm_maks_penilaian',  $request->maks_penilaian);
 
         return back()->with('success', 'Pengaturan berhasil disimpan.');
     }

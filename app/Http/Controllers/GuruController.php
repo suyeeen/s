@@ -27,29 +27,45 @@ class GuruController extends Controller
             'jawaban.*' => 'required|integer|min:1|max:5',
         ]);
 
-        $penilai = auth()->user()->guru;
+        // Cek batas waktu kuesioner
+        $buka  = \Illuminate\Support\Facades\Cache::get('stqm_buka_kuesioner', '');
+        $tutup = \Illuminate\Support\Facades\Cache::get('stqm_tutup_kuesioner', '');
+        $now   = now()->toDateString();
 
-        $sudahIsi = Kuesioner::where('guru_id', $request->guru_id)
-            ->where('penilai_guru_id', $penilai->id)
-            ->where('tahun_ajaran', config('app.tahun_ajaran', '2024/2025'))
-            ->where('semester', config('app.semester', 'ganjil'))
-            ->exists();
-
-        if ($sudahIsi) {
-            return back()->with('error', 'Kamu sudah menilai guru ini pada periode ini.');
+        if ($buka && $now < $buka) {
+            return back()->with('error', 'Kuesioner belum dibuka. Jadwal dibuka: ' . $buka);
+        }
+        if ($tutup && $now > $tutup) {
+            return back()->with('error', 'Batas waktu pengisian kuesioner sudah berakhir (' . $tutup . ').');
         }
 
-        $kuesioner = Kuesioner::create([
+        $penilai     = auth()->user()->guru;
+        $tahunAjaran = \Illuminate\Support\Facades\Cache::get('stqm_tahun_ajaran', '2024/2025');
+        $semester    = \Illuminate\Support\Facades\Cache::get('stqm_semester', 'ganjil');
+        $maksimal    = (int) \Illuminate\Support\Facades\Cache::get('stqm_maks_penilaian', 1);
+
+        // Cek apakah sudah mengisi melebihi batas
+        $jumlahIsi = \App\Models\Kuesioner::where('penilai_guru_id', $penilai->id)
+            ->where('guru_id', $request->guru_id)
+            ->where('tahun_ajaran', $tahunAjaran)
+            ->where('semester', $semester)
+            ->count();
+
+        if ($jumlahIsi >= $maksimal) {
+            return back()->with('error', 'Kamu sudah mengisi penilaian untuk guru ini sebanyak ' . $jumlahIsi . 'x. Batas maksimal ' . $maksimal . 'x per periode.');
+        }
+
+        $kuesioner = \App\Models\Kuesioner::create([
             'guru_id'         => $request->guru_id,
             'penilai_guru_id' => $penilai->id,
             'tipe'            => 'guru',
             'tanggal'         => now()->toDateString(),
-            'tahun_ajaran'    => config('app.tahun_ajaran', '2024/2025'),
-            'semester'        => config('app.semester', 'ganjil'),
+            'tahun_ajaran'    => $tahunAjaran,
+            'semester'        => $semester,
         ]);
 
         foreach ($request->jawaban as $pertanyaan_id => $nilai) {
-            Jawaban::create([
+            \App\Models\Jawaban::create([
                 'kuesioner_id'  => $kuesioner->id,
                 'pertanyaan_id' => $pertanyaan_id,
                 'nilai'         => $nilai,

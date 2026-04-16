@@ -100,7 +100,70 @@
                         </div>
                     </div>
                 </div>
+                {{-- Pengaturan Kuesioner --}}
+<div class="rounded-3xl overflow-hidden"
+     style="background: var(--card-bg); border: 1px solid var(--card-border);">
+    <div class="p-6 flex items-center gap-4"
+         style="border-bottom: 1px solid var(--card-divider); background: var(--card-bg-soft);">
+        <div class="p-2.5 rounded-xl"
+             style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2);">
+            <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 011-1h4a2 2 0 011 1"/>
+            </svg>
+        </div>
+        <div>
+            <h3 class="font-semibold text-lg" style="color: var(--text-main)">Pengaturan Kuesioner</h3>
+            <p class="text-sm mt-0.5" style="color: var(--text-muted)">Batasi berapa kali penilai boleh mengisi kuesioner untuk satu guru per periode.</p>
+        </div>
+    </div>
+    <div class="p-8">
+        <div class="max-w-sm">
+            <label class="block text-sm font-medium mb-2" style="color: var(--text-muted)">
+                Maksimal Pengisian per Target per Periode
+            </label>
+            <div class="flex items-center gap-4">
+                <input type="number"
+                       name="maks_penilaian"
+                       min="1" max="10"
+                       value="{{ $settings['maks_penilaian'] ?? 1 }}"
+                       class="w-32 px-4 py-3 rounded-2xl text-sm outline-none text-center font-bold text-lg"
+                       style="background: var(--input-bg); border: 1px solid var(--input-border); color: var(--text-main);">
+                <p class="text-sm" style="color: var(--text-muted)">
+                    kali per guru, per semester.<br>
+                    <span class="text-xs" style="color: var(--text-muted)">Set ke <strong>1</strong> agar tidak bisa mengulang.</span>
+                </p>
+            </div>
+        </div>
 
+        {{-- Info status kuesioner saat ini --}}
+        <div class="mt-6 p-4 rounded-2xl flex items-center gap-3 text-sm"
+             style="background: rgba(249,115,22,0.08); border: 1px solid rgba(249,115,22,0.15);">
+            <svg class="w-5 h-5 text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span style="color: var(--text-muted)">
+                Status kuesioner saat ini:
+                @php
+                    $buka  = $settings['buka_kuesioner'] ?? '';
+                    $tutup = $settings['tutup_kuesioner'] ?? '';
+                    $now   = now()->toDateString();
+                @endphp
+                @if(!$buka && !$tutup)
+                    <span class="text-emerald-400 font-medium">Selalu Terbuka</span>
+                @elseif($buka && $now < $buka)
+                    <span class="text-yellow-400 font-medium">Belum Dibuka (dibuka {{ $buka }})</span>
+                @elseif($tutup && $now > $tutup)
+                    <span class="text-red-400 font-medium">Sudah Ditutup ({{ $tutup }})</span>
+                @else
+                    <span class="text-emerald-400 font-medium">Sedang Terbuka</span>
+                    @if($tutup) <span style="color: var(--text-muted)">— tutup {{ $tutup }}</span> @endif
+                @endif
+            </span>
+        </div>
+    </div>
+</div>
                 {{-- Tombol Simpan --}}
                 <div class="flex justify-end">
                     <button type="submit"
