@@ -11,10 +11,25 @@ use Illuminate\Support\Facades\Cache;
 
 class AdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::latest()->paginate(15);
-        return view('admin.users', compact('users'));
+        $roleFilter = $request->get('role', 'semua');
+
+        $query = User::latest();
+        if ($roleFilter !== 'semua') {
+            $query->where('role', $roleFilter);
+        }
+        $users = $query->paginate(15)->withQueryString();
+
+        $stats = [
+            'total_guru'   => \App\Models\Guru::count(),
+            'total_siswa'  => \App\Models\Siswa::count(),
+            'total_users'  => User::count(),
+            'total_admin'  => User::where('role', 'admin')->count(),
+            'total_kepsek' => User::where('role', 'kepsek')->count(),
+        ];
+
+        return view('admin.users', compact('users', 'stats', 'roleFilter'));
     }
 
     public function store(Request $request)
@@ -69,31 +84,50 @@ class AdminController extends Controller
 
     public function monitoring(Request $request)
     {
-        $roleFilter = $request->get('role', 'semua');
-
-        // Stats umum
-        $stats = [
-            'total_guru'    => Guru::count(),
-            'total_siswa'   => Siswa::count(),
-            'total_users'   => User::count(),
-            'sudah_dinilai' => \App\Models\HasilClustering::distinct('guru_id')->count(),
-        ];
-
-        // Daftar user dengan filter role
-        $query = User::latest();
-        if ($roleFilter !== 'semua') {
-            $query->where('role', $roleFilter);
-        }
-        $users = $query->paginate(10)->withQueryString();
-
-        // Statistik kuesioner per role
+        // Statistik kuesioner
         $kuesionerStats = [
             'dari_siswa' => Kuesioner::where('tipe', 'siswa')->count(),
             'dari_guru'  => Kuesioner::where('tipe', 'guru')->count(),
             'total'      => Kuesioner::count(),
         ];
 
-        return view('admin.monitoring', compact('stats', 'users', 'roleFilter', 'kuesionerStats'));
+        // Data clustering AI
+        $totalGuru       = Guru::count();
+        $sudahDicluster  = \App\Models\HasilClustering::distinct('guru_id')->count();
+        $belumDicluster  = max(0, $totalGuru - $sudahDicluster);
+
+        $clusterDistribusi = [
+            'A' => \App\Models\HasilClustering::where('cluster', 'A')->distinct('guru_id')->count(),
+            'B' => \App\Models\HasilClustering::where('cluster', 'B')->distinct('guru_id')->count(),
+            'C' => \App\Models\HasilClustering::where('cluster', 'C')->distinct('guru_id')->count(),
+            'D' => \App\Models\HasilClustering::where('cluster', 'D')->distinct('guru_id')->count(),
+        ];
+
+        // Riwayat clustering terbaru
+        $riwayatClustering = \App\Models\HasilClustering::with('guru')
+            ->orderByDesc('tanggal')
+            ->orderByDesc('updated_at')
+            ->limit(10)
+            ->get();
+
+        // Rata-rata nilai per kompetensi
+        $rataKompetensi = \App\Models\HasilClustering::selectRaw('
+            AVG(nilai_pedagogik) as pedagogik,
+            AVG(nilai_profesional) as profesional,
+            AVG(nilai_sosial) as sosial,
+            AVG(nilai_kepribadian) as kepribadian,
+            AVG(nilai_rata_rata) as rata_rata
+        ')->first();
+
+        return view('admin.monitoring', compact(
+            'kuesionerStats',
+            'totalGuru',
+            'sudahDicluster',
+            'belumDicluster',
+            'clusterDistribusi',
+            'riwayatClustering',
+            'rataKompetensi'
+        ));
     }
 
     public function settings()
