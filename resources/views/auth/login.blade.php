@@ -4,114 +4,491 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login — STQM</title>
+    <title>Masuk — STQM</title>
+
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <style>
+        :root {
+            --clr-primary: #EA580C;
+            --clr-primary-h: #C2410C;
+            --clr-primary-soft: rgba(234, 88, 12, 0.09);
+            --clr-primary-ring: rgba(234, 88, 12, 0.18);
+
+            --clr-bg: #FDF8F3;
+            --clr-card: #FFFFFF;
+            --clr-text: #1C1917;
+            --clr-muted: #78716C;
+            --clr-faint: #A8A29E;
+            --clr-border: #EAE4DC;
+            --clr-input-bg: #FAFAF8;
+
+            --radius-card: 20px;
+            --radius-input: 11px;
+            --radius-btn: 11px;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--clr-bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ── Warm dot-grid background ── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(180, 120, 60, 0.13) 1.2px, transparent 1.2px);
+            background-size: 26px 26px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── Soft ambient glows ── */
+        .bg-glow {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow-1 {
+            width: 420px;
+            height: 420px;
+            top: -120px;
+            right: -100px;
+            background: radial-gradient(circle, rgba(234, 88, 12, 0.1) 0%, transparent 70%);
+        }
+
+        .bg-glow-2 {
+            width: 360px;
+            height: 360px;
+            bottom: -100px;
+            left: -80px;
+            background: radial-gradient(circle, rgba(217, 119, 6, 0.08) 0%, transparent 70%);
+        }
+
+        .bg-glow-3 {
+            width: 240px;
+            height: 240px;
+            top: 40%;
+            left: 55%;
+            background: radial-gradient(circle, rgba(234, 88, 12, 0.05) 0%, transparent 70%);
+        }
+
+        /* ══════════════════════════════════════
+           CARD
+        ══════════════════════════════════════ */
+        .login-card {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 420px;
+            background: var(--clr-card);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--clr-border);
+            box-shadow:
+                0 2px 4px rgba(28, 25, 23, 0.04),
+                0 8px 24px rgba(28, 25, 23, 0.07),
+                0 32px 64px rgba(28, 25, 23, 0.06);
+            padding: 40px 36px 32px;
+            animation: card-in .45s cubic-bezier(.22, .68, 0, 1.2) both;
+        }
+
+        @keyframes card-in {
+            from {
+                opacity: 0;
+                transform: translateY(18px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* ── Brand header ── */
+        .card-brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            margin-bottom: 28px;
+        }
+
+        .brand-logo {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            overflow: hidden;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(234, 88, 12, 0.22);
+        }
+
+        .brand-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .brand-text-wrap {
+            line-height: 1;
+        }
+
+        .brand-name {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900;
+            font-size: 17px;
+            color: var(--clr-text);
+            letter-spacing: -0.3px;
+            display: block;
+        }
+
+        .brand-sub {
+            font-size: 10.5px;
+            color: var(--clr-faint);
+            font-weight: 500;
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* Divider tipis setelah brand */
+        .card-divider {
+            height: 1px;
+            background: var(--clr-border);
+            margin-bottom: 28px;
+        }
+
+        /* ── Greeting ── */
+        .card-greeting {
+            margin-bottom: 26px;
+        }
+
+        .card-greeting h1 {
+            font-family: 'Nunito', sans-serif;
+            font-size: 23px;
+            font-weight: 900;
+            color: var(--clr-text);
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            margin-bottom: 5px;
+        }
+
+        .card-greeting p {
+            font-size: 13.5px;
+            color: var(--clr-muted);
+            line-height: 1.5;
+        }
+
+        /* ── Error alert ── */
+        .alert-error {
+            background: rgba(220, 38, 38, 0.06);
+            border: 1px solid rgba(220, 38, 38, 0.18);
+            border-left: 3px solid #DC2626;
+            color: #991B1B;
+            border-radius: 9px;
+            padding: 10px 14px;
+            font-size: 13px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ── Fields ── */
+        .field {
+            margin-bottom: 16px;
+        }
+
+        .field-label {
+            display: block;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--clr-text);
+            margin-bottom: 6px;
+            letter-spacing: 0.1px;
+        }
+
+        .field-wrap {
+            position: relative;
+        }
+
+        .field-icon {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 15px;
+            color: var(--clr-faint);
+            pointer-events: none;
+            transition: color .2s;
+        }
+
+        .field-input {
+            width: 100%;
+            padding: 11px 14px 11px 40px;
+            background: var(--clr-input-bg);
+            border: 1.5px solid var(--clr-border);
+            border-radius: var(--radius-input);
+            font-size: 13.5px;
+            color: var(--clr-text);
+            font-family: inherit;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s, background .2s;
+            -webkit-appearance: none;
+        }
+
+        .field-input::placeholder {
+            color: var(--clr-faint);
+        }
+
+        .field-input:focus {
+            border-color: var(--clr-primary);
+            box-shadow: 0 0 0 3px var(--clr-primary-ring);
+            background: #fff;
+        }
+
+        /* icon berubah warna saat field focused */
+        .field-wrap:focus-within .field-icon {
+            color: var(--clr-primary);
+        }
+
+        /* Password toggle */
+        .pw-toggle {
+            position: absolute;
+            right: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--clr-faint);
+            font-size: 16px;
+            padding: 2px;
+            transition: color .2s;
+            outline: none;
+        }
+
+        .pw-toggle:hover {
+            color: var(--clr-muted);
+        }
+
+        /* ── Remember ── */
+        .remember-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 22px;
+            margin-top: 4px;
+        }
+
+        .remember-row input[type="checkbox"] {
+            width: 15px;
+            height: 15px;
+            accent-color: var(--clr-primary);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .remember-row label {
+            font-size: 13px;
+            color: var(--clr-muted);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* ── Submit button ── */
+        .btn-submit {
+            width: 100%;
+            background: var(--clr-primary);
+            color: white;
+            font-size: 14px;
+            font-weight: 800;
+            font-family: 'Nunito', sans-serif;
+            letter-spacing: 0.1px;
+            padding: 13px;
+            border-radius: var(--radius-btn);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background .2s, transform .15s, box-shadow .2s;
+            box-shadow: 0 4px 14px rgba(234, 88, 12, 0.3);
+        }
+
+        .btn-submit:hover {
+            background: var(--clr-primary-h);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 22px rgba(234, 88, 12, 0.35);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(234, 88, 12, 0.25);
+        }
+
+        /* ── Footer note ── */
+        .card-footer-note {
+            margin-top: 22px;
+            padding-top: 18px;
+            border-top: 1px solid var(--clr-border);
+            font-size: 11.5px;
+            color: var(--clr-faint);
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        /* ── Chip row at bottom ── */
+        .card-chips {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .card-chip {
+            background: var(--clr-primary-soft);
+            border: 1px solid rgba(234, 88, 12, 0.15);
+            color: var(--clr-primary-h);
+            font-size: 10.5px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 32px 24px 26px;
+            }
+        }
+    </style>
 </head>
 
-<body class="min-h-screen flex items-center justify-center p-4" style="background: #0a0a14;">
+<body>
 
-    {{-- Background glow --}}
-    <div class="fixed inset-0 pointer-events-none overflow-hidden">
-        <div class="absolute top-[-30%] left-[-20%] w-[70%] h-[70%] rounded-full opacity-40"
-            style="background: radial-gradient(circle, rgba(139,92,246,0.2) 0%, transparent 70%)"></div>
-        <div class="absolute bottom-[-30%] right-[-20%] w-[70%] h-[70%] rounded-full opacity-40"
-            style="background: radial-gradient(circle, rgba(249,115,22,0.15) 0%, transparent 70%)"></div>
-    </div>
+    {{-- Background decorations --}}
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+    <div class="bg-glow bg-glow-3"></div>
 
-    {{-- Card --}}
-    <div class="w-full max-w-md rounded-[2rem] overflow-hidden z-10 relative"
-        style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 24px 80px rgba(0,0,0,0.4);">
+    <div class="login-card">
 
-        {{-- Header --}}
-        <div class="p-10 text-center relative overflow-hidden" style="border-bottom: 1px solid rgba(255,255,255,0.06);">
-            <div class="absolute inset-0 opacity-30"
-                style="background: linear-gradient(135deg, rgba(249,115,22,0.15) 0%, rgba(139,92,246,0.1) 100%)"></div>
-
-            <div class="relative z-10 flex flex-col items-center">
-                {{-- Logo --}}
-                <div class="mb-5 w-20 h-20 rounded-2xl overflow-hidden mx-auto"
-                    style="box-shadow: 0 12px 40px rgba(249,115,22,0.35);">
-                    <img src="{{ asset('images/logo.png') }}" alt="STQM Logo" class="w-full h-full object-cover">
-                </div>
-                <h1 class="text-2xl font-extrabold tracking-tight text-white">STQM System</h1>
-                <p class="text-gray-400 text-sm mt-2">Smart Teacher Quality Mapping</p>
+        {{-- Brand --}}
+        <div class="card-brand">
+            <div class="brand-logo">
+                <img src="{{ asset('images/logo.png') }}" alt="STQM">
+            </div>
+            <div class="brand-text-wrap">
+                <span class="brand-name">STQM</span>
+                <span class="brand-sub">Smart Teacher Quality Mapping</span>
             </div>
         </div>
 
-        {{-- Form --}}
-        <div class="p-8">
+        <div class="card-divider"></div>
 
-            {{-- Validation errors --}}
-            @if ($errors->any())
-                <div class="mb-6 p-4 rounded-2xl text-sm text-red-400"
-                    style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2);">
-                    {{ $errors->first() }}
-                </div>
-            @endif
-
-            <form method="POST" action="{{ route('login') }}" class="space-y-5">
-                @csrf
-
-                {{-- Email --}}
-                <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-2">Email</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
-                        </div>
-                        <input type="email" name="email" value="{{ old('email') }}" required autofocus
-                            placeholder="Masukkan email..."
-                            class="w-full pl-11 pr-4 py-3 rounded-2xl text-white text-sm placeholder-gray-500 outline-none transition-all"
-                            style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);"
-                            onfocus="this.style.borderColor='rgba(249,115,22,0.5)'"
-                            onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
-                    </div>
-                </div>
-
-                {{-- Password --}}
-                <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-2">Password</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                        </div>
-                        <input type="password" name="password" required placeholder="••••••••"
-                            class="w-full pl-11 pr-4 py-3 rounded-2xl text-white text-sm placeholder-gray-500 outline-none transition-all"
-                            style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);"
-                            onfocus="this.style.borderColor='rgba(249,115,22,0.5)'"
-                            onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
-                    </div>
-                </div>
-
-                {{-- Remember me --}}
-                <div class="flex items-center gap-2">
-                    <input type="checkbox" name="remember" id="remember" class="w-4 h-4 rounded accent-orange-500">
-                    <label for="remember" class="text-sm text-gray-400">Ingat saya</label>
-                </div>
-
-                {{-- Submit --}}
-                <button type="submit"
-                    class="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold text-white text-sm transition-all mt-2"
-                    style="background: linear-gradient(135deg, #f97316, #eab308); box-shadow: 0 8px 32px rgba(249,115,22,0.3);"
-                    onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-                    Masuk ke Sistem
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                </button>
-            </form>
-
-            <p class="text-center text-xs text-gray-600 mt-6">
-                © {{ date('Y') }} STQM — Smart Teacher Quality Mapping
-            </p>
+        {{-- Greeting --}}
+        <div class="card-greeting">
+            <h1>Halo, selamat datang! 👋</h1>
+            <p>Masuk untuk melanjutkan ke sistem evaluasi guru.</p>
         </div>
+
+        {{-- Error --}}
+        @if ($errors->any())
+            <div class="alert-error">
+                <i class="bi bi-exclamation-circle-fill"></i>
+                <span>{{ $errors->first() }}</span>
+            </div>
+        @endif
+
+        {{-- Form --}}
+        <form method="POST" action="{{ route('login') }}">
+            @csrf
+
+            <div class="field">
+                <label class="field-label" for="email">Email</label>
+                <div class="field-wrap">
+                    <i class="bi bi-envelope field-icon"></i>
+                    <input class="field-input" type="email" id="email" name="email" value="{{ old('email') }}" required
+                        autofocus autocomplete="email" placeholder="nama@sekolah.sch.id">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="field-label" for="password">Password</label>
+                <div class="field-wrap">
+                    <i class="bi bi-lock field-icon"></i>
+                    <input class="field-input" type="password" id="password" name="password" required
+                        autocomplete="current-password" placeholder="Masukkan password" style="padding-right: 42px;">
+                    <button type="button" class="pw-toggle" id="pw-toggle" aria-label="Tampilkan password">
+                        <i class="bi bi-eye" id="pw-icon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="remember-row">
+                <input type="checkbox" id="remember" name="remember">
+                <label for="remember">Ingat saya di perangkat ini</label>
+            </div>
+
+            <button type="submit" class="btn-submit">
+                Masuk ke Sistem
+                <i class="bi bi-arrow-right"></i>
+            </button>
+        </form>
+
+        {{-- Footer --}}
+        <div class="card-footer-note">
+            © {{ date('Y') }} STQM — Politeknik Negeri Jember
+            <div class="card-chips">
+                <span class="card-chip"><i class="bi bi-credit-card-2-front"></i> RFID</span>
+                <span class="card-chip"><i class="bi bi-cpu"></i> K-Means AI</span>
+                <span class="card-chip"><i class="bi bi-shield-check"></i> Multi-Role</span>
+            </div>
+        </div>
+
     </div>
+
+    <script>
+        // Password visibility toggle
+        const toggle = document.getElementById('pw-toggle');
+        const input = document.getElementById('password');
+        const icon = document.getElementById('pw-icon');
+
+        toggle.addEventListener('click', () => {
+            const isText = input.type === 'text';
+            input.type = isText ? 'password' : 'text';
+            icon.className = isText ? 'bi bi-eye' : 'bi bi-eye-slash';
+        });
+    </script>
 
 </body>
 
