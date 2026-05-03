@@ -9,30 +9,37 @@
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Nunito:wght@700;800;900&display=swap"
         rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
+        /* ══════════════════════════════════════
+           DESIGN TOKENS — sinkron dengan welcome.blade.php
+           dan [data-theme="light"] di app.blade.php
+        ══════════════════════════════════════ */
         :root {
-            --clr-primary: #EA580C;
-            --clr-primary-h: #C2410C;
-            --clr-primary-soft: rgba(234, 88, 12, 0.09);
-            --clr-primary-ring: rgba(234, 88, 12, 0.18);
+            --blue-600: #2563EB;
+            --blue-700: #1D4ED8;
+            --blue-800: #1E40AF;
+            --blue-soft: rgba(29, 78, 216, 0.08);
+            --blue-ring: rgba(29, 78, 216, 0.18);
+            --blue-border: rgba(29, 78, 216, 0.14);
 
-            --clr-bg: #FDF8F3;
-            --clr-card: #FFFFFF;
-            --clr-text: #1C1917;
-            --clr-muted: #78716C;
-            --clr-faint: #A8A29E;
-            --clr-border: #EAE4DC;
-            --clr-input-bg: #FAFAF8;
+            --bg-page: #EFF6FF;
+            /* blue-50 — halaman */
+            --bg-card: #FFFFFF;
+            --bg-input: #F8FAFF;
 
-            --radius-card: 20px;
-            --radius-input: 11px;
-            --radius-btn: 11px;
+            --txt-main: #0F172A;
+            --txt-muted: #475569;
+            --txt-faint: #94A3B8;
+
+            --border: #DBEAFE;
+            /* blue-100 */
+            --shadow-card: 0 8px 32px rgba(29, 78, 216, 0.1), 0 2px 8px rgba(15, 23, 42, 0.06);
         }
 
         *,
@@ -45,7 +52,7 @@
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: var(--clr-bg);
+            background: var(--bg-page);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -55,18 +62,18 @@
             overflow: hidden;
         }
 
-        /* ── Warm dot-grid background ── */
+        /* ── Dot grid background — biru muda ── */
         body::before {
             content: '';
             position: fixed;
             inset: 0;
-            background-image: radial-gradient(circle, rgba(180, 120, 60, 0.13) 1.2px, transparent 1.2px);
-            background-size: 26px 26px;
+            background-image: radial-gradient(circle, rgba(29, 78, 216, 0.1) 1.2px, transparent 1.2px);
+            background-size: 24px 24px;
             pointer-events: none;
             z-index: 0;
         }
 
-        /* ── Soft ambient glows ── */
+        /* ── Soft radial glows ── */
         .bg-glow {
             position: fixed;
             border-radius: 50%;
@@ -75,27 +82,38 @@
         }
 
         .bg-glow-1 {
-            width: 420px;
-            height: 420px;
+            width: 450px;
+            height: 450px;
             top: -120px;
             right: -100px;
-            background: radial-gradient(circle, rgba(234, 88, 12, 0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.12) 0%, transparent 65%);
         }
 
         .bg-glow-2 {
-            width: 360px;
-            height: 360px;
+            width: 380px;
+            height: 380px;
             bottom: -100px;
             left: -80px;
-            background: radial-gradient(circle, rgba(217, 119, 6, 0.08) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(29, 78, 216, 0.09) 0%, transparent 65%);
         }
 
         .bg-glow-3 {
-            width: 240px;
-            height: 240px;
-            top: 40%;
-            left: 55%;
-            background: radial-gradient(circle, rgba(234, 88, 12, 0.05) 0%, transparent 70%);
+            width: 220px;
+            height: 220px;
+            top: 45%;
+            left: 60%;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.06) 0%, transparent 65%);
+        }
+
+        /* ── Wave SVG decoration ── */
+        .bg-wave {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.3;
         }
 
         /* ══════════════════════════════════════
@@ -106,13 +124,10 @@
             z-index: 1;
             width: 100%;
             max-width: 420px;
-            background: var(--clr-card);
-            border-radius: var(--radius-card);
-            border: 1px solid var(--clr-border);
-            box-shadow:
-                0 2px 4px rgba(28, 25, 23, 0.04),
-                0 8px 24px rgba(28, 25, 23, 0.07),
-                0 32px 64px rgba(28, 25, 23, 0.06);
+            background: var(--bg-card);
+            border-radius: 22px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-card);
             padding: 40px 36px 32px;
             animation: card-in .45s cubic-bezier(.22, .68, 0, 1.2) both;
         }
@@ -134,7 +149,7 @@
             display: flex;
             align-items: center;
             gap: 11px;
-            margin-bottom: 28px;
+            margin-bottom: 26px;
         }
 
         .brand-logo {
@@ -143,7 +158,7 @@
             border-radius: 12px;
             overflow: hidden;
             flex-shrink: 0;
-            box-shadow: 0 4px 12px rgba(234, 88, 12, 0.22);
+            box-shadow: 0 4px 14px rgba(29, 78, 216, 0.25);
         }
 
         .brand-logo img {
@@ -153,44 +168,40 @@
             display: block;
         }
 
-        .brand-text-wrap {
-            line-height: 1;
-        }
-
         .brand-name {
             font-family: 'Nunito', sans-serif;
             font-weight: 900;
             font-size: 17px;
-            color: var(--clr-text);
-            letter-spacing: -0.3px;
+            color: var(--txt-main);
             display: block;
+            letter-spacing: -0.3px;
+            line-height: 1.2;
         }
 
         .brand-sub {
             font-size: 10.5px;
-            color: var(--clr-faint);
+            color: var(--txt-faint);
             font-weight: 500;
             display: block;
             margin-top: 2px;
         }
 
-        /* Divider tipis setelah brand */
         .card-divider {
             height: 1px;
-            background: var(--clr-border);
-            margin-bottom: 28px;
+            background: var(--border);
+            margin-bottom: 26px;
         }
 
         /* ── Greeting ── */
         .card-greeting {
-            margin-bottom: 26px;
+            margin-bottom: 24px;
         }
 
         .card-greeting h1 {
             font-family: 'Nunito', sans-serif;
-            font-size: 23px;
+            font-size: 22px;
             font-weight: 900;
-            color: var(--clr-text);
+            color: var(--txt-main);
             letter-spacing: -0.5px;
             line-height: 1.2;
             margin-bottom: 5px;
@@ -198,7 +209,7 @@
 
         .card-greeting p {
             font-size: 13.5px;
-            color: var(--clr-muted);
+            color: var(--txt-muted);
             line-height: 1.5;
         }
 
@@ -226,7 +237,7 @@
             display: block;
             font-size: 12.5px;
             font-weight: 700;
-            color: var(--clr-text);
+            color: var(--txt-main);
             margin-bottom: 6px;
             letter-spacing: 0.1px;
         }
@@ -241,7 +252,7 @@
             top: 50%;
             transform: translateY(-50%);
             font-size: 15px;
-            color: var(--clr-faint);
+            color: var(--txt-faint);
             pointer-events: none;
             transition: color .2s;
         }
@@ -249,11 +260,11 @@
         .field-input {
             width: 100%;
             padding: 11px 14px 11px 40px;
-            background: var(--clr-input-bg);
-            border: 1.5px solid var(--clr-border);
-            border-radius: var(--radius-input);
+            background: var(--bg-input);
+            border: 1.5px solid var(--border);
+            border-radius: 11px;
             font-size: 13.5px;
-            color: var(--clr-text);
+            color: var(--txt-main);
             font-family: inherit;
             outline: none;
             transition: border-color .2s, box-shadow .2s, background .2s;
@@ -261,18 +272,17 @@
         }
 
         .field-input::placeholder {
-            color: var(--clr-faint);
+            color: var(--txt-faint);
         }
 
         .field-input:focus {
-            border-color: var(--clr-primary);
-            box-shadow: 0 0 0 3px var(--clr-primary-ring);
+            border-color: var(--blue-600);
+            box-shadow: 0 0 0 3px var(--blue-ring);
             background: #fff;
         }
 
-        /* icon berubah warna saat field focused */
         .field-wrap:focus-within .field-icon {
-            color: var(--clr-primary);
+            color: var(--blue-700);
         }
 
         /* Password toggle */
@@ -284,7 +294,7 @@
             background: none;
             border: none;
             cursor: pointer;
-            color: var(--clr-faint);
+            color: var(--txt-faint);
             font-size: 16px;
             padding: 2px;
             transition: color .2s;
@@ -292,7 +302,7 @@
         }
 
         .pw-toggle:hover {
-            color: var(--clr-muted);
+            color: var(--txt-muted);
         }
 
         /* ── Remember ── */
@@ -307,29 +317,29 @@
         .remember-row input[type="checkbox"] {
             width: 15px;
             height: 15px;
-            accent-color: var(--clr-primary);
+            accent-color: var(--blue-700);
             cursor: pointer;
             flex-shrink: 0;
         }
 
         .remember-row label {
             font-size: 13px;
-            color: var(--clr-muted);
+            color: var(--txt-muted);
             cursor: pointer;
             user-select: none;
         }
 
-        /* ── Submit button ── */
+        /* ── Submit ── */
         .btn-submit {
             width: 100%;
-            background: var(--clr-primary);
-            color: white;
+            background: var(--blue-700);
+            color: #fff;
             font-size: 14px;
             font-weight: 800;
             font-family: 'Nunito', sans-serif;
             letter-spacing: 0.1px;
             padding: 13px;
-            border-radius: var(--radius-btn);
+            border-radius: 11px;
             border: none;
             cursor: pointer;
             display: flex;
@@ -337,44 +347,42 @@
             justify-content: center;
             gap: 8px;
             transition: background .2s, transform .15s, box-shadow .2s;
-            box-shadow: 0 4px 14px rgba(234, 88, 12, 0.3);
+            box-shadow: 0 4px 16px rgba(29, 78, 216, 0.3);
         }
 
         .btn-submit:hover {
-            background: var(--clr-primary-h);
+            background: var(--blue-800);
             transform: translateY(-1px);
-            box-shadow: 0 8px 22px rgba(234, 88, 12, 0.35);
+            box-shadow: 0 8px 24px rgba(29, 78, 216, 0.36);
         }
 
         .btn-submit:active {
             transform: translateY(0);
-            box-shadow: 0 2px 8px rgba(234, 88, 12, 0.25);
         }
 
-        /* ── Footer note ── */
+        /* ── Footer ── */
         .card-footer-note {
             margin-top: 22px;
             padding-top: 18px;
-            border-top: 1px solid var(--clr-border);
+            border-top: 1px solid var(--border);
             font-size: 11.5px;
-            color: var(--clr-faint);
+            color: var(--txt-faint);
             text-align: center;
             line-height: 1.6;
         }
 
-        /* ── Chip row at bottom ── */
         .card-chips {
             display: flex;
             justify-content: center;
             gap: 6px;
-            margin-top: 14px;
+            margin-top: 12px;
             flex-wrap: wrap;
         }
 
         .card-chip {
-            background: var(--clr-primary-soft);
-            border: 1px solid rgba(234, 88, 12, 0.15);
-            color: var(--clr-primary-h);
+            background: var(--blue-soft);
+            border: 1px solid var(--blue-border);
+            color: var(--blue-800);
             font-size: 10.5px;
             font-weight: 700;
             padding: 3px 10px;
@@ -400,14 +408,22 @@
     <div class="bg-glow bg-glow-2"></div>
     <div class="bg-glow bg-glow-3"></div>
 
+    {{-- Wave SVG --}}
+    <svg class="bg-wave" viewBox="0 0 1440 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,80 C180,20 320,140 480,80 C640,20 780,130 960,70 C1080,30 1200,110 1440,60 L1440,160 L0,160 Z"
+            fill="#1D4ED8" opacity=".2" />
+        <path d="M0,110 C200,55 360,160 560,100 C720,50 900,150 1100,90 C1240,55 1360,120 1440,85 L1440,160 L0,160 Z"
+            fill="#2563EB" opacity=".13" />
+    </svg>
+
     <div class="login-card">
 
         {{-- Brand --}}
         <div class="card-brand">
             <div class="brand-logo">
-                <img src="{{ asset('images/logo.png') }}" alt="STQM">
+                <img src="{{ asset('images/logo.png') }}" alt="STQM Logo">
             </div>
-            <div class="brand-text-wrap">
+            <div>
                 <span class="brand-name">STQM</span>
                 <span class="brand-sub">Smart Teacher Quality Mapping</span>
             </div>
@@ -478,7 +494,6 @@
     </div>
 
     <script>
-        // Password visibility toggle
         const toggle = document.getElementById('pw-toggle');
         const input = document.getElementById('password');
         const icon = document.getElementById('pw-icon');

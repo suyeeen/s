@@ -7,73 +7,79 @@
     <title>STQM — Smart Teacher Quality Mapping</title>
     <meta name="description" content="Sistem pemetaan kualitas guru berbasis data kuesioner, absensi RFID, dan analisis K-Means Clustering.">
 
-    {{-- Favicon --}}
     <link href="{{ asset('images/logo.png') }}" rel="icon">
 
-    {{-- Google Fonts --}}
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
 
-    {{-- Bootstrap + Icons --}}
     <link href="{{ asset('arsha/assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('arsha/assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
     <link href="{{ asset('arsha/assets/vendor/aos/aos.css') }}" rel="stylesheet">
-    <link href="{{ asset('arsha/assets/vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('arsha/assets/vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
 
     <style>
         /* ══════════════════════════════════════
-           DESIGN TOKENS — satu sumber kebenaran
-           Digunakan di welcome.blade.php DAN login.blade.php
+           DESIGN TOKENS — Blue Professional
+           Sinkron dengan login.blade.php & app.blade.php (light mode)
         ══════════════════════════════════════ */
         :root {
-            /* Brand */
-            --clr-primary:        #EA580C; /* orange-600 */
-            --clr-primary-hover:  #C2410C; /* orange-700 */
-            --clr-primary-light:  rgba(234,88,12,0.08);
-            --clr-primary-border: rgba(234,88,12,0.2);
-            --clr-accent:         #D97706; /* amber-600 — gradient pair */
+            /* Brand blue */
+            --blue-600:   #2563EB;
+            --blue-700:   #1D4ED8;
+            --blue-800:   #1E40AF;
+            --blue-900:   #1E3A8A;
+            --blue-soft:  rgba(29,78,216,0.08);
+            --blue-ring:  rgba(29,78,216,0.18);
+            --blue-border:rgba(29,78,216,0.14);
 
             /* Surfaces */
-            --clr-bg-page:        #F8F7F4; /* warm stone */
-            --clr-bg-hero:        #FEFCF8; /* cream warm */
-            --clr-bg-section-alt: #F3F1EC; /* slightly deeper stone */
-            --clr-bg-card:        #FFFFFF;
-            --clr-bg-dark:        #1C1917; /* stone-900 — footer, stats */
-            --clr-bg-dark2:       #292524; /* stone-800 */
+            --bg-page:    #F0F5FF;   /* biru-slate muda */
+            --bg-hero:    #F8FAFF;   /* nyaris putih dengan hint biru */
+            --bg-card:    #FFFFFF;
+            --bg-alt:     #EBF2FF;   /* section alt */
 
             /* Text */
-            --clr-text-primary:   #1C1917; /* stone-900 */
-            --clr-text-secondary: #44403C; /* stone-700 */
-            --clr-text-muted:     #78716C; /* stone-500 */
-            --clr-text-faint:     #A8A29E; /* stone-400 */
-            --clr-text-on-dark:   #F5F5F4; /* stone-100 */
-            --clr-text-muted-dark:#A8A29E; /* stone-400 — on dark bg */
+            --txt-main:   #0F172A;   /* slate-900 */
+            --txt-sub:    #334155;   /* slate-700 */
+            --txt-muted:  #64748B;   /* slate-500 */
+            --txt-faint:  #94A3B8;   /* slate-400 */
+            --txt-ondark: #F1F5F9;   /* slate-100 */
 
-            /* Borders */
-            --clr-border:         #E8E4DC; /* warm border */
-            --clr-border-hover:   #D6CFC4;
+            /* Border */
+            --border:     #E2E8F0;   /* slate-200 */
+            --border-b:   rgba(29,78,216,0.1);
 
-            /* Shadow */
-            --shadow-card:        0 4px 24px rgba(28,25,23,0.07);
-            --shadow-card-hover:  0 16px 48px rgba(28,25,23,0.11);
-            --shadow-cta:         0 8px 28px rgba(234,88,12,0.3);
+            /* Dark section (stats & footer) */
+            --bg-dark:    #0F172A;   /* slate-900 */
+            --bg-dark2:   #1E293B;   /* slate-800 */
+
+            /* Shadows */
+            --shadow-sm:  0 2px 8px rgba(15,23,42,0.06);
+            --shadow-md:  0 4px 20px rgba(15,23,42,0.08);
+            --shadow-lg:  0 16px 48px rgba(15,23,42,0.10);
+            --shadow-btn: 0 4px 16px rgba(29,78,216,0.28);
+
+            /* Cluster colors */
+            --c-a: #16A34A; --c-a-bg: rgba(22,163,74,0.08);
+            --c-b: #2563EB; --c-b-bg: rgba(37,99,235,0.08);
+            --c-c: #D97706; --c-c-bg: rgba(217,119,6,0.08);
+            --c-d: #DC2626; --c-d-bg: rgba(220,38,38,0.08);
         }
 
-        * { box-sizing: border-box; }
+        *, *::before, *::after { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: var(--clr-bg-page);
-            color: var(--clr-text-primary);
+            background: var(--bg-page);
+            color: var(--txt-main);
             overflow-x: hidden;
         }
 
-        /* ── SCROLLBAR ── */
         ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: var(--clr-bg-section-alt); }
-        ::-webkit-scrollbar-thumb { background: var(--clr-primary); border-radius: 3px; }
+        ::-webkit-scrollbar-track { background: var(--bg-alt); }
+        ::-webkit-scrollbar-thumb { background: var(--blue-700); border-radius: 3px; }
 
         /* ══════════════════════════════════════
            NAVBAR
@@ -83,89 +89,92 @@
             top: 0; left: 0; right: 0;
             z-index: 999;
             padding: 18px 0;
-            transition: all .35s ease;
+            transition: all .3s ease;
         }
 
         #header.scrolled {
-            background: rgba(254,252,248,0.97);
+            background: rgba(248,250,255,0.97);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            box-shadow: 0 1px 0 var(--clr-border), 0 4px 20px rgba(28,25,23,0.06);
-            padding: 12px 0;
+            box-shadow: 0 1px 0 var(--border-b), var(--shadow-sm);
+            padding: 11px 0;
         }
 
-        .logo-wrapper {
+        .logo-wrap {
             display: flex;
             align-items: center;
             gap: 10px;
             text-decoration: none;
         }
 
-        .logo-wrapper img {
-            width: 36px;
-            height: 36px;
+        .logo-wrap img {
+            width: 34px; height: 34px;
             border-radius: 9px;
             object-fit: cover;
+            box-shadow: 0 3px 10px rgba(29,78,216,0.2);
         }
 
-        .logo-wrapper .logo-text {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-weight: 800;
-            font-size: 19px;
-            color: var(--clr-text-primary);
-            letter-spacing: -0.5px;
+        .logo-name {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900;
+            font-size: 18px;
+            color: var(--txt-main);
+            letter-spacing: -0.4px;
         }
 
-        .logo-wrapper .logo-sub {
+        .logo-sub {
             font-size: 10px;
-            color: var(--clr-text-muted);
+            color: var(--txt-faint);
             display: block;
-            line-height: 1;
-            margin-top: 1px;
             font-weight: 400;
+            margin-top: 1px;
         }
 
-        nav ul {
-            list-style: none;
-            margin: 0; padding: 0;
-            display: flex;
-            gap: 4px;
-        }
+        nav ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 2px; }
 
         nav ul a {
             text-decoration: none;
-            color: var(--clr-text-secondary);
-            font-size: 14px;
+            color: var(--txt-sub);
+            font-size: 13.5px;
             font-weight: 500;
-            padding: 7px 15px;
+            padding: 7px 14px;
             border-radius: 8px;
             transition: all .2s;
         }
 
         nav ul a:hover, nav ul a.active {
-            color: var(--clr-primary);
-            background: var(--clr-primary-light);
+            color: var(--blue-700);
+            background: var(--blue-soft);
         }
 
-        .btn-login {
-            background: var(--clr-primary);
-            color: white !important;
-            font-size: 14px;
+        .btn-nav-login {
+            background: var(--blue-700);
+            color: #fff !important;
+            font-size: 13.5px;
             font-weight: 700;
             padding: 9px 22px;
             border-radius: 9px;
             text-decoration: none;
-            transition: all .25s;
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            transition: all .25s;
+            box-shadow: var(--shadow-btn);
         }
 
-        .btn-login:hover {
-            background: var(--clr-primary-hover);
+        .btn-nav-login:hover {
+            background: var(--blue-800);
             transform: translateY(-1px);
-            box-shadow: var(--shadow-cta);
-            color: white;
+            color: #fff;
+        }
+
+        .mobile-nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 22px;
+            color: var(--txt-sub);
+            cursor: pointer;
         }
 
         /* ══════════════════════════════════════
@@ -173,31 +182,36 @@
         ══════════════════════════════════════ */
         #hero {
             min-height: 100vh;
-            background: var(--clr-bg-hero);
-            position: relative;
-            overflow: hidden;
+            background: var(--bg-hero);
             display: flex;
             align-items: center;
             padding: 120px 0 80px;
-            border-bottom: 1px solid var(--clr-border);
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid var(--border-b);
         }
 
-        /* Subtle warm radial — tidak terasa "gaming" */
-        .hero-bg {
+        .hero-deco-grid {
             position: absolute;
             inset: 0;
-            background:
-                radial-gradient(ellipse 70% 80% at 85% 30%, rgba(234,88,12,0.07) 0%, transparent 60%),
-                radial-gradient(ellipse 50% 60% at 5%  85%, rgba(217,119,6,0.05) 0%, transparent 55%);
+            background-image: radial-gradient(circle, rgba(29,78,216,0.07) 1px, transparent 1px);
+            background-size: 28px 28px;
             pointer-events: none;
         }
 
-        /* Dot grid — sangat subtle */
-        .hero-grid {
+        .hero-glow-1 {
             position: absolute;
-            inset: 0;
-            background-image: radial-gradient(circle, rgba(28,25,23,0.06) 1px, transparent 1px);
-            background-size: 28px 28px;
+            width: 500px; height: 500px;
+            top: -100px; right: -80px;
+            background: radial-gradient(circle, rgba(37,99,235,0.09) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .hero-glow-2 {
+            position: absolute;
+            width: 350px; height: 350px;
+            bottom: -60px; left: 5%;
+            background: radial-gradient(circle, rgba(29,78,216,0.06) 0%, transparent 65%);
             pointer-events: none;
         }
 
@@ -205,193 +219,233 @@
             display: inline-flex;
             align-items: center;
             gap: 7px;
-            background: var(--clr-primary-light);
-            border: 1px solid var(--clr-primary-border);
-            color: var(--clr-primary-hover);
-            font-size: 12px;
+            background: var(--blue-soft);
+            border: 1px solid var(--blue-border);
+            color: var(--blue-800);
+            font-size: 11.5px;
             font-weight: 700;
-            padding: 6px 16px;
+            padding: 6px 15px;
             border-radius: 20px;
-            margin-bottom: 22px;
-            letter-spacing: 0.2px;
-        }
-
-        .hero-badge-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--clr-primary);
-            animation: pulse-dot 2s infinite;
-        }
-
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50%       { opacity: 0.5; transform: scale(0.75); }
-        }
-
-        .hero h1 {
-            font-family: 'Fraunces', serif;
-            font-size: clamp(2.4rem, 4.5vw, 3.6rem);
-            font-weight: 900;
-            color: var(--clr-text-primary);
-            line-height: 1.08;
-            letter-spacing: -1.5px;
             margin-bottom: 20px;
         }
 
-        .hero h1 .highlight {
-            color: var(--clr-primary);
+        .badge-pulse {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--blue-600);
+            animation: pulse 2s infinite;
         }
 
-        .hero p.lead {
-            font-size: 16px;
-            color: var(--clr-text-muted);
+        @keyframes pulse {
+            0%,100% { opacity:1; transform:scale(1); }
+            50%      { opacity:.4; transform:scale(.7); }
+        }
+
+        .hero h1 {
+            font-family: 'Nunito', sans-serif;
+            font-size: clamp(2.2rem, 4vw, 3.2rem);
+            font-weight: 900;
+            color: var(--txt-main);
+            line-height: 1.1;
+            letter-spacing: -1.2px;
+            margin-bottom: 18px;
+        }
+
+        .hero h1 .hi { color: var(--blue-700); }
+
+        .hero .lead {
+            font-size: 15.5px;
+            color: var(--txt-muted);
             line-height: 1.8;
             max-width: 500px;
-            margin-bottom: 36px;
+            margin-bottom: 32px;
         }
 
-        .hero-actions {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
+        .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
         .btn-hero-primary {
-            background: var(--clr-primary);
-            color: white;
+            background: var(--blue-700);
+            color: #fff;
             font-size: 14px;
             font-weight: 700;
             padding: 13px 28px;
             border-radius: 10px;
             text-decoration: none;
-            transition: all .25s;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 4px 16px rgba(234,88,12,0.28);
+            transition: all .25s;
+            box-shadow: var(--shadow-btn);
         }
 
         .btn-hero-primary:hover {
-            background: var(--clr-primary-hover);
+            background: var(--blue-800);
             transform: translateY(-2px);
-            box-shadow: 0 10px 28px rgba(234,88,12,0.35);
-            color: white;
+            box-shadow: 0 10px 28px rgba(29,78,216,0.34);
+            color: #fff;
         }
 
         .btn-hero-secondary {
-            background: var(--clr-bg-card);
-            border: 1.5px solid var(--clr-border);
-            color: var(--clr-text-secondary);
+            background: var(--bg-card);
+            border: 1.5px solid var(--border);
+            color: var(--txt-sub);
             font-size: 14px;
             font-weight: 600;
             padding: 13px 28px;
             border-radius: 10px;
             text-decoration: none;
-            transition: all .25s;
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            transition: all .25s;
         }
 
         .btn-hero-secondary:hover {
-            border-color: var(--clr-primary-border);
-            color: var(--clr-primary);
+            border-color: var(--blue-border);
+            color: var(--blue-700);
             transform: translateY(-2px);
-            box-shadow: var(--shadow-card);
+            box-shadow: var(--shadow-md);
         }
 
-        /* Hero stats bar */
+        /* Hero stats */
         .hero-stats {
             display: flex;
-            gap: 32px;
-            margin-top: 40px;
-            padding-top: 32px;
-            border-top: 1px solid var(--clr-border);
+            gap: 28px;
+            margin-top: 36px;
+            padding-top: 28px;
+            border-top: 1px solid var(--border-b);
             flex-wrap: wrap;
         }
 
-        .hero-stat-item .num {
-            font-family: 'Fraunces', serif;
-            font-size: 30px;
+        .hero-stat .num {
+            font-family: 'Nunito', sans-serif;
+            font-size: 28px;
             font-weight: 900;
-            color: var(--clr-primary);
+            color: var(--blue-700);
             line-height: 1;
             letter-spacing: -1px;
         }
 
-        .hero-stat-item .label {
-            font-size: 12px;
-            color: var(--clr-text-faint);
-            margin-top: 3px;
+        .hero-stat .lbl {
+            font-size: 11.5px;
+            color: var(--txt-faint);
             font-weight: 500;
+            margin-top: 3px;
         }
 
-        /* Hero card — cluster preview */
-        .hero-card {
-            background: var(--clr-bg-card);
-            border: 1px solid var(--clr-border);
+        /* ── Cluster card grid ── */
+        .cluster-wrap {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
             border-radius: 20px;
-            padding: 28px;
-            box-shadow: var(--shadow-card);
+            padding: 22px;
+            box-shadow: var(--shadow-md);
         }
 
-        .hero-card-header {
+        .cluster-win-bar {
             display: flex;
             align-items: center;
+            gap: 6px;
+            margin-bottom: 18px;
+        }
+
+        .win-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+        .cluster-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin-bottom: 22px;
         }
 
-        .hero-card-dot {
-            width: 10px; height: 10px;
-            border-radius: 50%;
+        .c-card {
+            border-radius: 14px;
+            padding: 16px 14px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid transparent;
+            transition: transform .25s, box-shadow .25s;
         }
 
-        .cluster-item {
+        .c-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .c-card-bar {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            border-radius: 14px 14px 0 0;
+        }
+
+        .c-card-icon {
+            font-size: 22px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .c-card-cluster {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            color: var(--txt-faint);
+            margin-bottom: 3px;
+        }
+
+        .c-card-pct {
+            font-family: 'Nunito', sans-serif;
+            font-size: 30px;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .c-card-name {
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--txt-muted);
+            margin-top: 4px;
+        }
+
+        .c-card-badge {
+            display: inline-block;
+            font-size: 9.5px;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 20px;
+            margin-top: 8px;
+        }
+
+        .cluster-footer {
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 13px 16px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            border: 1px solid transparent;
-            transition: border-color .2s;
+            gap: 7px;
         }
 
-        .cluster-item:hover {
-            border-color: currentColor;
-        }
-
-        .cluster-bar-bg {
-            flex: 1;
-            height: 5px;
-            background: rgba(28,25,23,0.08);
-            border-radius: 3px;
-            overflow: hidden;
-            margin-top: 6px;
-        }
-
-        .cluster-bar {
-            height: 100%;
-            border-radius: 3px;
+        .live-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: #22C55E;
         }
 
         /* ══════════════════════════════════════
-           SECTION COMMON
+           SECTION SHARED
         ══════════════════════════════════════ */
-        section { padding: 90px 0; }
+        section { padding: 88px 0; }
 
-        .section-title {
+        .section-head {
             text-align: center;
             margin-bottom: 56px;
         }
 
-        .section-title .badge-label {
+        .sec-badge {
             display: inline-block;
-            background: var(--clr-primary-light);
-            border: 1px solid var(--clr-primary-border);
-            color: var(--clr-primary-hover);
+            background: var(--blue-soft);
+            border: 1px solid var(--blue-border);
+            color: var(--blue-800);
             font-size: 11px;
             font-weight: 700;
             letter-spacing: .1em;
@@ -401,20 +455,20 @@
             margin-bottom: 14px;
         }
 
-        .section-title h2 {
-            font-family: 'Fraunces', serif;
-            font-size: clamp(1.8rem, 3vw, 2.5rem);
+        .section-head h2 {
+            font-family: 'Nunito', sans-serif;
+            font-size: clamp(1.7rem, 2.8vw, 2.3rem);
             font-weight: 900;
-            color: var(--clr-text-primary);
-            letter-spacing: -1px;
-            margin-bottom: 14px;
-            line-height: 1.1;
+            color: var(--txt-main);
+            letter-spacing: -0.8px;
+            margin-bottom: 12px;
+            line-height: 1.15;
         }
 
-        .section-title p {
-            color: var(--clr-text-muted);
+        .section-head p {
+            color: var(--txt-muted);
             font-size: 15px;
-            max-width: 520px;
+            max-width: 500px;
             margin: 0 auto;
             line-height: 1.8;
         }
@@ -422,233 +476,165 @@
         /* ══════════════════════════════════════
            ABOUT
         ══════════════════════════════════════ */
-        #about {
-            background: var(--clr-bg-section-alt);
-        }
+        #about { background: var(--bg-alt); }
 
-        .about-img-wrapper {
-            position: relative;
-        }
+        .about-img-wrap { position: relative; }
 
-        .about-img-wrapper img {
+        .about-img-wrap img {
             border-radius: 20px;
             width: 100%;
             object-fit: cover;
-            box-shadow: var(--shadow-card);
+            box-shadow: var(--shadow-lg);
         }
 
-        .about-badge-float {
+        .about-float {
             position: absolute;
-            bottom: -20px;
-            right: -16px;
-            background: white;
-            border: 1px solid var(--clr-border);
+            bottom: -18px; right: -14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 18px 22px;
-            box-shadow: var(--shadow-card-hover);
+            padding: 16px 20px;
+            box-shadow: var(--shadow-lg);
             text-align: center;
         }
 
-        .about-badge-float .big-num {
-            font-family: 'Fraunces', serif;
-            font-size: 34px;
-            font-weight: 900;
-            color: var(--clr-primary);
-            line-height: 1;
-        }
+        .about-float .big { font-family:'Nunito',sans-serif; font-size:32px; font-weight:900; color:var(--blue-700); line-height:1; }
+        .about-float .sm  { font-size:11px; color:var(--txt-muted); font-weight:600; margin-top:2px; }
+        .about-float .xs  { font-size:9.5px; color:var(--txt-faint); }
 
-        .about-check-item {
+        .check-item {
             display: flex;
             align-items: flex-start;
             gap: 12px;
             margin-bottom: 18px;
         }
 
-        .about-check-icon {
+        .check-icon {
             width: 26px; height: 26px;
             border-radius: 8px;
-            background: var(--clr-primary-light);
-            border: 1px solid var(--clr-primary-border);
+            background: var(--blue-soft);
+            border: 1px solid var(--blue-border);
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            margin-top: 1px;
+            margin-top: 2px;
         }
 
-        .about-check-icon i {
-            font-size: 12px;
-            color: var(--clr-primary);
-        }
+        .check-icon i { font-size: 12px; color: var(--blue-700); }
 
         /* ══════════════════════════════════════
            FEATURES
         ══════════════════════════════════════ */
-        #features {
-            background: var(--clr-bg-hero);
-        }
+        #features { background: var(--bg-hero); }
 
-        .feature-card {
-            background: var(--clr-bg-card);
-            border: 1px solid var(--clr-border);
+        .feat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
             border-radius: 18px;
-            padding: 28px 24px;
+            padding: 28px 22px;
             height: 100%;
-            transition: all .3s ease;
+            transition: all .3s;
             position: relative;
             overflow: hidden;
         }
 
-        .feature-card::after {
+        .feat-card::after {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0;
             height: 3px;
-            background: linear-gradient(90deg, var(--clr-primary), var(--clr-accent));
+            background: linear-gradient(90deg, var(--blue-700), var(--blue-600));
             opacity: 0;
             transition: opacity .3s;
         }
 
-        .feature-card:hover {
-            transform: translateY(-6px);
-            box-shadow: var(--shadow-card-hover);
-            border-color: var(--clr-primary-border);
-        }
+        .feat-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--blue-border); }
+        .feat-card:hover::after { opacity: 1; }
 
-        .feature-card:hover::after { opacity: 1; }
-
-        .feature-icon {
-            width: 52px; height: 52px;
+        .feat-icon {
+            width: 50px; height: 50px;
             border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 18px;
-            font-size: 22px;
+            font-size: 21px;
         }
 
-        .feature-card h4 {
-            font-weight: 700;
-            font-size: 16px;
-            color: var(--clr-text-primary);
-            margin-bottom: 9px;
-        }
-
-        .feature-card p {
-            font-size: 13.5px;
-            color: var(--clr-text-muted);
-            line-height: 1.75;
-            margin: 0;
-        }
+        .feat-card h4 { font-weight: 700; font-size: 15.5px; color: var(--txt-main); margin-bottom: 9px; }
+        .feat-card p  { font-size: 13.5px; color: var(--txt-muted); line-height: 1.75; margin: 0; }
 
         /* ══════════════════════════════════════
            HOW IT WORKS
         ══════════════════════════════════════ */
-        #how-it-works {
-            background: var(--clr-bg-section-alt);
-        }
+        #how-it-works { background: var(--bg-alt); }
 
-        .step-card {
-            text-align: center;
-            padding: 36px 20px;
-            position: relative;
-        }
+        .step-card { text-align: center; padding: 32px 16px; position: relative; }
 
-        .step-number {
-            width: 60px; height: 60px;
+        .step-num {
+            width: 56px; height: 56px;
             border-radius: 16px;
-            background: var(--clr-primary);
-            color: white;
-            font-family: 'Fraunces', serif;
+            background: var(--blue-700);
+            color: #fff;
+            font-family: 'Nunito', sans-serif;
             font-size: 22px;
             font-weight: 900;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 18px;
-            box-shadow: 0 6px 20px rgba(234,88,12,0.28);
+            margin: 0 auto 16px;
+            box-shadow: 0 6px 18px rgba(29,78,216,0.28);
         }
 
-        .step-connector {
+        .step-arrow {
             position: absolute;
-            top: 68px;
-            right: -18px;
-            width: 36px;
-            height: 2px;
-            background: var(--clr-primary);
+            top: 60px; right: -14px;
+            width: 28px; height: 2px;
+            background: var(--blue-700);
             opacity: 0.2;
         }
 
-        .step-card h4 {
-            font-weight: 700;
-            font-size: 15px;
-            color: var(--clr-text-primary);
-            margin-bottom: 9px;
-        }
-
-        .step-card p {
-            font-size: 13px;
-            color: var(--clr-text-muted);
-            line-height: 1.7;
-            margin: 0;
-        }
+        .step-card h4 { font-weight: 700; font-size: 14.5px; color: var(--txt-main); margin-bottom: 8px; }
+        .step-card p  { font-size: 13px; color: var(--txt-muted); line-height: 1.7; margin: 0; }
 
         /* ══════════════════════════════════════
            ROLES
         ══════════════════════════════════════ */
-        #roles {
-            background: var(--clr-bg-hero);
-        }
+        #roles { background: var(--bg-hero); }
 
         .role-card {
             border-radius: 18px;
-            padding: 32px 24px;
+            padding: 28px 22px;
             height: 100%;
-            transition: all .3s;
             border: 1px solid transparent;
+            transition: all .3s;
         }
 
-        .role-card:hover {
-            transform: translateY(-6px);
-            box-shadow: var(--shadow-card-hover);
-        }
+        .role-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
 
-        .role-card h4 {
-            font-weight: 700;
-            font-size: 17px;
-            color: var(--clr-text-primary);
-            margin-bottom: 10px;
-        }
+        .role-card h4 { font-weight: 700; font-size: 16px; color: var(--txt-main); margin-bottom: 9px; }
+        .role-card p  { font-size: 13.5px; color: var(--txt-muted); line-height: 1.7; margin-bottom: 16px; }
 
-        .role-card p {
-            font-size: 13.5px;
-            color: var(--clr-text-muted);
-            line-height: 1.7;
-            margin-bottom: 18px;
-        }
+        .role-list { list-style:none; padding:0; margin:0; }
 
-        .role-feature-list {
-            list-style: none;
-            padding: 0; margin: 0;
-        }
-
-        .role-feature-list li {
+        .role-list li {
             font-size: 13px;
-            color: var(--clr-text-secondary);
+            color: var(--txt-sub);
             padding: 7px 0;
             display: flex;
             align-items: center;
             gap: 8px;
-            border-bottom: 1px solid rgba(28,25,23,0.06);
+            border-bottom: 1px solid rgba(15,23,42,0.05);
         }
 
-        .role-feature-list li:last-child { border-bottom: none; }
+        .role-list li:last-child { border-bottom: none; }
 
         /* ══════════════════════════════════════
-           STATS — satu-satunya seksi dark
+           STATS — satu-satunya dark section
         ══════════════════════════════════════ */
         #stats {
-            background: var(--clr-bg-dark);
+            background: var(--bg-dark);
             position: relative;
             overflow: hidden;
         }
@@ -657,94 +643,84 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(ellipse 80% 70% at 50% 50%, rgba(234,88,12,0.07) 0%, transparent 70%);
+            background: radial-gradient(ellipse 80% 70% at 50% 50%, rgba(37,99,235,0.1) 0%, transparent 70%);
             pointer-events: none;
         }
 
-        .stat-item {
-            text-align: center;
-            padding: 48px 20px;
-        }
+        .stat-box { text-align: center; padding: 48px 20px; }
 
-        .stat-item .num {
-            font-family: 'Fraunces', serif;
+        .stat-box .n {
+            font-family: 'Nunito', sans-serif;
             font-size: 52px;
             font-weight: 900;
-            color: var(--clr-primary);
+            color: var(--blue-600);
             line-height: 1;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             letter-spacing: -2px;
         }
 
-        .stat-item .label {
-            font-size: 14px;
-            color: var(--clr-text-muted-dark);
-            font-weight: 500;
-        }
+        .stat-box .l { font-size: 14px; color: #64748B; font-weight: 500; }
 
         /* ══════════════════════════════════════
            CTA
         ══════════════════════════════════════ */
-        #cta {
-            background: var(--clr-bg-section-alt);
-            border-top: 1px solid var(--clr-border);
-        }
+        #cta { background: var(--bg-alt); border-top: 1px solid var(--border-b); }
 
-        .cta-inner {
-            background: var(--clr-primary);
+        .cta-box {
+            background: var(--blue-700);
             border-radius: 24px;
-            padding: 68px 60px;
+            padding: 68px 56px;
             text-align: center;
             position: relative;
             overflow: hidden;
         }
 
-        .cta-inner::before {
+        .cta-box::before {
             content: '';
             position: absolute;
-            top: -40%; right: -15%;
-            width: 380px; height: 380px;
+            top: -50%; right: -10%;
+            width: 400px; height: 400px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.07);
+            background: rgba(255,255,255,0.06);
             pointer-events: none;
         }
 
-        .cta-inner::after {
+        .cta-box::after {
             content: '';
             position: absolute;
-            bottom: -30%; left: -8%;
-            width: 300px; height: 300px;
+            bottom: -40%; left: -5%;
+            width: 320px; height: 320px;
             border-radius: 50%;
             background: rgba(255,255,255,0.04);
             pointer-events: none;
         }
 
-        .cta-inner h2 {
-            font-family: 'Fraunces', serif;
-            font-size: clamp(1.8rem, 3vw, 2.5rem);
+        .cta-box h2 {
+            font-family: 'Nunito', sans-serif;
+            font-size: clamp(1.7rem, 2.8vw, 2.3rem);
             font-weight: 900;
-            color: white;
+            color: #fff;
             margin-bottom: 14px;
             position: relative;
             z-index: 1;
-            letter-spacing: -1px;
+            letter-spacing: -0.8px;
         }
 
-        .cta-inner p {
-            color: rgba(255,255,255,0.82);
+        .cta-box p {
+            color: rgba(255,255,255,0.8);
             font-size: 15px;
             margin-bottom: 32px;
             position: relative;
             z-index: 1;
-            max-width: 480px;
+            max-width: 460px;
             margin-left: auto;
             margin-right: auto;
             line-height: 1.8;
         }
 
         .btn-cta {
-            background: white;
-            color: var(--clr-primary-hover);
+            background: #fff;
+            color: var(--blue-800);
             font-weight: 700;
             font-size: 14px;
             padding: 13px 32px;
@@ -753,57 +729,45 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            transition: all .25s;
             position: relative;
             z-index: 1;
-            box-shadow: 0 6px 24px rgba(28,25,23,0.18);
+            transition: all .25s;
+            box-shadow: 0 6px 24px rgba(15,23,42,0.2);
         }
 
         .btn-cta:hover {
             transform: translateY(-2px);
-            box-shadow: 0 14px 36px rgba(28,25,23,0.22);
-            color: var(--clr-primary);
+            box-shadow: 0 14px 36px rgba(15,23,42,0.26);
+            color: var(--blue-700);
         }
 
         /* ══════════════════════════════════════
            FOOTER
         ══════════════════════════════════════ */
         footer {
-            background: var(--clr-bg-dark);
-            border-top: 1px solid rgba(255,255,255,0.06);
-            color: var(--clr-text-muted-dark);
+            background: var(--bg-dark);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            color: #64748B;
             padding: 60px 0 24px;
         }
 
-        footer .footer-logo-text {
-            font-weight: 800;
-            font-size: 20px;
-            color: var(--clr-text-on-dark);
-            letter-spacing: -0.5px;
-        }
+        .footer-logo-name { font-family:'Nunito',sans-serif; font-weight:900; font-size:19px; color:var(--txt-ondark); letter-spacing:-0.4px; }
 
-        footer p {
-            font-size: 13.5px;
-            line-height: 1.75;
-            color: #6B7280;
-        }
+        footer p { font-size:13.5px; line-height:1.75; color:#4B5563; }
 
         footer h6 {
             font-weight: 700;
-            color: var(--clr-text-on-dark);
+            color: var(--txt-ondark);
             margin-bottom: 14px;
-            font-size: 13px;
+            font-size: 12.5px;
             text-transform: uppercase;
             letter-spacing: .07em;
         }
 
-        footer ul {
-            list-style: none;
-            padding: 0; margin: 0;
-        }
+        footer ul { list-style:none; padding:0; margin:0; }
 
         footer ul li a {
-            color: #6B7280;
+            color: #4B5563;
             text-decoration: none;
             font-size: 13.5px;
             transition: color .2s;
@@ -811,67 +775,51 @@
             padding: 4px 0;
         }
 
-        footer ul li a:hover { color: var(--clr-primary); }
+        footer ul li a:hover { color: var(--blue-600); }
 
         .footer-bottom {
-            border-top: 1px solid rgba(255,255,255,0.06);
-            padding-top: 22px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 20px;
             margin-top: 40px;
             text-align: center;
             font-size: 12.5px;
-            color: #4B5563;
+            color: #374151;
         }
 
         /* ══════════════════════════════════════
-           MOBILE MENU
+           MOBILE
         ══════════════════════════════════════ */
-        .mobile-nav-toggle {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 22px;
-            color: var(--clr-text-secondary);
-            cursor: pointer;
-        }
-
         @media (max-width: 991px) {
             .mobile-nav-toggle { display: block; }
             nav { display: none; }
             nav.open {
-                display: block;
+                display: flex;
                 position: fixed;
                 inset: 0;
-                background: rgba(254,252,248,0.98);
+                background: rgba(248,250,255,0.98);
                 backdrop-filter: blur(20px);
                 z-index: 9998;
-                display: flex;
                 align-items: center;
                 justify-content: center;
             }
-            nav.open ul {
-                flex-direction: column;
-                text-align: center;
-                gap: 6px;
-            }
-            nav.open ul a { font-size: 18px; padding: 12px 24px; }
-            .step-connector { display: none; }
-            .about-badge-float { right: 0; }
-            .cta-inner { padding: 48px 24px; }
+            nav.open ul { flex-direction: column; text-align: center; gap: 4px; }
+            nav.open ul a { font-size: 18px; padding: 12px 28px; }
+            .step-arrow { display: none; }
+            .about-float { right: 0; }
+            .cta-box { padding: 48px 24px; }
         }
     </style>
 </head>
 
 <body>
 
-    {{-- ══════════════════════════════════════
-         NAVBAR
-    ══════════════════════════════════════ --}}
+    {{-- ══════ NAVBAR ══════ --}}
     <header id="header">
         <div class="container d-flex align-items-center justify-content-between">
-            <a href="#hero" class="logo-wrapper">
-                <img src="{{ asset('images/logo.png') }}" alt="STQM Logo">
+            <a href="#hero" class="logo-wrap">
+                <img src="{{ asset('images/logo.png') }}" alt="STQM">
                 <div>
-                    <span class="logo-text">STQM</span>
+                    <span class="logo-name">STQM</span>
                     <span class="logo-sub">Teacher Quality Mapping</span>
                 </div>
             </a>
@@ -887,39 +835,38 @@
             </nav>
 
             <div class="d-flex align-items-center gap-3">
-                <a href="{{ route('login') }}" class="btn-login">
+                <a href="{{ route('login') }}" class="btn-nav-login">
                     <i class="bi bi-box-arrow-in-right"></i> Masuk
                 </a>
-                <button class="mobile-nav-toggle" onclick="toggleMobileNav()">
+                <button class="mobile-nav-toggle" onclick="toggleNav()">
                     <i class="bi bi-list" id="nav-icon"></i>
                 </button>
             </div>
         </div>
     </header>
 
-    {{-- ══════════════════════════════════════
-         HERO
-    ══════════════════════════════════════ --}}
+    {{-- ══════ HERO ══════ --}}
     <section id="hero">
-        <div class="hero-bg"></div>
-        <div class="hero-grid"></div>
+        <div class="hero-deco-grid"></div>
+        <div class="hero-glow-1"></div>
+        <div class="hero-glow-2"></div>
 
         <div class="container position-relative" style="z-index:1">
             <div class="row align-items-center g-5">
 
                 {{-- Left --}}
-                <div class="col-lg-6" data-aos="fade-right" data-aos-duration="700">
+                <div class="col-lg-6" data-aos="fade-right" data-aos-duration="650">
                     <div class="hero-badge">
-                        <span class="hero-badge-dot"></span>
-                        Sistem Pemetaan Kualitas Guru Berbasis AI
+                        <span class="badge-pulse"></span>
+                        AI-Powered · K-Means Clustering
                     </div>
                     <h1>
                         Petakan Kualitas Guru dengan
-                        <span class="highlight">Data & Kecerdasan Buatan</span>
+                        <span class="hi">Data & Kecerdasan Buatan</span>
                     </h1>
                     <p class="lead">
                         STQM mengintegrasikan data kuesioner, absensi RFID, dan prestasi guru
-                        untuk menghasilkan pemetaan kompetensi yang objektif dan akurat menggunakan K-Means Clustering.
+                        untuk menghasilkan pemetaan kompetensi yang objektif dan akurat.
                     </p>
                     <div class="hero-actions">
                         <a href="{{ route('login') }}" class="btn-hero-primary">
@@ -930,55 +877,45 @@
                         </a>
                     </div>
                     <div class="hero-stats">
-                        <div class="hero-stat-item">
-                            <div class="num">4</div>
-                            <div class="label">Indikator Kompetensi</div>
-                        </div>
-                        <div class="hero-stat-item">
-                            <div class="num">4</div>
-                            <div class="label">Cluster Kualitas</div>
-                        </div>
-                        <div class="hero-stat-item">
-                            <div class="num">25+</div>
-                            <div class="label">Butir Pertanyaan</div>
-                        </div>
+                        <div class="hero-stat"><div class="num">4</div><div class="lbl">Indikator Kompetensi</div></div>
+                        <div class="hero-stat"><div class="num">4</div><div class="lbl">Cluster Kualitas</div></div>
+                        <div class="hero-stat"><div class="num">25+</div><div class="lbl">Butir Pertanyaan</div></div>
                     </div>
                 </div>
 
-                {{-- Right — Cluster card --}}
-                <div class="col-lg-6" data-aos="fade-left" data-aos-duration="700" data-aos-delay="150">
-                    <div class="hero-card">
-                        <div class="hero-card-header">
-                            <div class="hero-card-dot" style="background:#EF4444"></div>
-                            <div class="hero-card-dot" style="background:#F59E0B"></div>
-                            <div class="hero-card-dot" style="background:#22C55E"></div>
-                            <span style="color:var(--clr-text-faint); font-size:12px; margin-left:8px; font-weight:500;">
-                                Hasil Clustering K-Means
+                {{-- Right — 4 cluster cards --}}
+                <div class="col-lg-6" data-aos="fade-left" data-aos-duration="650" data-aos-delay="120">
+                    <div class="cluster-wrap">
+                        <div class="cluster-win-bar">
+                            <div class="win-dot" style="background:#EF4444"></div>
+                            <div class="win-dot" style="background:#F59E0B"></div>
+                            <div class="win-dot" style="background:#22C55E"></div>
+                            <span style="font-size:11.5px;color:var(--txt-faint);font-weight:500;margin-left:8px;">
+                                Distribusi Cluster Guru — K-Means
                             </span>
                         </div>
 
-                        @foreach([
-                            ['label'=>'Cluster A — Sangat Baik',     'pct'=>35, 'color'=>'#16A34A', 'bg'=>'rgba(22,163,74,0.07)',  'bar'=>'#22C55E'],
-                            ['label'=>'Cluster B — Baik',            'pct'=>40, 'color'=>'#1D4ED8', 'bg'=>'rgba(29,78,216,0.07)',  'bar'=>'#3B82F6'],
-                            ['label'=>'Cluster C — Cukup',           'pct'=>18, 'color'=>'#B45309', 'bg'=>'rgba(217,119,6,0.07)',  'bar'=>'#F59E0B'],
-                            ['label'=>'Cluster D — Perlu Pembinaan', 'pct'=>7,  'color'=>'#B91C1C', 'bg'=>'rgba(239,68,68,0.07)',  'bar'=>'#EF4444'],
-                        ] as $c)
-                            <div class="cluster-item" style="background:{{ $c['bg'] }};">
-                                <div style="flex:1">
-                                    <div style="font-size:13px; font-weight:600; color:{{ $c['color'] }};">{{ $c['label'] }}</div>
-                                    <div class="cluster-bar-bg">
-                                        <div class="cluster-bar" style="width:{{ $c['pct'] }}%; background:{{ $c['bar'] }};"></div>
-                                    </div>
+                        <div class="cluster-grid">
+                            @foreach([
+                                ['A','Sangat Baik', '35%','🏆','#16A34A','rgba(22,163,74,0.08)','rgba(22,163,74,0.15)','#15803D','↑ Terbaik'],
+                                ['B','Baik',        '40%','⭐','#2563EB','rgba(37,99,235,0.08)','rgba(37,99,235,0.15)','#1E40AF','Mayoritas'],
+                                ['C','Cukup',       '18%','📈','#D97706','rgba(217,119,6,0.08)','rgba(217,119,6,0.15)','#92400E','Perlu Peningkatan'],
+                                ['D','Perlu Pembinaan','7%','🎯','#DC2626','rgba(220,38,38,0.08)','rgba(220,38,38,0.15)','#991B1B','Prioritas'],
+                            ] as $c)
+                                <div class="c-card" style="background:{{ $c[5] }};border-color:{{ $c[6] }}">
+                                    <div class="c-card-bar" style="background:{{ $c[4] }}"></div>
+                                    <span class="c-card-icon">{{ $c[3] }}</span>
+                                    <div class="c-card-cluster">Cluster {{ $c[0] }}</div>
+                                    <div class="c-card-pct" style="color:{{ $c[4] }}">{{ $c[2] }}</div>
+                                    <div class="c-card-name">{{ $c[1] }}</div>
+                                    <span class="c-card-badge" style="background:{{ $c[6] }};color:{{ $c[7] }}">{{ $c[8] }}</span>
                                 </div>
-                                <div style="font-size:17px; font-weight:800; color:{{ $c['color'] }}; margin-left:16px;">
-                                    {{ $c['pct'] }}%
-                                </div>
-                            </div>
-                        @endforeach
+                            @endforeach
+                        </div>
 
-                        <div style="margin-top:18px; padding-top:14px; border-top:1px solid var(--clr-border); display:flex; align-items:center; gap:8px;">
-                            <div style="width:7px;height:7px;border-radius:50%;background:#22C55E;"></div>
-                            <span style="font-size:12px; color:var(--clr-text-faint); font-weight:500;">Clustering diperbarui hari ini</span>
+                        <div class="cluster-footer">
+                            <div class="live-dot"></div>
+                            <span style="font-size:11.5px;color:var(--txt-faint);font-weight:500;">Clustering diperbarui hari ini</span>
                         </div>
                     </div>
                 </div>
@@ -987,44 +924,40 @@
         </div>
     </section>
 
-    {{-- ══════════════════════════════════════
-         ABOUT
-    ══════════════════════════════════════ --}}
+    {{-- ══════ ABOUT ══════ --}}
     <section id="about">
         <div class="container">
             <div class="row align-items-center g-5">
                 <div class="col-lg-5" data-aos="fade-right">
-                    <div class="about-img-wrapper">
+                    <div class="about-img-wrap">
                         <img src="{{ asset('arsha/assets/img/why-us.png') }}" alt="Tentang STQM">
-                        <div class="about-badge-float">
-                            <div class="big-num">4</div>
-                            <div style="font-size:12px; color:var(--clr-text-muted); font-weight:600; margin-top:2px;">Kompetensi Guru</div>
-                            <div style="font-size:10px; color:var(--clr-text-faint);">Permendiknas No.16/2007</div>
+                        <div class="about-float">
+                            <div class="big">4</div>
+                            <div class="sm">Kompetensi Guru</div>
+                            <div class="xs">Permendiknas No.16/2007</div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-7" data-aos="fade-left">
-                    <div class="section-title text-start mb-4">
-                        <span class="badge-label">Tentang Sistem</span>
+                    <div class="section-head text-start mb-4">
+                        <span class="sec-badge">Tentang Sistem</span>
                         <h2>Evaluasi Guru yang Objektif & Berbasis Data</h2>
                         <p class="text-start">
-                            STQM hadir sebagai solusi evaluasi guru yang komprehensif, menggantikan metode konvensional
-                            yang subjektif dengan sistem analisis berbasis kecerdasan buatan.
+                            STQM hadir sebagai solusi evaluasi guru yang komprehensif, menggantikan metode
+                            konvensional yang subjektif dengan sistem analisis berbasis kecerdasan buatan.
                         </p>
                     </div>
                     @foreach([
-                        ['Kuesioner Multi-Penilai',        'Evaluasi dari perspektif siswa, sesama guru, dan penilaian diri sendiri untuk hasil yang menyeluruh.'],
-                        ['Absensi RFID Terintegrasi',      'Data kehadiran otomatis dari sistem RFID sebagai indikator kedisiplinan guru.'],
-                        ['Analisis K-Means Clustering',    'Algoritma machine learning mengelompokkan guru ke 4 cluster berdasarkan profil kompetensi mereka.'],
-                        ['Dashboard & Laporan Real-time',  'Kepala sekolah dapat memantau performa dan distribusi kualitas guru secara langsung.'],
-                    ] as $item)
-                        <div class="about-check-item">
-                            <div class="about-check-icon">
-                                <i class="bi bi-check2"></i>
-                            </div>
+                        ['Kuesioner Multi-Penilai',       'Evaluasi dari perspektif siswa, sesama guru, dan penilaian diri untuk hasil yang menyeluruh.'],
+                        ['Absensi RFID Terintegrasi',     'Data kehadiran otomatis dari sistem RFID sebagai indikator kedisiplinan guru.'],
+                        ['Analisis K-Means Clustering',   'Algoritma ML mengelompokkan guru ke 4 cluster berdasarkan profil kompetensi secara otomatis.'],
+                        ['Dashboard & Laporan Real-time', 'Kepala sekolah memantau performa dan distribusi kualitas guru secara langsung.'],
+                    ] as [$title, $desc])
+                        <div class="check-item">
+                            <div class="check-icon"><i class="bi bi-check2"></i></div>
                             <div>
-                                <strong style="font-size:14.5px; color:var(--clr-text-primary);">{{ $item[0] }}</strong>
-                                <p style="font-size:13.5px; color:var(--clr-text-muted); margin:4px 0 0; line-height:1.7;">{{ $item[1] }}</p>
+                                <strong style="font-size:14.5px;color:var(--txt-main);">{{ $title }}</strong>
+                                <p style="font-size:13.5px;color:var(--txt-muted);margin:4px 0 0;line-height:1.7;">{{ $desc }}</p>
                             </div>
                         </div>
                     @endforeach
@@ -1033,32 +966,30 @@
         </div>
     </section>
 
-    {{-- ══════════════════════════════════════
-         FEATURES
-    ══════════════════════════════════════ --}}
+    {{-- ══════ FEATURES ══════ --}}
     <section id="features">
         <div class="container">
-            <div class="section-title" data-aos="fade-up">
-                <span class="badge-label">Fitur Unggulan</span>
+            <div class="section-head" data-aos="fade-up">
+                <span class="sec-badge">Fitur Unggulan</span>
                 <h2>Semua yang Dibutuhkan dalam Satu Sistem</h2>
-                <p>Dirancang khusus untuk memenuhi kebutuhan evaluasi guru di lingkungan sekolah modern.</p>
+                <p>Dirancang khusus untuk kebutuhan evaluasi guru di sekolah modern.</p>
             </div>
             <div class="row g-4">
                 @foreach([
-                    ['bi-journal-check',        'rgba(234,88,12,0.09)',  '#EA580C', 'Sistem Kuesioner',      'Kuesioner digital berbasis indikator kompetensi Permendiknas No.16/2007 dengan skala Likert 1-5. Diisi oleh siswa dan sesama guru.'],
-                    ['bi-credit-card-2-front',  'rgba(29,78,216,0.09)',  '#2563EB', 'Absensi RFID',          'Sistem scan kartu otomatis untuk mencatat kehadiran guru setiap hari. Data kedisiplinan tercatat akurat dan real-time.'],
-                    ['bi-trophy',               'rgba(180,83,9,0.09)',   '#B45309', 'Data Prestasi Guru',    'Upload dan kelola sertifikat, penghargaan, dan portofolio profesional guru dengan sistem validasi oleh admin.'],
-                    ['bi-cpu',                  'rgba(109,40,217,0.09)', '#7C3AED', 'K-Means Clustering',    'Algoritma machine learning mengelompokkan guru ke 4 cluster (A/B/C/D) berdasarkan 4 dimensi kompetensi secara otomatis.'],
-                    ['bi-bar-chart-line',       'rgba(5,150,105,0.09)',  '#059669', 'Dashboard Analisis',    'Visualisasi distribusi cluster, grafik kompetensi, dan statistik performa guru yang interaktif untuk pengambilan keputusan.'],
-                    ['bi-file-earmark-text',    'rgba(220,38,38,0.09)',  '#DC2626', 'Laporan Evaluasi',      'Generate laporan lengkap per guru beserta rekomendasi tindak lanjut berdasarkan hasil clustering. Dapat diexport ke Excel.'],
-                ] as $f)
-                    <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ $loop->index * 70 }}">
-                        <div class="feature-card">
-                            <div class="feature-icon" style="background:{{ $f[1] }};">
-                                <i class="bi {{ $f[0] }}" style="color:{{ $f[2] }};"></i>
+                    ['bi-journal-check',       'rgba(29,78,216,0.09)',  '#2563EB', 'Sistem Kuesioner',      'Kuesioner digital berbasis indikator kompetensi Permendiknas No.16/2007 dengan skala Likert 1-5, diisi siswa dan sesama guru.'],
+                    ['bi-credit-card-2-front', 'rgba(5,150,105,0.09)',  '#059669', 'Absensi RFID',          'Sistem scan kartu otomatis untuk mencatat kehadiran guru tiap hari. Akurat dan real-time tanpa input manual.'],
+                    ['bi-trophy',              'rgba(217,119,6,0.09)',  '#B45309', 'Data Prestasi Guru',    'Upload sertifikat, penghargaan, dan portofolio profesional guru dengan sistem validasi oleh admin.'],
+                    ['bi-cpu',                 'rgba(109,40,217,0.09)', '#7C3AED', 'K-Means Clustering',    'Algoritma ML mengelompokkan guru ke 4 cluster (A/B/C/D) berdasarkan 4 dimensi kompetensi secara otomatis.'],
+                    ['bi-bar-chart-line',      'rgba(29,78,216,0.09)',  '#2563EB', 'Dashboard Analisis',    'Visualisasi distribusi cluster, grafik kompetensi, dan statistik performa guru yang interaktif.'],
+                    ['bi-file-earmark-text',   'rgba(220,38,38,0.09)',  '#DC2626', 'Laporan Evaluasi',      'Generate laporan per guru + rekomendasi tindak lanjut berdasarkan clustering. Export ke Excel tersedia.'],
+                ] as [$icon, $bg, $color, $title, $desc])
+                    <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ $loop->index * 60 }}">
+                        <div class="feat-card">
+                            <div class="feat-icon" style="background:{{ $bg }}">
+                                <i class="bi {{ $icon }}" style="color:{{ $color }}"></i>
                             </div>
-                            <h4>{{ $f[3] }}</h4>
-                            <p>{{ $f[4] }}</p>
+                            <h4>{{ $title }}</h4>
+                            <p>{{ $desc }}</p>
                         </div>
                     </div>
                 @endforeach
@@ -1066,32 +997,30 @@
         </div>
     </section>
 
-    {{-- ══════════════════════════════════════
-         HOW IT WORKS
-    ══════════════════════════════════════ --}}
+    {{-- ══════ HOW IT WORKS ══════ --}}
     <section id="how-it-works">
         <div class="container">
-            <div class="section-title" data-aos="fade-up">
-                <span class="badge-label">Alur Sistem</span>
+            <div class="section-head" data-aos="fade-up">
+                <span class="sec-badge">Alur Sistem</span>
                 <h2>Bagaimana STQM Bekerja?</h2>
-                <p>Proses evaluasi yang sistematis dari pengumpulan data hingga menghasilkan insight strategis.</p>
+                <p>Proses sistematis dari pengumpulan data hingga insight strategis.</p>
             </div>
             <div class="row g-0">
                 @foreach([
-                    ['1', 'Pengisian Kuesioner', 'Siswa dan sesama guru mengisi kuesioner kompetensi secara digital melalui sistem.'],
-                    ['2', 'Absensi & Prestasi',  'Guru melakukan absensi via RFID dan upload sertifikat/prestasi ke sistem.'],
-                    ['3', 'Pengolahan Data',     'Sistem mengagregasi semua data dan menghitung rata-rata nilai per kompetensi.'],
-                    ['4', 'Analisis K-Means',    'Algoritma K-Means mengelompokkan guru ke cluster A, B, C, atau D secara otomatis.'],
-                    ['5', 'Dashboard & Laporan', 'Kepala sekolah melihat hasil, distribusi cluster, dan rekomendasi tindak lanjut.'],
-                ] as $s)
-                    <div class="col position-relative" data-aos="fade-up" data-aos-delay="{{ $loop->index * 90 }}">
+                    ['1','Pengisian Kuesioner','Siswa dan sesama guru mengisi kuesioner kompetensi secara digital.'],
+                    ['2','Absensi & Prestasi', 'Guru absensi via RFID dan upload sertifikat/prestasi ke sistem.'],
+                    ['3','Pengolahan Data',    'Sistem agregasi data dan hitung rata-rata nilai per kompetensi.'],
+                    ['4','Analisis K-Means',   'Algoritma K-Means kelompokkan guru ke cluster A, B, C, atau D.'],
+                    ['5','Dashboard & Laporan','Kepala sekolah lihat hasil dan rekomendasi tindak lanjut.'],
+                ] as [$num, $title, $desc])
+                    <div class="col position-relative" data-aos="fade-up" data-aos-delay="{{ $loop->index * 80 }}">
                         <div class="step-card">
-                            <div class="step-number">{{ $s[0] }}</div>
+                            <div class="step-num">{{ $num }}</div>
                             @if(!$loop->last)
-                                <div class="step-connector"></div>
+                                <div class="step-arrow"></div>
                             @endif
-                            <h4>{{ $s[1] }}</h4>
-                            <p>{{ $s[2] }}</p>
+                            <h4>{{ $title }}</h4>
+                            <p>{{ $desc }}</p>
                         </div>
                     </div>
                 @endforeach
@@ -1099,36 +1028,34 @@
         </div>
     </section>
 
-    {{-- ══════════════════════════════════════
-         ROLES
-    ══════════════════════════════════════ --}}
+    {{-- ══════ ROLES ══════ --}}
     <section id="roles">
         <div class="container">
-            <div class="section-title" data-aos="fade-up">
-                <span class="badge-label">Pengguna Sistem</span>
+            <div class="section-head" data-aos="fade-up">
+                <span class="sec-badge">Pengguna Sistem</span>
                 <h2>Dirancang untuk Semua Pemangku Kepentingan</h2>
-                <p>Setiap role memiliki akses dan fitur yang disesuaikan dengan kebutuhan masing-masing.</p>
+                <p>Setiap role memiliki akses yang disesuaikan dengan kebutuhan masing-masing.</p>
             </div>
             <div class="row g-4">
                 @foreach([
-                    ['👨‍🎓', 'rgba(29,78,216,0.07)',  'rgba(29,78,216,0.15)',  '#2563EB', 'Siswa',           'Memberikan penilaian objektif terhadap guru yang mengajar di kelasnya.',
-                     ['Mengisi kuesioner evaluasi guru', 'Skala Likert 1-5 per indikator', 'Satu penilaian per guru per semester']],
-                    ['👨‍🏫', 'rgba(234,88,12,0.07)',   'rgba(234,88,12,0.15)',   '#EA580C', 'Guru',            'Menilai rekan sejawat, mencatat kehadiran, dan mengelola portofolio profesional.',
-                     ['Menilai sesama guru (peer assessment)', 'Absensi RFID harian', 'Upload prestasi & sertifikasi']],
-                    ['👨‍💼', 'rgba(5,150,105,0.07)',   'rgba(5,150,105,0.15)',   '#059669', 'Kepala Sekolah',  'Memantau dashboard analitik dan menggunakan hasil clustering untuk pengambilan keputusan.',
-                     ['Melihat dashboard distribusi cluster', 'Laporan evaluasi per guru', 'Rekomendasi tindak lanjut']],
-                    ['👨‍💻', 'rgba(109,40,217,0.07)', 'rgba(109,40,217,0.15)', '#7C3AED', 'Administrator',   'Mengelola seluruh data sistem, validasi prestasi, dan menjalankan proses clustering.',
-                     ['Manajemen pengguna & akses', 'Validasi prestasi guru', 'Jalankan K-Means Clustering']],
-                ] as $r)
-                    <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="{{ $loop->index * 90 }}">
-                        <div class="role-card" style="background:{{ $r[1] }}; border-color:{{ $r[2] }};">
-                            <div style="font-size:32px; margin-bottom:16px;">{{ $r[0] }}</div>
-                            <h4>{{ $r[4] }}</h4>
-                            <p>{{ $r[5] }}</p>
-                            <ul class="role-feature-list">
-                                @foreach($r[6] as $item)
+                    ['👨‍🎓','Siswa',          'rgba(29,78,216,0.07)', 'rgba(29,78,216,0.14)', '#2563EB', 'Memberikan penilaian objektif terhadap guru yang mengajar.',
+                     ['Isi kuesioner evaluasi guru','Skala Likert 1-5 per indikator','Satu penilaian per guru per semester']],
+                    ['👨‍🏫','Guru',           'rgba(5,150,105,0.07)', 'rgba(5,150,105,0.14)', '#059669', 'Menilai rekan sejawat, absensi RFID, dan kelola portofolio.',
+                     ['Peer assessment sesama guru','Absensi RFID harian','Upload sertifikat & prestasi']],
+                    ['👨‍💼','Kepala Sekolah', 'rgba(217,119,6,0.07)',  'rgba(217,119,6,0.14)',  '#D97706', 'Pantau dashboard analitik dan gunakan hasil clustering.',
+                     ['Dashboard distribusi cluster','Laporan evaluasi per guru','Rekomendasi tindak lanjut']],
+                    ['👨‍💻','Administrator',  'rgba(109,40,217,0.07)','rgba(109,40,217,0.14)','#7C3AED', 'Kelola seluruh data, validasi prestasi, dan jalankan clustering.',
+                     ['Manajemen pengguna & akses','Validasi prestasi guru','Jalankan K-Means Clustering']],
+                ] as [$emoji, $name, $bg, $bdr, $color, $desc, $items])
+                    <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="{{ $loop->index * 80 }}">
+                        <div class="role-card" style="background:{{ $bg }};border-color:{{ $bdr }}">
+                            <div style="font-size:30px;margin-bottom:14px;">{{ $emoji }}</div>
+                            <h4>{{ $name }}</h4>
+                            <p>{{ $desc }}</p>
+                            <ul class="role-list">
+                                @foreach($items as $item)
                                     <li>
-                                        <i class="bi bi-check-circle-fill" style="color:{{ $r[3] }}; font-size:13px;"></i>
+                                        <i class="bi bi-check-circle-fill" style="color:{{ $color }};font-size:12px;flex-shrink:0;"></i>
                                         {{ $item }}
                                     </li>
                                 @endforeach
@@ -1140,22 +1067,20 @@
         </div>
     </section>
 
-    {{-- ══════════════════════════════════════
-         STATS
-    ══════════════════════════════════════ --}}
+    {{-- ══════ STATS ══════ --}}
     <section id="stats">
         <div class="container position-relative" style="z-index:1">
             <div class="row g-0 text-center">
                 @foreach([
-                    ['4',   '',  'Kompetensi yang Dinilai'],
-                    ['25',  '+', 'Butir Pertanyaan Kuesioner'],
-                    ['4',   '',  'Cluster Kualitas Guru'],
-                    ['100', '%', 'Berbasis Data & AI'],
-                ] as $stat)
-                    <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="{{ $loop->index * 80 }}">
-                        <div class="stat-item">
-                            <div class="num">{{ $stat[0] }}<span style="font-size:30px">{{ $stat[1] }}</span></div>
-                            <div class="label">{{ $stat[2] }}</div>
+                    ['4','','Kompetensi yang Dinilai'],
+                    ['25','+','Butir Pertanyaan Kuesioner'],
+                    ['4','','Cluster Kualitas Guru'],
+                    ['100','%','Berbasis Data & AI'],
+                ] as [$n, $suf, $lbl])
+                    <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="{{ $loop->index * 70 }}">
+                        <div class="stat-box">
+                            <div class="n">{{ $n }}<span style="font-size:28px">{{ $suf }}</span></div>
+                            <div class="l">{{ $lbl }}</div>
                         </div>
                     </div>
                 @endforeach
@@ -1163,42 +1088,35 @@
         </div>
     </section>
 
-    {{-- ══════════════════════════════════════
-         CTA
-    ══════════════════════════════════════ --}}
+    {{-- ══════ CTA ══════ --}}
     <section id="cta">
         <div class="container" data-aos="zoom-in">
-            <div class="cta-inner">
+            <div class="cta-box">
                 <h2>Siap Meningkatkan Kualitas Pendidikan?</h2>
-                <p>Mulai gunakan STQM sekarang dan dapatkan gambaran objektif kualitas guru di sekolah Anda berbasis data dan kecerdasan buatan.</p>
+                <p>Mulai gunakan STQM dan dapatkan gambaran objektif kualitas guru berbasis data dan kecerdasan buatan.</p>
                 <a href="{{ route('login') }}" class="btn-cta">
-                    <i class="bi bi-box-arrow-in-right"></i>
-                    Masuk ke Sistem
+                    <i class="bi bi-box-arrow-in-right"></i> Masuk ke Sistem
                 </a>
             </div>
         </div>
     </section>
 
-    {{-- ══════════════════════════════════════
-         FOOTER
-    ══════════════════════════════════════ --}}
+    {{-- ══════ FOOTER ══════ --}}
     <footer>
         <div class="container">
             <div class="row g-4">
                 <div class="col-lg-4">
                     <div class="d-flex align-items-center gap-2 mb-3">
-                        <img src="{{ asset('images/logo.png') }}" alt="Logo" style="width:34px;height:34px;border-radius:9px;object-fit:cover;">
-                        <span class="footer-logo-text">STQM</span>
+                        <img src="{{ asset('images/logo.png') }}" alt="Logo" style="width:32px;height:32px;border-radius:9px;object-fit:cover;">
+                        <span class="footer-logo-name">STQM</span>
                     </div>
-                    <p>
-                        Smart Teacher Quality Mapping — Sistem pemetaan kualitas guru berbasis data dan kecerdasan buatan untuk mendukung peningkatan mutu pendidikan.
-                    </p>
+                    <p>Smart Teacher Quality Mapping — sistem pemetaan kualitas guru berbasis data dan AI untuk mendukung peningkatan mutu pendidikan.</p>
                 </div>
                 <div class="col-6 col-lg-2">
                     <h6>Navigasi</h6>
                     <ul>
-                        @foreach(['Beranda'=>'#hero','Tentang'=>'#about','Fitur'=>'#features','Alur Sistem'=>'#how-it-works','Pengguna'=>'#roles'] as $label => $href)
-                            <li><a href="{{ $href }}">{{ $label }}</a></li>
+                        @foreach(['Beranda'=>'#hero','Tentang'=>'#about','Fitur'=>'#features','Alur Sistem'=>'#how-it-works','Pengguna'=>'#roles'] as $lbl => $href)
+                            <li><a href="{{ $href }}">{{ $lbl }}</a></li>
                         @endforeach
                     </ul>
                 </div>
@@ -1216,7 +1134,7 @@
                         @foreach(['Kompetensi Pedagogik','Kompetensi Kepribadian','Kompetensi Sosial','Kompetensi Profesional'] as $k)
                             <li>
                                 <a href="#" style="display:flex;align-items:center;gap:8px;">
-                                    <i class="bi bi-check2-circle" style="color:var(--clr-primary);font-size:13px;"></i>
+                                    <i class="bi bi-check2-circle" style="color:var(--blue-600);font-size:13px;"></i>
                                     {{ $k }}
                                 </a>
                             </li>
@@ -1225,20 +1143,17 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                © {{ date('Y') }} <strong style="color:var(--clr-primary)">STQM</strong> — Smart Teacher Quality Mapping.
-                Designed with <i class="bi bi-heart-fill" style="color:#EF4444;font-size:10px;"></i> for Education.
+                © {{ date('Y') }} <strong style="color:var(--blue-600)">STQM</strong> — Smart Teacher Quality Mapping.
+                Politeknik Negeri Jember.
             </div>
         </div>
     </footer>
 
-    {{-- Scripts --}}
     <script src="{{ asset('arsha/assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('arsha/assets/vendor/aos/aos.js') }}"></script>
-    <script src="{{ asset('arsha/assets/vendor/glightbox/js/glightbox.min.js') }}"></script>
-    <script src="{{ asset('arsha/assets/vendor/swiper/swiper-bundle.min.js') }}"></script>
 
     <script>
-        AOS.init({ duration: 650, easing: 'ease-out', once: true });
+        AOS.init({ duration: 600, easing: 'ease-out', once: true });
 
         // Navbar scroll
         window.addEventListener('scroll', () => {
@@ -1256,7 +1171,7 @@
         });
 
         // Mobile nav
-        function toggleMobileNav() {
+        function toggleNav() {
             const nav  = document.getElementById('navbar');
             const icon = document.getElementById('nav-icon');
             nav.classList.toggle('open');
@@ -1266,10 +1181,10 @@
         // Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(a => {
             a.addEventListener('click', e => {
-                const target = document.querySelector(a.getAttribute('href'));
-                if (target) {
+                const el = document.querySelector(a.getAttribute('href'));
+                if (el) {
                     e.preventDefault();
-                    target.scrollIntoView({ behavior: 'smooth' });
+                    el.scrollIntoView({ behavior: 'smooth' });
                     document.getElementById('navbar').classList.remove('open');
                     document.getElementById('nav-icon').className = 'bi bi-list';
                 }

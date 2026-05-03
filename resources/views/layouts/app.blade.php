@@ -47,31 +47,75 @@
         }
 
         [data-theme="light"] {
-            --bg-page: #f1f5f9;
-            --bg-sidebar: #ffffff;
-            --border-color: rgba(0, 0, 0, 0.07);
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --header-bg: rgba(241, 245, 249, 0.8);
-            --toggle-bg: rgba(0, 0, 0, 0.06);
-            --toggle-border: rgba(0, 0, 0, 0.1);
-            --toggle-color: #6366f1;
-            --nav-active-bg: rgba(0, 0, 0, 0.06);
-            --nav-hover-bg: rgba(0, 0, 0, 0.03);
-            --icon-bg: rgba(0, 0, 0, 0.05);
-            --user-bg: rgba(0, 0, 0, 0.03);
-            --swal-bg: #ffffff;
-            --swal-color: #0f172a;
-            --card-bg: rgba(255, 255, 255, 0.9);
-            --card-border: rgba(0, 0, 0, 0.08);
-            --card-bg-soft: rgba(0, 0, 0, 0.02);
-            --card-border-soft: rgba(0, 0, 0, 0.06);
-            --card-footer-bg: rgba(0, 0, 0, 0.02);
-            --card-divider: rgba(0, 0, 0, 0.06);
-            --input-bg: rgba(0, 0, 0, 0.05);
-            --input-border: rgba(0, 0, 0, 0.1);
-            --btn-bg: rgba(0, 0, 0, 0.05);
-            --btn-border: rgba(0, 0, 0, 0.1);
+            /*
+             * Light mode — Blue Professional
+             * Selaras dengan landing page (#F8FAFC base) dan login page (#EFF6FF bg)
+             * Token ini HANYA mengubah light mode; dark mode tidak terpengaruh.
+             */
+
+            /* Surfaces */
+            --bg-page: #F0F5FF;
+            /* biru-slate sangat muda — halaman */
+            --bg-sidebar: #FFFFFF;
+            /* sidebar putih bersih */
+
+            /* Border & divider */
+            --border-color: rgba(29, 78, 216, 0.09);
+            /* biru tipis */
+
+            /* Text */
+            --text-main: #0F172A;
+            /* slate-900 */
+            --text-muted: #475569;
+            /* slate-600 */
+
+            /* Header (top bar mobile) */
+            --header-bg: rgba(240, 245, 255, 0.92);
+
+            /* Theme toggle button */
+            --toggle-bg: rgba(29, 78, 216, 0.08);
+            --toggle-border: rgba(29, 78, 216, 0.18);
+            --toggle-color: #1D4ED8;
+            /* biru-700 — ikon bulan/matahari */
+
+            /* Nav items */
+            --nav-active-bg: rgba(29, 78, 216, 0.09);
+            /* highlight aktif biru muda */
+            --nav-hover-bg: rgba(29, 78, 216, 0.05);
+            /* hover sangat lembut */
+
+            /* Icon background (lingkaran di samping menu) */
+            --icon-bg: rgba(29, 78, 216, 0.07);
+
+            /* User info box di sidebar */
+            --user-bg: rgba(29, 78, 216, 0.05);
+
+            /* SweetAlert */
+            --swal-bg: #FFFFFF;
+            --swal-color: #0F172A;
+
+            /* Cards */
+            --card-bg: #FFFFFF;
+            --card-border: rgba(29, 78, 216, 0.1);
+            --card-bg-soft: rgba(239, 246, 255, 0.6);
+            /* biru-50 transparan */
+            --card-border-soft: rgba(29, 78, 216, 0.07);
+            --card-footer-bg: rgba(239, 246, 255, 0.5);
+            --card-divider: rgba(29, 78, 216, 0.08);
+
+            /* Inputs */
+            --input-bg: #F8FAFF;
+            --input-border: rgba(29, 78, 216, 0.15);
+
+            /* Generic buttons */
+            --btn-bg: rgba(29, 78, 216, 0.07);
+            --btn-border: rgba(29, 78, 216, 0.15);
+
+            /* Accent utama (untuk komponen yang masih pakai warna aksen inline) */
+            --accent: #1D4ED8;
+            --accent-hover: #1E40AF;
+            --accent-soft: rgba(29, 78, 216, 0.09);
+            --accent-ring: rgba(29, 78, 216, 0.2);
         }
 
         body {
@@ -183,7 +227,7 @@
                     icon: 'success',
                     title: 'Berhasil!',
                     text: '{{ addslashes(session('success')) }}',
-                    confirmButtonColor: '#f97316',
+                    confirmButtonColor: '#1D4ED8',
                     background: t.background,
                     color: t.color,
                     timer: 3000,
@@ -203,7 +247,7 @@
                     icon: 'error',
                     title: 'Gagal!',
                     text: '{{ addslashes(session('error')) }}',
-                    confirmButtonColor: '#f97316',
+                    confirmButtonColor: '#1D4ED8',
                     background: t.background,
                     color: t.color,
                     customClass: {
@@ -220,7 +264,7 @@
                     icon: 'warning',
                     title: 'Perhatian!',
                     text: '{{ addslashes(session('warning')) }}',
-                    confirmButtonColor: '#f97316',
+                    confirmButtonColor: '#1D4ED8',
                     background: t.background,
                     color: t.color,
                     customClass: {
@@ -270,7 +314,7 @@
                         title: judul,
                         text: pesan,
                         showCancelButton: true,
-                        confirmButtonColor: '#f97316',
+                        confirmButtonColor: '#1D4ED8',
                         cancelButtonColor: '#6b7280',
                         confirmButtonText: 'Ya, Lanjutkan!',
                         cancelButtonText: 'Batal',
