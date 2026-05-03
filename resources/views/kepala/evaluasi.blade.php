@@ -8,8 +8,8 @@
         {{-- Header --}}
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-                <h1 class="text-3xl font-bold text-white tracking-tight">Laporan Evaluasi Guru</h1>
-                <p class="text-gray-400 mt-2">Daftar lengkap hasil pemetaan kualitas guru.</p>
+                <h1 class="text-3xl font-bold" style="color:var(--text-main)" tracking-tight">Laporan Evaluasi Guru</h1>
+                <p class="text-sm mt-2" style="color:var(--text-muted)">Daftar lengkap hasil pemetaan kualitas guru.</p>
             </div>
             <a href="{{ route('kepala.evaluasi.export') }}"
                 class="flex items-center gap-2 px-5 py-3 rounded-2xl text-sm font-medium text-gray-300 transition-all"
@@ -23,11 +23,11 @@
         </div>
 
         <div class="rounded-3xl overflow-hidden"
-            style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+            style="background:var(--card-bg);border:1px solid var(--card-border);">
 
             {{-- Filter --}}
             <div class="p-6 flex flex-col sm:flex-row gap-5"
-                style="border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02);">
+                style="border-bottom:1px solid var(--card-divider);background:var(--card-bg-soft);">
 
                 <form method="GET" action="{{ route('kepala.evaluasi') }}" class="flex flex-col sm:flex-row gap-4 w-full">
                     <div class="relative flex-1">
@@ -37,8 +37,7 @@
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                         <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama atau NIP..."
-                            class="w-full pl-12 pr-4 py-3 rounded-2xl text-white text-sm outline-none"
-                            style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);">
+                            class="w-full pl-12 pr-4 py-3 rounded-2xl text-sm outline-none" style="background:var(--input-bg);border:1.5px solid var(--input-border);color:var(--text-main);">
                     </div>
 
                     <select name="cluster" onchange="this.form.submit()"
@@ -65,8 +64,7 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
                     <thead>
-                        <tr class="text-sm text-gray-400"
-                            style="border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.01);">
+                        <tr class="text-xs" style="color:var(--text-muted);border-bottom:1px solid var(--card-divider);background:var(--card-bg-soft);">
                             <th class="p-5 font-medium">
                                 <a href="{{ request()->fullUrlWithQuery(['sort' => 'nama', 'dir' => $sort === 'nama' && $dir === 'asc' ? 'desc' : 'asc']) }}"
                                     class="flex items-center gap-2 hover:text-white transition-colors">
@@ -98,9 +96,8 @@
                         @forelse($guru as $g)
                             <tr onclick="window.location='{{ route('kepala.guru.detail', $g->id) }}'"
                                 class="cursor-pointer transition-colors"
-                                style="border-bottom: 1px solid rgba(255,255,255,0.04);"
-                                onmouseover="this.style.background='rgba(255,255,255,0.03)'"
-                                onmouseout="this.style.background='transparent'">
+                                style="border-bottom:1px solid var(--card-border-soft);"
+                                onmouseover="this.style.background='rgba(26,22,19,0.03)'" onmouseout="this.style.background='transparent'" >
 
                                 <td class="p-5">
                                     <p class="font-semibold text-white">{{ $g->nama }}</p>

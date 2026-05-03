@@ -1,3 +1,106 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════
+   STQM GLOBAL — Light mode adaptive overrides
+═══════════════════════════════════════════════════════════ */
+
+body { font-family: 'DM Sans', 'Figtree', sans-serif; -webkit-font-smoothing: antialiased; }
+
+/* ─── LIGHT: Halaman & layout utama ─────────────────────── */
+[data-theme="light"] body {
+    background: #F5F2EE;
+    color: #1A1613;
+}
+
+/* ─── LIGHT: Tailwind text overrides ────────────────────── */
+[data-theme="light"] .text-white          { color: #1A1613 !important; }
+[data-theme="light"] .text-gray-100       { color: #2D2520 !important; }
+[data-theme="light"] .text-gray-200       { color: #403830 !important; }
+[data-theme="light"] .text-gray-300       { color: #5A4F47 !important; }
+[data-theme="light"] .text-gray-400       { color: #7A6F67 !important; }
+[data-theme="light"] .text-gray-500       { color: #7A6F67 !important; }
+[data-theme="light"] .text-gray-600       { color: #9A8E86 !important; }
+
+/* ─── LIGHT: Form inputs ────────────────────────────────── */
+[data-theme="light"] input[type="text"],
+[data-theme="light"] input[type="email"],
+[data-theme="light"] input[type="password"],
+[data-theme="light"] input[type="number"],
+[data-theme="light"] input[type="date"],
+[data-theme="light"] select,
+[data-theme="light"] textarea {
+    background: #FFFFFF !important;
+    border-color: #D5CCC4 !important;
+    color: #1A1613 !important;
+}
+
+[data-theme="light"] input::placeholder,
+[data-theme="light"] textarea::placeholder { color: #B0A89E !important; }
+
+[data-theme="light"] input:focus,
+[data-theme="light"] select:focus,
+[data-theme="light"] textarea:focus {
+    outline: none;
+    border-color: #E8560A !important;
+    box-shadow: 0 0 0 3px rgba(232,86,10,0.12) !important;
+}
+
+[data-theme="light"] select option { background: #FFFFFF; color: #1A1613; }
+
+/* ─── LIGHT: Table rows ─────────────────────────────────── */
+[data-theme="light"] tr { transition: background 0.15s; }
+
+/* ─── LIGHT: Toggle switch background ───────────────────── */
+[data-theme="light"] .toggle-off-bg { background: #E5DDD4 !important; }
+
+/* ─── LIGHT: Status badges ───────────────────────────────── */
+[data-theme="light"] .text-emerald-400 { color: #059669 !important; }
+[data-theme="light"] .text-yellow-400  { color: #B45309 !important; }
+[data-theme="light"] .text-red-400     { color: #DC2626 !important; }
+[data-theme="light"] .text-blue-400    { color: #1D6FBF !important; }
+[data-theme="light"] .text-orange-400  { color: #C44608 !important; }
+[data-theme="light"] .text-violet-400  { color: #6D28D9 !important; }
+[data-theme="light"] .text-amber-400   { color: #92400E !important; }
+[data-theme="light"] .text-cyan-400    { color: #0E7490 !important; }
+[data-theme="light"] .text-rose-400    { color: #BE123C !important; }
+[data-theme="light"] .text-indigo-400  { color: #3730A3 !important; }
+[data-theme="light"] .text-teal-400    { color: #0F766E !important; }
+[data-theme="light"] .text-sky-400     { color: #0369A1 !important; }
+[data-theme="light"] .text-pink-400    { color: #9D174D !important; }
+
+/* ─── LIGHT: Nav active ─────────────────────────────────── */
+[data-theme="light"] .nav-active {
+    background: rgba(232,86,10,0.09) !important;
+    border-color: rgba(232,86,10,0.15) !important;
+    color: #C44608 !important;
+}
+
+[data-theme="light"] .nav-inactive:hover {
+    background: rgba(26,22,19,0.04) !important;
+    color: #1A1613 !important;
+}
+
+/* ─── LIGHT: Nav icon bg colors ─────────────────────────── */
+[data-theme="light"] .bg-sky-500\/15     { background: rgba(3,105,161,0.1) !important; }
+[data-theme="light"] .bg-violet-500\/15  { background: rgba(109,40,217,0.1) !important; }
+[data-theme="light"] .bg-emerald-500\/15 { background: rgba(5,150,105,0.1) !important; }
+[data-theme="light"] .bg-amber-500\/15   { background: rgba(146,64,14,0.1) !important; }
+[data-theme="light"] .bg-cyan-500\/15    { background: rgba(14,116,144,0.1) !important; }
+[data-theme="light"] .bg-rose-500\/15    { background: rgba(190,18,60,0.1) !important; }
+[data-theme="light"] .bg-indigo-500\/15  { background: rgba(55,48,163,0.1) !important; }
+[data-theme="light"] .bg-teal-500\/15    { background: rgba(15,118,110,0.1) !important; }
+[data-theme="light"] .bg-orange-500\/15  { background: rgba(196,70,8,0.1) !important; }
+
+/* ─── LIGHT: Scrollbar ──────────────────────────────────── */
+[data-theme="light"] ::-webkit-scrollbar { width: 4px; }
+[data-theme="light"] ::-webkit-scrollbar-track { background: #F0EBE5; }
+[data-theme="light"] ::-webkit-scrollbar-thumb { background: #E8560A; border-radius: 4px; }
+
+/* ─── SweetAlert ─────────────────────────────────────────── */
+[data-theme="light"] .swal2-popup {
+    border-radius: 1.25rem !important;
+    border: 1px solid #E5DDD4 !important;
+    box-shadow: 0 8px 40px rgba(26,22,19,0.12) !important;
+}

@@ -7,10 +7,10 @@
 
         {{-- Header --}}
         <div>
-            <h1 class="text-3xl font-bold text-white tracking-tight">
+            <h1 class="text-3xl font-bold" style="color:var(--text-main)" tracking-tight">
                 Halo, {{ auth()->user()->name }}!
             </h1>
-            <p class="text-gray-400 mt-2">
+            <p class="text-sm mt-2" style="color:var(--text-muted)">
                 Lihat progress kompetensi, distribusi cluster, dan performa guru — semua di satu tempat.
             </p>
         </div>
@@ -19,7 +19,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             @foreach ([['title' => 'Total Guru', 'value' => $total, 'suffix' => '', 'color' => '#60a5fa', 'bg' => 'rgba(59,130,246,0.1)', 'border' => 'rgba(59,130,246,0.2)'], ['title' => 'Rata-rata Kompetensi', 'value' => number_format($rataKompetensi->pedagogik ?? 0, 2), 'suffix' => '/ 5.0', 'color' => '#fbbf24', 'bg' => 'rgba(245,158,11,0.1)', 'border' => 'rgba(245,158,11,0.2)'], ['title' => 'Guru Cluster A', 'value' => $distribusiCluster['A'] ?? 0, 'suffix' => ' Orang', 'color' => '#34d399', 'bg' => 'rgba(16,185,129,0.1)', 'border' => 'rgba(16,185,129,0.2)'], ['title' => 'Sudah Dipetakan', 'value' => $distribusiCluster->sum(), 'suffix' => ' Guru', 'color' => '#a78bfa', 'bg' => 'rgba(139,92,246,0.1)', 'border' => 'rgba(139,92,246,0.2)']] as $stat)
                 <div class="rounded-3xl p-6 flex items-center gap-5 relative overflow-hidden transition-all"
-                    style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);"
+                    style="background:var(--card-bg);border:1px solid var(--card-border);"
                     onmouseover="this.style.background='rgba(255,255,255,0.06)'"
                     onmouseout="this.style.background='rgba(255,255,255,0.04)'">
                     <div class="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0"
@@ -42,7 +42,7 @@
 
             {{-- Distribusi Cluster --}}
             <div class="rounded-3xl p-6"
-                style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                style="background:var(--card-bg);border:1px solid var(--card-border);">
                 <h3 class="font-semibold text-white mb-6 text-lg">Distribusi Cluster Guru</h3>
 
                 <canvas id="chartCluster" height="220"></canvas>
@@ -50,7 +50,7 @@
                 <div class="mt-6 space-y-3">
                     @foreach ([['label' => 'Sangat Baik (A)', 'key' => 'A', 'color' => '#10b981'], ['label' => 'Baik (B)', 'key' => 'B', 'color' => '#3b82f6'], ['label' => 'Cukup (C)', 'key' => 'C', 'color' => '#f59e0b'], ['label' => 'Perlu Pembinaan (D)', 'key' => 'D', 'color' => '#ef4444']] as $item)
                         <div class="flex items-center justify-between text-sm p-3 rounded-xl"
-                            style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+                            style="background:var(--card-bg-soft);border:1px solid var(--card-border-soft);">
                             <div class="flex items-center gap-3">
                                 <div class="w-3 h-3 rounded-full" style="background: {{ $item['color'] }};"></div>
                                 <span class="text-gray-300">{{ $item['label'] }}</span>
@@ -63,17 +63,17 @@
 
             {{-- Rata-rata Kompetensi --}}
             <div class="lg:col-span-2 rounded-3xl p-6"
-                style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                style="background:var(--card-bg);border:1px solid var(--card-border);">
                 <h3 class="font-semibold text-white mb-6 text-lg">Rata-rata per Indikator Kompetensi</h3>
                 <canvas id="chartKompetensi" height="220"></canvas>
             </div>
 
             {{-- Top 5 Guru --}}
             <div class="lg:col-span-3 rounded-3xl overflow-hidden"
-                style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                style="background:var(--card-bg);border:1px solid var(--card-border);">
 
                 <div class="p-6 flex justify-between items-center"
-                    style="border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02);">
+                    style="border-bottom:1px solid var(--card-divider);background:var(--card-bg-soft);">
                     <h3 class="font-semibold text-white text-lg">Top 5 Guru Berprestasi</h3>
                     <a href="{{ route('kepala.evaluasi') }}"
                         class="text-sm text-orange-400 font-semibold hover:text-orange-300 flex items-center gap-1 transition-colors">
@@ -87,9 +87,8 @@
                 @forelse($topGuru as $index => $guru)
                     <a href="{{ route('kepala.guru.detail', $guru->id) }}"
                         class="flex items-center justify-between p-5 transition-colors block"
-                        style="border-bottom: 1px solid rgba(255,255,255,0.04);"
-                        onmouseover="this.style.background='rgba(255,255,255,0.03)'"
-                        onmouseout="this.style.background='transparent'">
+                        style="border-bottom:1px solid var(--card-border-soft);"
+                        onmouseover="this.style.background='rgba(26,22,19,0.03)'" onmouseout="this.style.background='transparent'" >
 
                         <div class="flex items-center gap-5">
                             <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-lg shrink-0"

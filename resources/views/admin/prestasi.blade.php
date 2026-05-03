@@ -8,8 +8,8 @@
         {{-- Header --}}
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div>
-                <h1 class="text-3xl font-bold text-white tracking-tight">Konfirmasi Prestasi</h1>
-                <p class="text-gray-400 mt-2">Verifikasi data prestasi guru sebelum masuk ke laporan.</p>
+                <h1 class="text-3xl font-bold" style="color:var(--text-main)" tracking-tight">Konfirmasi Prestasi</h1>
+                <p class="text-sm mt-2" style="color:var(--text-muted)">Verifikasi data prestasi guru sebelum masuk ke laporan.</p>
             </div>
             @if ($prestasi_menunggu->total() > 0)
                 <div class="flex items-center gap-2 px-5 py-3 rounded-2xl text-sm font-semibold"
@@ -25,7 +25,7 @@
 
         {{-- Tab Navigation --}}
         <div class="flex gap-2 p-1 rounded-2xl w-fit"
-            style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+            style="background:var(--card-bg);border:1px solid var(--card-border);">
             @foreach ([
             'menunggu' => ['label' => 'Menunggu', 'count' => $prestasi_menunggu->total(), 'color' => 'rgba(249,115,22,0.15)', 'border' => 'rgba(249,115,22,0.3)', 'text' => '#fb923c'],
             'tervalidasi' => ['label' => 'Tervalidasi', 'count' => $prestasi_tervalidasi->total(), 'color' => 'rgba(16,185,129,0.15)', 'border' => 'rgba(16,185,129,0.3)', 'text' => '#34d399'],
@@ -36,7 +36,7 @@
                     :style="tab === '{{ $key }}'
                         ?
                         'background: {{ $cfg['color'] }}; border: 1px solid {{ $cfg['border'] }}; color: {{ $cfg['text'] }};' :
-                        'color: #6b7280; border: 1px solid transparent;'">
+                        'color:var(--text-muted);border:1px solid transparent;'">
                     {{ $cfg['label'] }}
                     <span class="px-2 py-0.5 rounded-lg text-xs font-bold"
                         :style="tab === '{{ $key }}'
@@ -53,12 +53,12 @@
         <div x-show="tab === 'menunggu'" x-transition:enter="transition ease-out duration-200"
             x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
             <div class="rounded-3xl overflow-hidden"
-                style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                style="background:var(--card-bg);border:1px solid var(--card-border);">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
                         <thead>
                             <tr class="text-xs text-gray-500 uppercase tracking-wide"
-                                style="border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02);">
+                                style="border-bottom:1px solid var(--card-divider);background:var(--card-bg-soft);">
                                 <th class="p-5 font-medium">Guru</th>
                                 <th class="p-5 font-medium">Prestasi</th>
                                 <th class="p-5 font-medium">Kategori</th>
@@ -70,9 +70,8 @@
                         </thead>
                         <tbody class="text-sm">
                             @forelse ($prestasi_menunggu as $item)
-                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);"
-                                    onmouseover="this.style.background='rgba(255,255,255,0.03)'"
-                                    onmouseout="this.style.background='transparent'">
+                                <tr style="border-bottom:1px solid var(--card-border-soft);"
+                                    onmouseover="this.style.background='rgba(26,22,19,0.03)'" onmouseout="this.style.background='transparent'" >
                                     <td class="p-5">
                                         <div class="flex items-center gap-3">
                                             <div class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm shrink-0"
@@ -255,12 +254,12 @@
         <div x-show="tab === 'tervalidasi'" x-transition:enter="transition ease-out duration-200"
             x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
             <div class="rounded-3xl overflow-hidden"
-                style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                style="background:var(--card-bg);border:1px solid var(--card-border);">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
                         <thead>
                             <tr class="text-xs text-gray-500 uppercase tracking-wide"
-                                style="border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02);">
+                                style="border-bottom:1px solid var(--card-divider);background:var(--card-bg-soft);">
                                 <th class="p-5 font-medium">Guru</th>
                                 <th class="p-5 font-medium">Prestasi</th>
                                 <th class="p-5 font-medium">Kategori</th>
@@ -272,9 +271,8 @@
                         </thead>
                         <tbody class="text-sm">
                             @forelse ($prestasi_tervalidasi as $item)
-                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);"
-                                    onmouseover="this.style.background='rgba(255,255,255,0.03)'"
-                                    onmouseout="this.style.background='transparent'">
+                                <tr style="border-bottom:1px solid var(--card-border-soft);"
+                                    onmouseover="this.style.background='rgba(26,22,19,0.03)'" onmouseout="this.style.background='transparent'" >
                                     <td class="p-5">
                                         <div class="flex items-center gap-3">
                                             <div class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm shrink-0"
@@ -333,12 +331,12 @@
         <div x-show="tab === 'ditolak'" x-transition:enter="transition ease-out duration-200"
             x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
             <div class="rounded-3xl overflow-hidden"
-                style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                style="background:var(--card-bg);border:1px solid var(--card-border);">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
                         <thead>
                             <tr class="text-xs text-gray-500 uppercase tracking-wide"
-                                style="border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02);">
+                                style="border-bottom:1px solid var(--card-divider);background:var(--card-bg-soft);">
                                 <th class="p-5 font-medium">Guru</th>
                                 <th class="p-5 font-medium">Prestasi</th>
                                 <th class="p-5 font-medium">Kategori</th>
@@ -350,9 +348,8 @@
                         </thead>
                         <tbody class="text-sm">
                             @forelse ($prestasi_ditolak as $item)
-                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);"
-                                    onmouseover="this.style.background='rgba(255,255,255,0.03)'"
-                                    onmouseout="this.style.background='transparent'">
+                                <tr style="border-bottom:1px solid var(--card-border-soft);"
+                                    onmouseover="this.style.background='rgba(26,22,19,0.03)'" onmouseout="this.style.background='transparent'" >
                                     <td class="p-5">
                                         <div class="flex items-center gap-3">
                                             <div class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm shrink-0"

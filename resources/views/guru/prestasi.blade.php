@@ -8,8 +8,8 @@
         {{-- Header --}}
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div>
-                <h1 class="text-3xl font-bold text-white tracking-tight">Data Prestasi & Sertifikasi</h1>
-                <p class="text-gray-400 mt-2">Kelola portofolio pengembangan profesional Anda.</p>
+                <h1 class="text-3xl font-bold" style="color:var(--text-main)" tracking-tight">Data Prestasi & Sertifikasi</h1>
+                <p class="text-sm mt-2" style="color:var(--text-muted)">Kelola portofolio pengembangan profesional Anda.</p>
             </div>
             <button @click="modalOpen = true"
                 class="flex items-center gap-2 px-5 py-3 rounded-2xl font-semibold text-white text-sm transition-all"
@@ -39,7 +39,7 @@
             </div>
 
             <div class="rounded-3xl p-6"
-                style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                style="background:var(--card-bg);border:1px solid var(--card-border);">
                 <div class="flex items-center justify-between mb-5">
                     <h3 class="font-medium text-gray-400">Menunggu Validasi</h3>
                     <div class="p-2.5 rounded-xl"
@@ -54,7 +54,7 @@
             </div>
 
             <div class="rounded-3xl p-6"
-                style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                style="background:var(--card-bg);border:1px solid var(--card-border);">
                 <div class="flex items-center justify-between mb-5">
                     <h3 class="font-medium text-gray-400">Poin Portofolio</h3>
                     <div class="p-2.5 rounded-xl"
@@ -72,18 +72,17 @@
 
         {{-- Daftar Prestasi --}}
         <div class="rounded-3xl overflow-hidden"
-            style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+            style="background:var(--card-bg);border:1px solid var(--card-border);">
 
             <div class="p-6"
-                style="border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02);">
+                style="border-bottom:1px solid var(--card-divider);background:var(--card-bg-soft);">
                 <h3 class="font-semibold text-white text-lg">Riwayat Prestasi & Pelatihan</h3>
             </div>
 
             @forelse($prestasi as $item)
                 <div class="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-5 transition-colors"
-                    style="border-bottom: 1px solid rgba(255,255,255,0.04);"
-                    onmouseover="this.style.background='rgba(255,255,255,0.03)'"
-                    onmouseout="this.style.background='transparent'">
+                    style="border-bottom:1px solid var(--card-border-soft);"
+                    onmouseover="this.style.background='rgba(26,22,19,0.03)'" onmouseout="this.style.background='transparent'" >
 
                     <div class="flex items-start gap-5">
                         <div class="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0"
@@ -191,7 +190,7 @@
 
                 {{-- Modal Header --}}
                 <div class="p-6 flex justify-between items-center"
-                    style="border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02);">
+                    style="border-bottom:1px solid var(--card-divider);background:var(--card-bg-soft);">
                     <h3 class="font-bold text-white text-xl">Tambah Prestasi Baru</h3>
                     <button @click="modalOpen = false"
                         class="p-2 rounded-xl text-gray-400 hover:text-white transition-colors"
@@ -222,8 +221,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-300 mb-2">Kategori</label>
                                 <select name="kategori" required
-                                    class="w-full px-4 py-3 rounded-2xl text-white text-sm outline-none"
-                                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);">
+                                    class="w-full px-4 py-3 rounded-2xl text-sm outline-none" style="background:var(--input-bg);border:1.5px solid var(--input-border);color:var(--text-main);">
                                     @foreach (['Sertifikasi', 'Pelatihan', 'Penghargaan', 'Publikasi', 'Lainnya'] as $kat)
                                         <option value="{{ $kat }}" style="background: #0a0a14;">
                                             {{ $kat }}</option>
@@ -233,8 +231,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-300 mb-2">Tingkat</label>
                                 <select name="tingkat" required
-                                    class="w-full px-4 py-3 rounded-2xl text-white text-sm outline-none"
-                                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);">
+                                    class="w-full px-4 py-3 rounded-2xl text-sm outline-none" style="background:var(--input-bg);border:1.5px solid var(--input-border);color:var(--text-main);">
                                     @foreach (['sekolah', 'kecamatan', 'kota', 'provinsi', 'nasional', 'internasional'] as $tkt)
                                         <option value="{{ $tkt }}" style="background: #0a0a14;">
                                             {{ ucfirst($tkt) }}</option>
@@ -247,8 +244,7 @@
                             <label class="block text-sm font-medium text-gray-300 mb-2">Tahun</label>
                             <input type="number" name="tahun" required min="2000" max="{{ date('Y') }}"
                                 value="{{ date('Y') }}"
-                                class="w-full px-4 py-3 rounded-2xl text-white text-sm outline-none"
-                                style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);"
+                                class="w-full px-4 py-3 rounded-2xl text-sm outline-none" style="background:var(--input-bg);border:1.5px solid var(--input-border);color:var(--text-main);"
                                 onfocus="this.style.borderColor='rgba(249,115,22,0.5)'"
                                 onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
                         </div>

@@ -8,8 +8,8 @@
         {{-- Header --}}
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-                <h1 class="text-3xl font-bold text-white tracking-tight">Evaluasi Kinerja Guru</h1>
-                <p class="text-gray-400 mt-2">Isi kuesioner dengan jujur dan objektif.</p>
+                <h1 class="text-3xl font-bold" style="color:var(--text-main)" tracking-tight">Evaluasi Kinerja Guru</h1>
+                <p class="text-sm mt-2" style="color:var(--text-muted)">Isi kuesioner dengan jujur dan objektif.</p>
             </div>
 
             {{-- Pilih Guru --}}
@@ -50,9 +50,9 @@
 
                 {{-- Progress Bar --}}
                 <div class="rounded-3xl overflow-hidden"
-                    style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                    style="background:var(--card-bg);border:1px solid var(--card-border);">
 
-                    <div class="p-8" style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                    <div class="p-8" style="border-bottom:1px solid var(--card-divider);">
                         <div class="flex justify-between text-sm font-medium text-gray-400 mb-3">
                             <span>Progress Pengisian</span>
                             <span class="text-orange-400">
@@ -93,7 +93,7 @@
                             <div class="space-y-6">
                                 @foreach ($soalList as $index => $soal)
                                     <div class="rounded-3xl p-6 transition-all duration-300"
-                                        style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);"
+                                        style="background:var(--card-bg-soft);border:1px solid var(--card-border-soft);"
                                         onmouseover="this.style.background='rgba(255,255,255,0.04)'"
                                         onmouseout="this.style.background='rgba(255,255,255,0.02)'">
 

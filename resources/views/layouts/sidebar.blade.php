@@ -184,9 +184,15 @@
 <style>
     .nav-active {
         color: var(--text-main);
-        font-weight: 500;
-        border: 1px solid var(--border-color);
+        font-weight: 600;
+        border: 1px solid var(--card-border-soft);
         background: var(--nav-active-bg);
+    }
+
+    [data-theme="light"] .nav-active {
+        color: #C44608;
+        background: rgba(232,86,10,0.09);
+        border-color: rgba(232,86,10,0.15);
     }
 
     .nav-inactive {
@@ -202,7 +208,7 @@
 <script>
     // Sinkronkan icon sidebar saat load
     (function() {
-        syncSidebarIcon(localStorage.getItem('stqm-theme') || 'dark');
+        syncSidebarIcon(localStorage.getItem('stqm-theme') || 'light');
     })();
 
     function syncSidebarIcon(theme) {

@@ -8,7 +8,7 @@
         {{-- Tombol kembali --}}
         <a href="{{ route('kepala.evaluasi') }}"
             class="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors px-4 py-2 rounded-xl"
-            style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+            style="background:var(--card-bg-soft);border:1px solid var(--card-border-soft);">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
@@ -22,7 +22,7 @@
 
                 {{-- Profil --}}
                 <div class="rounded-3xl overflow-hidden"
-                    style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                    style="background:var(--card-bg);border:1px solid var(--card-border);">
                     <div class="h-24 w-full" style="background: linear-gradient(135deg, #f97316, #eab308);"></div>
                     <div class="px-6 pb-6 -mt-12 text-center">
                         <div class="w-24 h-24 mx-auto rounded-full flex items-center justify-center text-3xl font-bold mb-4"
@@ -135,7 +135,7 @@
                 {{-- Quick Stats --}}
                 <div class="grid grid-cols-2 gap-4">
                     <div class="rounded-3xl p-6 text-center"
-                        style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                        style="background:var(--card-bg);border:1px solid var(--card-border);">
                         <div class="w-12 h-12 mx-auto rounded-2xl flex items-center justify-center mb-4"
                             style="background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.2);">
                             <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -143,11 +143,11 @@
                                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                         </div>
-                        <p class="text-3xl font-bold text-white mb-1">{{ $persenHadir }}%</p>
+                        <p class="text-3xl font-bold" style="color:var(--text-main)" mb-1">{{ $persenHadir }}%</p>
                         <p class="text-xs text-gray-500 uppercase tracking-wider">Kehadiran</p>
                     </div>
                     <div class="rounded-3xl p-6 text-center"
-                        style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                        style="background:var(--card-bg);border:1px solid var(--card-border);">
                         <div class="w-12 h-12 mx-auto rounded-2xl flex items-center justify-center mb-4"
                             style="background: rgba(249,115,22,0.1); border: 1px solid rgba(249,115,22,0.2);">
                             <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -155,7 +155,7 @@
                                     d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                             </svg>
                         </div>
-                        <p class="text-3xl font-bold text-white mb-1">
+                        <p class="text-3xl font-bold" style="color:var(--text-main)" mb-1">
                             {{ $guru->prestasi->where('status', 'tervalidasi')->count() }}
                         </p>
                         <p class="text-xs text-gray-500 uppercase tracking-wider">Prestasi</p>
@@ -169,7 +169,7 @@
                 {{-- Profil Kompetensi --}}
                 @if ($guru->clusterTerakhir)
                     <div class="rounded-3xl p-8"
-                        style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                        style="background:var(--card-bg);border:1px solid var(--card-border);">
                         <div class="flex items-center justify-between mb-8">
                             <h3 class="font-semibold text-white text-xl">Profil Kompetensi</h3>
                             <div class="px-4 py-2 rounded-xl font-bold text-lg"
@@ -210,16 +210,15 @@
 
                 {{-- Riwayat Prestasi --}}
                 <div class="rounded-3xl overflow-hidden"
-                    style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                    style="background:var(--card-bg);border:1px solid var(--card-border);">
                     <div class="p-6"
-                        style="border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02);">
+                        style="border-bottom:1px solid var(--card-divider);background:var(--card-bg-soft);">
                         <h3 class="font-semibold text-white text-lg">Riwayat Prestasi & Sertifikasi</h3>
                     </div>
                     @forelse($guru->prestasi->where('status', 'tervalidasi') as $p)
                         <div class="p-5 flex items-center justify-between transition-colors"
-                            style="border-bottom: 1px solid rgba(255,255,255,0.04);"
-                            onmouseover="this.style.background='rgba(255,255,255,0.03)'"
-                            onmouseout="this.style.background='transparent'">
+                            style="border-bottom:1px solid var(--card-border-soft);"
+                            onmouseover="this.style.background='rgba(26,22,19,0.03)'" onmouseout="this.style.background='transparent'" >
                             <div class="flex items-center gap-4">
                                 <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
                                     style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">

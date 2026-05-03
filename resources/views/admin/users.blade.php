@@ -8,8 +8,8 @@
         {{-- Header --}}
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div>
-                <h1 class="text-3xl font-bold text-white tracking-tight">Manajemen Pengguna</h1>
-                <p class="text-gray-400 mt-2">Kelola akses dan data pengguna sistem STQM.</p>
+                <h1 class="text-3xl font-bold" style="color:var(--text-main)" tracking-tight">Manajemen Pengguna</h1>
+                <p class="text-sm mt-2" style="color:var(--text-muted)">Kelola akses dan data pengguna sistem STQM.</p>
             </div>
             <button @click="modalOpen = true; editUser = null"
                 class="flex items-center gap-2 px-5 py-3 rounded-2xl font-semibold text-white text-sm transition-all"
@@ -23,11 +23,11 @@
 
         {{-- Tabel --}}
         <div class="rounded-3xl overflow-hidden"
-            style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+            style="background:var(--card-bg);border:1px solid var(--card-border);">
 
             {{-- Search --}}
             <div class="p-6"
-                style="border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02);">
+                style="border-bottom:1px solid var(--card-divider);background:var(--card-bg-soft);">
                 <form method="GET" action="{{ route('admin.users.index') }}">
                     <div class="relative w-full max-w-md">
                         <svg class="w-5 h-5 text-gray-500 absolute left-4 top-1/2 -translate-y-1/2" fill="none"
@@ -37,8 +37,7 @@
                         </svg>
                         <input type="text" name="search" value="{{ request('search') }}"
                             placeholder="Cari nama atau email..."
-                            class="w-full pl-12 pr-4 py-3 rounded-2xl text-white text-sm outline-none"
-                            style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);">
+                            class="w-full pl-12 pr-4 py-3 rounded-2xl text-sm outline-none" style="background:var(--input-bg);border:1.5px solid var(--input-border);color:var(--text-main);">
                     </div>
                 </form>
             </div>
@@ -46,8 +45,7 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
                     <thead>
-                        <tr class="text-sm text-gray-400"
-                            style="border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.01);">
+                        <tr class="text-xs" style="color:var(--text-muted);border-bottom:1px solid var(--card-divider);background:var(--card-bg-soft);">
                             <th class="p-5 font-medium">Nama Lengkap</th>
                             <th class="p-5 font-medium">Email</th>
                             <th class="p-5 font-medium">Role</th>
@@ -57,14 +55,13 @@
                     </thead>
                     <tbody class="text-sm">
                         @forelse($users as $user)
-                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);"
-                                onmouseover="this.style.background='rgba(255,255,255,0.03)'"
-                                onmouseout="this.style.background='transparent'">
+                            <tr style="border-bottom:1px solid var(--card-border-soft);"
+                                onmouseover="this.style.background='rgba(26,22,19,0.03)'" onmouseout="this.style.background='transparent'" >
 
                                 <td class="p-5">
                                     <div class="flex items-center gap-3">
                                         <div class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm shrink-0"
-                                            style="background: linear-gradient(135deg, rgba(139,92,246,0.3), rgba(249,115,22,0.3)); color: #fbbf24;">
+                                            style="background:rgba(232,86,10,0.12);color:#E8560A;">
                                             {{ strtoupper(substr($user->name, 0, 1)) }}
                                         </div>
                                         <span class="font-semibold text-white">{{ $user->name }}</span>
@@ -180,7 +177,7 @@
 
                 {{-- Header --}}
                 <div class="p-6 flex justify-between items-center"
-                    style="border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02);">
+                    style="border-bottom:1px solid var(--card-divider);background:var(--card-bg-soft);">
                     <h3 class="font-bold text-white text-xl" x-text="editUser ? 'Edit Pengguna' : 'Tambah Pengguna Baru'">
                     </h3>
                     <button @click="modalOpen = false" class="p-2 rounded-xl text-gray-400 hover:text-white"
@@ -216,8 +213,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-300 mb-2">Role</label>
                                 <select name="role" required
-                                    class="w-full px-4 py-3 rounded-2xl text-white text-sm outline-none"
-                                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);">
+                                    class="w-full px-4 py-3 rounded-2xl text-sm outline-none" style="background:var(--input-bg);border:1.5px solid var(--input-border);color:var(--text-main);">
                                     @foreach (['siswa' => 'Siswa', 'guru' => 'Guru', 'kepsek' => 'Kepala Sekolah', 'admin' => 'Administrator'] as $val => $label)
                                         <option value="{{ $val }}" style="background: #0a0a14;">
                                             {{ $label }}</option>
@@ -259,8 +255,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-300 mb-2">Nama Lengkap</label>
                                 <input type="text" name="name" :value="editUser?.name" required
-                                    class="w-full px-4 py-3 rounded-2xl text-white text-sm outline-none"
-                                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);"
+                                    class="w-full px-4 py-3 rounded-2xl text-sm outline-none" style="background:var(--input-bg);border:1.5px solid var(--input-border);color:var(--text-main);"
                                     onfocus="this.style.borderColor='rgba(249,115,22,0.5)'"
                                     onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
                             </div>
@@ -269,8 +264,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
                                 <input type="email" name="email" :value="editUser?.email" required
-                                    class="w-full px-4 py-3 rounded-2xl text-white text-sm outline-none"
-                                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);"
+                                    class="w-full px-4 py-3 rounded-2xl text-sm outline-none" style="background:var(--input-bg);border:1.5px solid var(--input-border);color:var(--text-main);"
                                     onfocus="this.style.borderColor='rgba(249,115,22,0.5)'"
                                     onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
                             </div>
@@ -279,8 +273,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-300 mb-2">Role</label>
                                 <select name="role" required
-                                    class="w-full px-4 py-3 rounded-2xl text-white text-sm outline-none"
-                                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);">
+                                    class="w-full px-4 py-3 rounded-2xl text-sm outline-none" style="background:var(--input-bg);border:1.5px solid var(--input-border);color:var(--text-main);">
                                     @foreach (['siswa' => 'Siswa', 'guru' => 'Guru', 'kepsek' => 'Kepala Sekolah', 'admin' => 'Administrator'] as $val => $label)
                                         <option value="{{ $val }}"
                                             :selected="editUser?.role === '{{ $val }}'"
