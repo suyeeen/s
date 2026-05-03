@@ -11,14 +11,16 @@ use App\Http\Controllers\AdminPrestasiController;
 
 // ── Default redirect setelah login ───────────────────────────────────────
 Route::get('/', function () {
-    if (!auth()->check()) return redirect()->route('login');
-    return match (auth()->user()->role) {
-        'siswa'  => redirect()->route('siswa.kuesioner'),
-        'guru'   => redirect()->route('guru.kuesioner'),       // ✅ diperbaiki
-        'kepsek' => redirect()->route('kepala.dashboard'),
-        'admin'  => redirect()->route('admin.users.index'),    // ✅ diperbaiki
-        default  => redirect()->route('login'),
-    };
+    if (auth()->check()) {
+        return match (auth()->user()->role) {
+            'siswa'  => redirect()->route('siswa.kuesioner'),
+            'guru'   => redirect()->route('guru.kuesioner'),
+            'kepsek' => redirect()->route('kepala.dashboard'),
+            'admin'  => redirect()->route('admin.users.index'),
+            default  => redirect()->route('login'),
+        };
+    }
+    return view('welcome');
 });
 
 // ── Auth routes (dari Breeze) ─────────────────────────────────────────────
