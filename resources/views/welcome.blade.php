@@ -333,102 +333,51 @@
             margin-top: 3px;
         }
 
-        /* ── Cluster card grid ── */
-        .cluster-wrap {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 22px;
-            box-shadow: var(--shadow-md);
-        }
-
-        .cluster-win-bar {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 18px;
-        }
-
-        .win-dot { width: 10px; height: 10px; border-radius: 50%; }
-
-        .cluster-grid {
+        /* ── Feature highlight cards (hero right column) ── */
+        .feat-highlight-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 14px;
         }
 
-        .c-card {
-            border-radius: 14px;
-            padding: 16px 14px;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid transparent;
-            transition: transform .25s, box-shadow .25s;
+        .feat-hl-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: transform .25s, box-shadow .25s, border-color .25s;
         }
 
-        .c-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
+        .feat-hl-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--blue-border);
         }
 
-        .c-card-bar {
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
-            border-radius: 14px 14px 0 0;
-        }
-
-        .c-card-icon {
-            font-size: 22px;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .c-card-cluster {
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: .4px;
-            color: var(--txt-faint);
-            margin-bottom: 3px;
-        }
-
-        .c-card-pct {
-            font-family: 'Nunito', sans-serif;
-            font-size: 30px;
-            font-weight: 900;
-            line-height: 1;
-        }
-
-        .c-card-name {
-            font-size: 11.5px;
-            font-weight: 600;
-            color: var(--txt-muted);
-            margin-top: 4px;
-        }
-
-        .c-card-badge {
-            display: inline-block;
-            font-size: 9.5px;
-            font-weight: 700;
-            padding: 3px 9px;
-            border-radius: 20px;
-            margin-top: 8px;
-        }
-
-        .cluster-footer {
-            margin-top: 14px;
-            padding-top: 12px;
-            border-top: 1px solid var(--border);
+        .feat-hl-icon {
+            width: 44px; height: 44px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
-            gap: 7px;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
         }
 
-        .live-dot {
-            width: 7px; height: 7px;
-            border-radius: 50%;
-            background: #22C55E;
+        .feat-hl-title {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--txt-main);
+            margin-bottom: 5px;
+        }
+
+        .feat-hl-desc {
+            font-size: 12.5px;
+            color: var(--txt-muted);
+            line-height: 1.65;
         }
 
         /* ══════════════════════════════════════
@@ -883,40 +832,45 @@
                     </div>
                 </div>
 
-                {{-- Right — 4 cluster cards --}}
+                {{-- Right — 4 feature highlight cards --}}
                 <div class="col-lg-6" data-aos="fade-left" data-aos-duration="650" data-aos-delay="120">
-                    <div class="cluster-wrap">
-                        <div class="cluster-win-bar">
-                            <div class="win-dot" style="background:#EF4444"></div>
-                            <div class="win-dot" style="background:#F59E0B"></div>
-                            <div class="win-dot" style="background:#22C55E"></div>
-                            <span style="font-size:11.5px;color:var(--txt-faint);font-weight:500;margin-left:8px;">
-                                Distribusi Cluster Guru — K-Means
-                            </span>
-                        </div>
-
-                        <div class="cluster-grid">
-                            @foreach([
-                                ['A','Sangat Baik', '35%','🏆','#16A34A','rgba(22,163,74,0.08)','rgba(22,163,74,0.15)','#15803D','↑ Terbaik'],
-                                ['B','Baik',        '40%','⭐','#2563EB','rgba(37,99,235,0.08)','rgba(37,99,235,0.15)','#1E40AF','Mayoritas'],
-                                ['C','Cukup',       '18%','📈','#D97706','rgba(217,119,6,0.08)','rgba(217,119,6,0.15)','#92400E','Perlu Peningkatan'],
-                                ['D','Perlu Pembinaan','7%','🎯','#DC2626','rgba(220,38,38,0.08)','rgba(220,38,38,0.15)','#991B1B','Prioritas'],
-                            ] as $c)
-                                <div class="c-card" style="background:{{ $c[5] }};border-color:{{ $c[6] }}">
-                                    <div class="c-card-bar" style="background:{{ $c[4] }}"></div>
-                                    <span class="c-card-icon">{{ $c[3] }}</span>
-                                    <div class="c-card-cluster">Cluster {{ $c[0] }}</div>
-                                    <div class="c-card-pct" style="color:{{ $c[4] }}">{{ $c[2] }}</div>
-                                    <div class="c-card-name">{{ $c[1] }}</div>
-                                    <span class="c-card-badge" style="background:{{ $c[6] }};color:{{ $c[7] }}">{{ $c[8] }}</span>
+                    <div class="feat-highlight-grid">
+                        @foreach([
+                            [
+                                'bi-journal-check',
+                                'rgba(29,78,216,0.09)', '#2563EB',
+                                'Kuesioner Evaluasi',
+                                'Penilaian multi-penilai berbasis indikator kompetensi guru dengan skala Likert.'
+                            ],
+                            [
+                                'bi-credit-card-2-front',
+                                'rgba(5,150,105,0.09)', '#059669',
+                                'Absensi RFID',
+                                'Rekam kehadiran guru secara otomatis dan real-time tanpa input manual.'
+                            ],
+                            [
+                                'bi-cpu',
+                                'rgba(109,40,217,0.09)', '#7C3AED',
+                                'K-Means Clustering',
+                                'Algoritma AI mengelompokkan guru ke 4 cluster kualitas secara otomatis.'
+                            ],
+                            [
+                                'bi-bar-chart-line',
+                                'rgba(29,78,216,0.09)', '#2563EB',
+                                'Dashboard & Laporan',
+                                'Pantau performa guru dan unduh laporan evaluasi kapan saja.'
+                            ],
+                        ] as [$icon, $bg, $color, $title, $desc])
+                            <div class="feat-hl-card">
+                                <div class="feat-hl-icon" style="background:{{ $bg }}">
+                                    <i class="bi {{ $icon }}" style="color:{{ $color }}"></i>
                                 </div>
-                            @endforeach
-                        </div>
-
-                        <div class="cluster-footer">
-                            <div class="live-dot"></div>
-                            <span style="font-size:11.5px;color:var(--txt-faint);font-weight:500;">Clustering diperbarui hari ini</span>
-                        </div>
+                                <div>
+                                    <div class="feat-hl-title">{{ $title }}</div>
+                                    <div class="feat-hl-desc">{{ $desc }}</div>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
 
