@@ -224,11 +224,10 @@
         <label class="block text-sm font-medium text-gray-300 mb-2">Kategori</label>
         <select name="kategori" id="selectKategori" required
                 onchange="toggleKategoriLainnya(this.value)"
-                class="w-full px-4 py-3 rounded-2xl text-sm outline-none"
-                style="background:var(--input-bg);border:1.5px solid var(--input-border);color:var(--text-main);"
+                class="stqm-select w-full px-4 py-3 rounded-2xl text-sm outline-none"
                 onfocus="this.style.borderColor='rgba(249,115,22,0.5)'"
                 onblur="this.style.borderColor='var(--input-border)'">
-            <option value="" disabled selected style="background:var(--card-bg)">-- Pilih Kategori --</option>
+            <option value="" disabled selected>-- Pilih Kategori --</option>
             @foreach ([
                 'Sertifikat Pendidik',
                 'Pelatihan & Workshop',
@@ -239,7 +238,7 @@
                 'Organisasi Profesi',
                 'Lainnya',
             ] as $kat)
-                <option value="{{ $kat }}" style="background:var(--card-bg)">{{ $kat }}</option>
+                <option value="{{ $kat }}">{{ $kat }}</option>
             @endforeach
         </select>
 
@@ -259,13 +258,12 @@
     <div>
         <label class="block text-sm font-medium text-gray-300 mb-2">Tingkat</label>
         <select name="tingkat"
-                class="w-full px-4 py-3 rounded-2xl text-sm outline-none"
-                style="background:var(--input-bg);border:1.5px solid var(--input-border);color:var(--text-main);"
+                class="stqm-select w-full px-4 py-3 rounded-2xl text-sm outline-none"
                 onfocus="this.style.borderColor='rgba(249,115,22,0.5)'"
                 onblur="this.style.borderColor='var(--input-border)'">
-            <option value="" style="background:var(--card-bg)">— (Tidak Ditentukan)</option>
+            <option value="">— (Tidak Ditentukan)</option>
             @foreach (['sekolah', 'kecamatan', 'kota', 'provinsi', 'nasional', 'internasional'] as $tkt)
-                <option value="{{ $tkt }}" style="background:var(--card-bg)">{{ ucfirst($tkt) }}</option>
+                <option value="{{ $tkt }}">{{ ucfirst($tkt) }}</option>
             @endforeach
         </select>
     </div>
@@ -323,4 +321,39 @@
         </div>
 
     </div>
+
+<style>
+    /* ── Dropdown select: kompatibel semua browser & kedua mode tema ── */
+    .stqm-select {
+        background: var(--input-bg);
+        border: 1.5px solid var(--input-border);
+        color: var(--text-main);
+        appearance: auto;
+        -webkit-appearance: auto;
+    }
+    [data-theme="dark"] .stqm-select option {
+        background-color: #1a1a2e;
+        color: #e5e7eb;
+    }
+    [data-theme="light"] .stqm-select option {
+        background-color: #ffffff;
+        color: #1f2937;
+    }
+</style>
+
+<script>
+    function toggleKategoriLainnya(val) {
+        var wrapper = document.getElementById('inputLainnya');
+        var input   = document.getElementById('kategoriLainnyaInput');
+        if (!wrapper || !input) return;
+        if (val === 'Lainnya') {
+            wrapper.style.display = 'block';
+            input.required = true;
+        } else {
+            wrapper.style.display = 'none';
+            input.required = false;
+            input.value = '';
+        }
+    }
+</script>
 @endsection

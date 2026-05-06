@@ -15,7 +15,8 @@
     <div class="px-2 py-3 mb-4 rounded-2xl" style="background: var(--user-bg); border: 1px solid var(--border-color)">
         <p class="text-sm font-medium truncate" style="color: var(--text-main)">{{ auth()->user()->name }}</p>
         <p class="text-xs mt-0.5 capitalize" style="color: var(--text-muted)">
-            {{ str_replace('_', ' ', auth()->user()->role) }}</p>
+            {{ str_replace('_', ' ', auth()->user()->role) }}
+        </p>
     </div>
 
     {{-- Nav items --}}
@@ -191,8 +192,8 @@
 
     [data-theme="light"] .nav-active {
         color: #C44608;
-        background: rgba(232,86,10,0.09);
-        border-color: rgba(232,86,10,0.15);
+        background: rgba(232, 86, 10, 0.09);
+        border-color: rgba(232, 86, 10, 0.15);
     }
 
     .nav-inactive {
@@ -207,7 +208,7 @@
 
 <script>
     // Sinkronkan icon sidebar saat load
-    (function() {
+    (function () {
         syncSidebarIcon(localStorage.getItem('stqm-theme') || 'light');
     })();
 
@@ -215,15 +216,18 @@
         const sun = document.getElementById('sidebar-icon-sun');
         const moon = document.getElementById('sidebar-icon-moon');
         const label = document.getElementById('sidebar-theme-label');
+        const btn = document.querySelector('.theme-toggle');
         if (!sun || !moon) return;
         if (theme === 'dark') {
             sun.classList.remove('hidden');
             moon.classList.add('hidden');
-            if (label) label.textContent = 'Mode Terang';
+            if (btn) btn.title = 'Beralih ke Mode Terang';
         } else {
             sun.classList.add('hidden');
             moon.classList.remove('hidden');
-            if (label) label.textContent = 'Mode Gelap';
+            if (btn) btn.title = 'Beralih ke Mode Gelap';
         }
+        // Label selalu tetap "Ganti mode"
+        if (label) label.textContent = 'Ganti mode';
     }
 </script>

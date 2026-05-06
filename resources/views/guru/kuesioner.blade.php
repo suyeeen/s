@@ -9,24 +9,53 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
                 <h1 class="text-3xl font-bold" style="color:var(--text-main)" tracking-tight">Penilaian Guru</h1>
-                <p class="text-sm mt-2" style="color:var(--text-muted)">Nilai rekan guru berdasarkan indikator kompetensi.</p>
+                <p class="text-sm mt-2" style="color:var(--text-muted)">Nilai rekan guru berdasarkan indikator kompetensi.
+                </p>
             </div>
 
-            {{-- Pilih Guru yang Dinilai --}}
-            <div class="w-full md:w-80">
-                <select id="pilihGuru" class="w-full px-4 py-3 rounded-2xl text-white text-sm outline-none transition-all"
-                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);"
-                    onchange="gantiGuru(this.value)">
-                    <option value="">-- Pilih Guru yang Dinilai --</option>
+            {{-- Pilih Guru yang Dinilai (Custom Dropdown) --}}
+            <div class="w-full md:w-80 relative" id="dropdownWrapper">
+                {{-- Hidden real input for form --}}
+                <input type="hidden" id="pilihGuruVal">
+
+                {{-- Trigger button --}}
+                <button type="button" id="dropdownTrigger" onclick="toggleDropdown()"
+                    class="w-full flex items-center justify-between px-4 py-3 rounded-2xl text-sm transition-all"
+                    style="background:var(--input-bg); border:1px solid var(--input-border); color:var(--text-muted);">
+                    <span id="dropdownLabel">-- Pilih Guru yang Dinilai --</span>
+                    <svg id="dropdownChevron" class="w-4 h-4 shrink-0 transition-transform" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+
+                {{-- Dropdown list --}}
+                <div id="dropdownList"
+                    class="hidden absolute right-0 left-0 z-50 mt-2 rounded-2xl overflow-y-auto shadow-2xl"
+                    style="max-height:320px; background:var(--card-bg); border:1px solid var(--card-border);">
+
+                    {{-- Opsi default --}}
+                    <div onclick="pilihGuruDrop('', '-- Pilih Guru yang Dinilai --')"
+                        class="px-4 py-3 cursor-pointer text-sm font-semibold transition-colors"
+                        style="color:var(--text-muted); border-bottom:1px solid var(--card-border-soft);"
+                        onmouseover="this.style.background='var(--nav-hover-bg)'"
+                        onmouseout="this.style.background='transparent'">
+                        -- Pilih Guru yang Dinilai --
+                    </div>
+
                     @foreach ($guru as $g)
-                        {{-- Guru tidak bisa menilai dirinya sendiri --}}
                         @if ($g->id !== auth()->user()->guru->id)
-                            <option value="{{ $g->id }}" style="background: #0a0a14;">
-                                {{ $g->nama }} — {{ $g->mata_pelajaran }}
-                            </option>
+                            <div onclick="pilihGuruDrop('{{ $g->id }}', '{{ $g->nama }} — {{ $g->mata_pelajaran }}')"
+                                class="px-4 py-3 cursor-pointer text-sm transition-colors"
+                                style="color:var(--text-main); border-bottom:1px solid var(--card-border-soft);"
+                                onmouseover="this.style.background='var(--nav-hover-bg)'"
+                                onmouseout="this.style.background='transparent'">
+                                <span class="font-medium">{{ $g->nama }}</span>
+                                <span style="color:var(--text-muted)"> — {{ $g->mata_pelajaran }}</span>
+                            </div>
                         @endif
                     @endforeach
-                </select>
+                </div>
             </div>
         </div>
 
@@ -84,8 +113,7 @@
                         {{-- Tab Kategori --}}
                         <div class="flex gap-3 mt-8 overflow-x-auto pb-2">
                             @foreach ($pertanyaan as $kategori => $soalList)
-                                <button type="button" onclick="gantiKategori('{{ $kategori }}')"
-                                    id="tab-{{ $kategori }}"
+                                <button type="button" onclick="gantiKategori('{{ $kategori }}')" id="tab-{{ $kategori }}"
                                     class="px-5 py-2.5 rounded-2xl text-sm font-medium whitespace-nowrap transition-all capitalize"
                                     style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); color: #9ca3af;">
                                     Kompetensi {{ ucfirst($kategori) }}
@@ -124,12 +152,10 @@
                                                     style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); color: #9ca3af;"
                                                     onmouseover="if(!this.classList.contains('selected')){ this.style.background='rgba(255,255,255,0.06)'; this.style.color='#e5e7eb'; }"
                                                     onmouseout="if(!this.classList.contains('selected')){ this.style.background='rgba(255,255,255,0.03)'; this.style.color='#9ca3af'; }">
-                                                    <input type="radio" name="jawaban[{{ $soal->id }}]"
-                                                        value="{{ $val }}" class="sr-only"
-                                                        onchange="pilihJawaban(this)">
+                                                    <input type="radio" name="jawaban[{{ $soal->id }}]" value="{{ $val }}"
+                                                        class="sr-only" onchange="pilihJawaban(this)">
                                                     <span class="text-2xl font-bold mb-2">{{ $val }}</span>
-                                                    <span
-                                                        class="text-[10px] leading-tight font-medium">{{ $label }}</span>
+                                                    <span class="text-[10px] leading-tight font-medium">{{ $label }}</span>
                                                 </label>
                                             @endforeach
                                         </div>
@@ -165,8 +191,7 @@
                             class="hidden flex items-center gap-2 px-6 py-3 rounded-2xl text-sm font-semibold text-white transition-all"
                             style="background: linear-gradient(135deg, #10b981, #059669);">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                             </svg>
                             Simpan Penilaian
                         </button>
@@ -181,6 +206,32 @@
         const kategoriList = @json(array_keys($pertanyaan->toArray()));
         const totalSoal = {{ $pertanyaan->flatten()->count() }};
         let kategoriAktif = 0;
+
+        /* ── Custom Dropdown ── */
+        function toggleDropdown() {
+            const list = document.getElementById('dropdownList');
+            const chevron = document.getElementById('dropdownChevron');
+            const isOpen = !list.classList.contains('hidden');
+            list.classList.toggle('hidden', isOpen);
+            chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+        }
+
+        function pilihGuruDrop(id, label) {
+            document.getElementById('dropdownLabel').textContent = label;
+            document.getElementById('dropdownLabel').style.color = id ? 'var(--text-main)' : 'var(--text-muted)';
+            document.getElementById('dropdownList').classList.add('hidden');
+            document.getElementById('dropdownChevron').style.transform = 'rotate(0deg)';
+            gantiGuru(id);
+        }
+
+        // Tutup dropdown kalau klik di luar
+        document.addEventListener('click', function (e) {
+            const wrapper = document.getElementById('dropdownWrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                document.getElementById('dropdownList').classList.add('hidden');
+                document.getElementById('dropdownChevron').style.transform = 'rotate(0deg)';
+            }
+        });
 
         function gantiGuru(id) {
             document.getElementById('inputGuruId').value = id;
