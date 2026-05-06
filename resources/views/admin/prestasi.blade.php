@@ -87,25 +87,40 @@
                                     <td class="p-5">
                                         @php
                                             $katColor = match ($item->kategori) {
-                                                'Sertifikasi' => [
+                                                'Sertifikat Pendidik' => [
                                                     'bg' => 'rgba(99,102,241,0.1)',
                                                     'color' => '#a5b4fc',
                                                     'border' => 'rgba(99,102,241,0.2)',
                                                 ],
-                                                'Pelatihan' => [
+                                                'Pelatihan & Workshop' => [
                                                     'bg' => 'rgba(59,130,246,0.1)',
                                                     'color' => '#93c5fd',
                                                     'border' => 'rgba(59,130,246,0.2)',
                                                 ],
-                                                'Penghargaan' => [
+                                                'Karya Ilmiah' => [
+                                                    'bg' => 'rgba(168,85,247,0.1)',
+                                                    'color' => '#d8b4fe',
+                                                    'border' => 'rgba(168,85,247,0.2)',
+                                                ],
+                                                'Guru Berprestasi' => [
                                                     'bg' => 'rgba(234,179,8,0.1)',
                                                     'color' => '#fde047',
                                                     'border' => 'rgba(234,179,8,0.2)',
                                                 ],
-                                                'Publikasi' => [
-                                                    'bg' => 'rgba(168,85,247,0.1)',
-                                                    'color' => '#d8b4fe',
-                                                    'border' => 'rgba(168,85,247,0.2)',
+                                                'Inovasi Pembelajaran' => [
+                                                    'bg' => 'rgba(16,185,129,0.1)',
+                                                    'color' => '#6ee7b7',
+                                                    'border' => 'rgba(16,185,129,0.2)',
+                                                ],
+                                                'Pengabdian Masyarakat' => [
+                                                    'bg' => 'rgba(249,115,22,0.1)',
+                                                    'color' => '#fb923c',
+                                                    'border' => 'rgba(249,115,22,0.2)',
+                                                ],
+                                                'Organisasi Profesi' => [
+                                                    'bg' => 'rgba(14,165,233,0.1)',
+                                                    'color' => '#38bdf8',
+                                                    'border' => 'rgba(14,165,233,0.2)',
                                                 ],
                                                 default => [
                                                     'bg' => 'rgba(255,255,255,0.05)',

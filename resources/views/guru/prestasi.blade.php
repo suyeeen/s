@@ -218,27 +218,58 @@
                         </div>
 
                         <div class="grid grid-cols-2 gap-5">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Kategori</label>
-                                <select name="kategori" required
-                                    class="w-full px-4 py-3 rounded-2xl text-sm outline-none" style="background:var(--input-bg);border:1.5px solid var(--input-border);color:var(--text-main);">
-                                    @foreach (['Sertifikasi', 'Pelatihan', 'Penghargaan', 'Publikasi', 'Lainnya'] as $kat)
-                                        <option value="{{ $kat }}" style="background: #0a0a14;">
-                                            {{ $kat }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Tingkat</label>
-                                <select name="tingkat" required
-                                    class="w-full px-4 py-3 rounded-2xl text-sm outline-none" style="background:var(--input-bg);border:1.5px solid var(--input-border);color:var(--text-main);">
-                                    @foreach (['sekolah', 'kecamatan', 'kota', 'provinsi', 'nasional', 'internasional'] as $tkt)
-                                        <option value="{{ $tkt }}" style="background: #0a0a14;">
-                                            {{ ucfirst($tkt) }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
+
+    {{-- Kategori --}}
+    <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Kategori</label>
+        <select name="kategori" id="selectKategori" required
+                onchange="toggleKategoriLainnya(this.value)"
+                class="w-full px-4 py-3 rounded-2xl text-sm outline-none"
+                style="background:var(--input-bg);border:1.5px solid var(--input-border);color:var(--text-main);"
+                onfocus="this.style.borderColor='rgba(249,115,22,0.5)'"
+                onblur="this.style.borderColor='var(--input-border)'">
+            <option value="" disabled selected style="background:var(--card-bg)">-- Pilih Kategori --</option>
+            @foreach ([
+                'Sertifikat Pendidik',
+                'Pelatihan & Workshop',
+                'Karya Ilmiah',
+                'Guru Berprestasi',
+                'Inovasi Pembelajaran',
+                'Pengabdian Masyarakat',
+                'Organisasi Profesi',
+                'Lainnya',
+            ] as $kat)
+                <option value="{{ $kat }}" style="background:var(--card-bg)">{{ $kat }}</option>
+            @endforeach
+        </select>
+
+        {{-- Input teks muncul kalau pilih Lainnya --}}
+        <div id="inputLainnya" style="display:none;" class="mt-3">
+            <input type="text" name="kategori_lainnya"
+                   id="kategoriLainnyaInput"
+                   placeholder="Tuliskan kategori..."
+                   class="w-full px-4 py-3 rounded-2xl text-sm outline-none"
+                   style="background:var(--input-bg);border:1.5px solid rgba(249,115,22,0.4);color:var(--text-main);"
+                   onfocus="this.style.borderColor='rgba(249,115,22,0.7)'"
+                   onblur="this.style.borderColor='rgba(249,115,22,0.4)'">
+        </div>
+    </div>
+
+    {{-- Tingkat --}}
+    <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Tingkat</label>
+        <select name="tingkat"
+                class="w-full px-4 py-3 rounded-2xl text-sm outline-none"
+                style="background:var(--input-bg);border:1.5px solid var(--input-border);color:var(--text-main);"
+                onfocus="this.style.borderColor='rgba(249,115,22,0.5)'"
+                onblur="this.style.borderColor='var(--input-border)'">
+            <option value="" style="background:var(--card-bg)">— (Tidak Ditentukan)</option>
+            @foreach (['sekolah', 'kecamatan', 'kota', 'provinsi', 'nasional', 'internasional'] as $tkt)
+                <option value="{{ $tkt }}" style="background:var(--card-bg)">{{ ucfirst($tkt) }}</option>
+            @endforeach
+        </select>
+    </div>
+</div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Tahun</label>

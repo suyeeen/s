@@ -17,8 +17,16 @@ return new class extends Migration
             $table->string('nama_prestasi');
             $table->enum('tingkat', ['sekolah', 'kecamatan', 'kota', 'provinsi', 'nasional', 'internasional'])
                 ->default('sekolah');
-            $table->enum('kategori', ['Sertifikasi', 'Pelatihan', 'Penghargaan', 'Publikasi', 'Lainnya'])
-                ->default('Lainnya');
+            $table->enum('kategori', [
+                'Sertifikat Pendidik',
+                'Pelatihan/Workshop',
+                'Karya Ilmiah',
+                'Guru Berprestasi',
+                'Inovasi Pembelajaran',
+                'Pengabdian Masyarakat',
+                'Organisasi Profesi',
+                'Lainnya',
+            ])->default('Lainnya');
             $table->year('tahun');
             $table->string('file_bukti')->nullable()->comment('Path file di storage/app/public/prestasi');
             $table->enum('status', ['menunggu', 'tervalidasi', 'ditolak'])->default('menunggu');
