@@ -6,12 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Kuesioner extends Model
 {
-    //
     protected $table = 'kuesioner';
 
     protected $fillable = [
-        'guru_id', 'siswa_id', 'penilai_guru_id',
-        'tipe', 'tanggal', 'tahun_ajaran', 'semester'
+        'guru_id',
+        'siswa_id',
+        'penilai_guru_id',
+        'tipe',
+        'tanggal',
+        'tahun_ajaran',
+        'semester',
+        'kesan_pesan'
     ];
 
     protected $casts = ['tanggal' => 'date'];
