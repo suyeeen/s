@@ -183,13 +183,84 @@
         .swal2-popup {
             border-radius: 1.25rem !important;
         }
+
+        /* ── Fixed sidebar, scrollable content area ── */
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .app-shell {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-sidebar {
+            width: 256px;
+            /* w-64 */
+            flex-shrink: 0;
+            height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: relative;
+            /* tidak perlu sticky/fixed */
+        }
+
+        .app-sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .app-sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .app-sidebar::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        .app-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            /* main sendiri tidak scroll */
+            min-width: 0;
+        }
+
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            /* HANYA area ini yang scroll */
+            overflow-x: hidden;
+        }
+
+        .app-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .app-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .app-content::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        .app-content::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
     </style>
 </head>
 
-<body class="h-screen overflow-hidden" x-data="{ sidebarOpen: false }">
-    <div class="flex h-screen overflow-hidden">
+<body x-data="{ sidebarOpen: false }">
+    <div class="app-shell">
 
-        <aside class="hidden md:flex flex-col w-64 h-screen sticky top-0 flex-shrink-0 border-r overflow-y-auto">
+        <aside class="app-sidebar hidden md:flex flex-col border-r">
             @include('layouts.sidebar')
         </aside>
 
@@ -202,8 +273,8 @@
             @include('layouts.sidebar')
         </aside>
 
-        <main class="flex-1 flex flex-col h-screen overflow-y-auto">
-            <header class="md:hidden flex items-center justify-between p-4 border-b backdrop-blur">
+        <main class="app-main">
+            <header class="md:hidden flex items-center justify-between p-4 border-b backdrop-blur flex-shrink-0">
                 <span class="font-bold text-lg" style="color:var(--text-main)">STQM</span>
                 <div class="flex items-center gap-2">
                     <button onclick="toggleTheme()"
@@ -228,7 +299,7 @@
                 </div>
             </header>
 
-            <div class="flex-1 p-4 md:p-8">
+            <div class="app-content p-4 md:p-8">
                 @yield('content')
             </div>
         </main>
