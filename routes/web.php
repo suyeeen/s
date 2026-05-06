@@ -37,6 +37,8 @@ Route::middleware(['auth', 'role:guru'])->prefix('guru')->name('guru.')->group(f
     Route::get('/kuesioner',         [GuruController::class, 'kuesioner'])->name('kuesioner');
     Route::post('/kuesioner/submit', [GuruController::class, 'submitKuesioner'])->name('kuesioner.submit');
 
+    Route::get('/profil',            [GuruController::class, 'profil'])->name('profil');
+
     Route::get('/absensi',           [GuruController::class, 'absensi'])->name('absensi');
     Route::post('/absensi/scan',     [GuruController::class, 'scanRfid'])->name('absensi.scan');
 

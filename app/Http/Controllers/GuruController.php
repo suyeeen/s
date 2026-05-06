@@ -75,6 +75,54 @@ class GuruController extends Controller
         return redirect()->route('guru.kuesioner')->with('success', 'Penilaian berhasil disimpan!');
     }
 
+    public function profil()
+    {
+        $guru = auth()->user()->guru;
+
+        // Ambil semua kuesioner yang menilai guru ini (dari guru lain)
+        $kuesioner = \App\Models\Kuesioner::where('guru_id', $guru->id)
+            ->where('tipe', 'guru')
+            ->with('jawaban.pertanyaan')
+            ->get();
+
+        $totalPenilai = $kuesioner->count();
+        $skorKategori = ['pedagogik' => 0, 'kepribadian' => 0, 'sosial' => 0, 'profesional' => 0];
+        $hitungKategori = ['pedagogik' => 0, 'kepribadian' => 0, 'sosial' => 0, 'profesional' => 0];
+
+        foreach ($kuesioner as $k) {
+            foreach ($k->jawaban as $j) {
+                if ($j->pertanyaan && isset($skorKategori[$j->pertanyaan->kategori])) {
+                    $skorKategori[$j->pertanyaan->kategori] += $j->nilai;
+                    $hitungKategori[$j->pertanyaan->kategori]++;
+                }
+            }
+        }
+
+        foreach ($skorKategori as $kat => $total) {
+            $skorKategori[$kat] = $hitungKategori[$kat] > 0
+                ? round($total / $hitungKategori[$kat], 2)
+                : 0;
+        }
+
+        $nilaiAda = array_filter($skorKategori, function ($v) {
+            return $v > 0;
+        });
+        $skorRata = count($nilaiAda) > 0
+            ? round(array_sum($nilaiAda) / count($nilaiAda), 2)
+            : 0;
+
+        // Kesan & pesan — tanpa identitas penilai
+        $kesanPesan = \App\Models\Kuesioner::where('guru_id', $guru->id)
+            ->where('tipe', 'guru')
+            ->whereNotNull('kesan_pesan')
+            ->where('kesan_pesan', '!=', '')
+            ->select('kesan_pesan', 'tanggal', 'tahun_ajaran', 'semester')
+            ->orderByDesc('tanggal')
+            ->get();
+
+        return view('guru.profil', compact('guru', 'skorKategori', 'skorRata', 'totalPenilai', 'kesanPesan'));
+    }
+
     public function absensi()
     {
         $guru       = auth()->user()->guru;
