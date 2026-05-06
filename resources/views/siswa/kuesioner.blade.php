@@ -1,245 +1,889 @@
 @extends('layouts.app')
 
-@section('title', 'Isi Kuesioner')
+@section('title', 'Evaluasi Kinerja Guru')
+
+@push('styles')
+<style>
+    /* ═══════════════════════════════════
+       SISWA KUESIONER — Step-based flow
+       Mobile-first, Tailwind-compatible
+    ═══════════════════════════════════ */
+    :root {
+        --sk-primary: #4F63FF;
+        --sk-primary-dark: #3A4FE8;
+        --sk-primary-glow: rgba(79,99,255,0.16);
+        --sk-primary-soft: rgba(79,99,255,0.08);
+        --sk-green: #10B981;
+        --sk-green-soft: rgba(16,185,129,0.1);
+        --sk-orange: #F97316;
+        --sk-orange-soft: rgba(249,115,22,0.1);
+        --sk-amber: #F59E0B;
+        --sk-surface: var(--card-bg, #fff);
+        --sk-border: var(--card-border, rgba(79,99,255,0.13));
+        --sk-text: var(--text-main, #1A1D3A);
+        --sk-muted: var(--text-muted, #5A6070);
+        --sk-faint: var(--text-faint, #9AA0B5);
+        --sk-radius: 20px;
+        --sk-shadow: 0 8px 32px rgba(79,99,255,0.08);
+    }
+
+    .sk-wrap { max-width: 720px; margin: 0 auto; padding: 0 0 48px; }
+
+    /* ── Stepper header ── */
+    .sk-stepper {
+        display: flex;
+        align-items: flex-start;
+        gap: 0;
+        margin-bottom: 28px;
+        position: relative;
+    }
+    .sk-stepper::before {
+        content: '';
+        position: absolute;
+        top: 20px; left: 20px; right: 20px;
+        height: 2px;
+        background: var(--sk-border);
+        z-index: 0;
+    }
+    .sk-step {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        position: relative;
+        z-index: 1;
+    }
+    .sk-step-dot {
+        width: 40px; height: 40px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-family: 'Outfit', sans-serif;
+        font-weight: 800;
+        font-size: 15px;
+        transition: all 0.3s;
+        background: var(--sk-surface);
+        border: 2px solid var(--sk-border);
+        color: var(--sk-faint);
+    }
+    .sk-step.active .sk-step-dot {
+        background: var(--sk-primary);
+        border-color: var(--sk-primary);
+        color: white;
+        box-shadow: 0 4px 16px var(--sk-primary-glow);
+    }
+    .sk-step.done .sk-step-dot {
+        background: var(--sk-green);
+        border-color: var(--sk-green);
+        color: white;
+    }
+    .sk-step-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--sk-faint);
+        text-align: center;
+        line-height: 1.3;
+        max-width: 80px;
+    }
+    .sk-step.active .sk-step-label { color: var(--sk-primary); }
+    .sk-step.done .sk-step-label { color: var(--sk-green); }
+
+    /* ── Page title ── */
+    .sk-page-title {
+        margin-bottom: 24px;
+    }
+    .sk-page-title h1 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 26px;
+        font-weight: 800;
+        color: var(--sk-text);
+        line-height: 1.2;
+    }
+    .sk-page-title p {
+        font-size: 14px;
+        color: var(--sk-muted);
+        margin-top: 5px;
+    }
+
+    /* ── Card base ── */
+    .sk-card {
+        background: var(--sk-surface);
+        border: 1px solid var(--sk-border);
+        border-radius: var(--sk-radius);
+        box-shadow: var(--sk-shadow);
+        overflow: hidden;
+    }
+
+    /* ── Step panels ── */
+    .sk-panel { display: none; }
+    .sk-panel.active { display: block; animation: panelIn 0.35s ease both; }
+    @keyframes panelIn { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: none; } }
+
+    /* ═══ STEP 1: Aturan ═══ */
+    .sk-rules-header {
+        background: linear-gradient(135deg, var(--sk-primary) 0%, #6B7FFF 100%);
+        padding: 28px 28px 24px;
+        color: white;
+    }
+    .sk-rules-header-top {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 12px;
+    }
+    .sk-rules-icon {
+        width: 48px; height: 48px;
+        background: rgba(255,255,255,0.15);
+        border-radius: 14px;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+    }
+    .sk-rules-icon i { font-size: 22px; }
+    .sk-rules-header h2 { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800; }
+    .sk-rules-header p { font-size: 13.5px; opacity: 0.85; margin-top: 4px; }
+    .sk-rules-body { padding: 24px 28px; }
+    .sk-rule-item {
+        display: flex;
+        gap: 14px;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--sk-border);
+    }
+    .sk-rule-item:last-child { border-bottom: none; }
+    .sk-rule-num {
+        width: 28px; height: 28px;
+        border-radius: 8px;
+        background: var(--sk-primary-soft);
+        color: var(--sk-primary);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 12px; font-weight: 800;
+        flex-shrink: 0;
+        font-family: 'Outfit', sans-serif;
+    }
+    .sk-rule-text { font-size: 13.5px; color: var(--sk-text); line-height: 1.6; padding-top: 4px; }
+    .sk-rule-text strong { color: var(--sk-primary); }
+
+    .sk-confirm-row {
+        padding: 20px 28px;
+        border-top: 1px solid var(--sk-border);
+        background: var(--sk-primary-soft);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .sk-confirm-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--sk-primary); flex-shrink: 0; cursor: pointer; }
+    .sk-confirm-row label { font-size: 13.5px; font-weight: 600; color: var(--sk-text); cursor: pointer; }
+
+    /* ═══ STEP 2: Pilih Guru ═══ */
+    .sk-guru-header { padding: 24px 28px; border-bottom: 1px solid var(--sk-border); }
+    .sk-guru-header h2 { font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: var(--sk-text); }
+    .sk-guru-header p { font-size: 13px; color: var(--sk-muted); margin-top: 4px; }
+
+    .sk-search-wrap { padding: 16px 28px; border-bottom: 1px solid var(--sk-border); }
+    .sk-search-inner { position: relative; }
+    .sk-search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; color: var(--sk-faint); pointer-events: none; }
+    .sk-search-input {
+        width: 100%;
+        padding: 11px 14px 11px 42px;
+        background: var(--sk-primary-soft);
+        border: 1.5px solid var(--sk-border);
+        border-radius: 12px;
+        font-size: 14px;
+        color: var(--sk-text);
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        font-family: inherit;
+    }
+    .sk-search-input:focus { border-color: var(--sk-primary); box-shadow: 0 0 0 3px var(--sk-primary-glow); background: white; }
+    .sk-search-inner:focus-within .sk-search-icon { color: var(--sk-primary); }
+
+    .sk-guru-list { max-height: 320px; overflow-y: auto; }
+    .sk-guru-list::-webkit-scrollbar { width: 4px; }
+    .sk-guru-list::-webkit-scrollbar-track { background: transparent; }
+    .sk-guru-list::-webkit-scrollbar-thumb { background: var(--sk-border); border-radius: 4px; }
+
+    .sk-guru-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 28px;
+        cursor: pointer;
+        transition: background 0.15s;
+        border-bottom: 1px solid var(--sk-border);
+        position: relative;
+    }
+    .sk-guru-item:last-child { border-bottom: none; }
+    .sk-guru-item:hover { background: var(--sk-primary-soft); }
+    .sk-guru-item.selected { background: var(--sk-primary-soft); }
+    .sk-guru-item.sudah { opacity: 0.5; cursor: not-allowed; }
+
+    .sk-guru-avatar {
+        width: 42px; height: 42px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--sk-primary-soft), rgba(107,127,255,0.15));
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+        font-family: 'Outfit', sans-serif;
+        font-weight: 800;
+        font-size: 16px;
+        color: var(--sk-primary);
+        border: 1.5px solid var(--sk-border);
+    }
+    .sk-guru-item.selected .sk-guru-avatar {
+        background: var(--sk-primary);
+        color: white;
+        border-color: var(--sk-primary);
+    }
+    .sk-guru-info { flex: 1; min-width: 0; }
+    .sk-guru-nama { font-weight: 700; font-size: 14px; color: var(--sk-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sk-guru-mapel { font-size: 12px; color: var(--sk-muted); margin-top: 2px; }
+    .sk-guru-check {
+        width: 22px; height: 22px;
+        border-radius: 50%;
+        border: 2px solid var(--sk-border);
+        display: flex; align-items: center; justify-content: center;
+        transition: all 0.2s;
+        flex-shrink: 0;
+    }
+    .sk-guru-item.selected .sk-guru-check {
+        background: var(--sk-primary);
+        border-color: var(--sk-primary);
+        color: white;
+    }
+    .sk-guru-check i { font-size: 11px; display: none; }
+    .sk-guru-item.selected .sk-guru-check i { display: block; }
+
+    .sk-badge-sudah {
+        position: absolute; right: 28px; top: 50%; transform: translateY(-50%);
+        background: var(--sk-green-soft);
+        border: 1px solid rgba(16,185,129,0.2);
+        color: var(--sk-green);
+        font-size: 10px; font-weight: 700;
+        padding: 2px 8px; border-radius: 20px;
+        white-space: nowrap;
+    }
+
+    .sk-empty-search { padding: 32px 28px; text-align: center; color: var(--sk-faint); font-size: 13.5px; }
+
+    /* Selected guru preview */
+    .sk-guru-selected-bar {
+        display: none;
+        padding: 14px 28px;
+        border-top: 1px solid var(--sk-border);
+        background: linear-gradient(135deg, rgba(79,99,255,0.06), rgba(107,127,255,0.04));
+        align-items: center;
+        gap: 12px;
+    }
+    .sk-guru-selected-bar.show { display: flex; }
+    .sk-guru-selected-bar .label { font-size: 12px; color: var(--sk-muted); font-weight: 600; }
+    .sk-guru-selected-bar .name { font-size: 14px; font-weight: 700; color: var(--sk-primary); }
+    .sk-guru-selected-bar .mapel { font-size: 12px; color: var(--sk-muted); }
+
+    /* ═══ STEP 3: Kuesioner ═══ */
+    .sk-q-header { padding: 20px 28px; border-bottom: 1px solid var(--sk-border); }
+    .sk-q-header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .sk-q-header-top h2 { font-family: 'Outfit', sans-serif; font-size: 17px; font-weight: 800; color: var(--sk-text); }
+    .sk-progress-info { font-size: 12.5px; color: var(--sk-muted); font-weight: 600; }
+    .sk-progress-info span { color: var(--sk-primary); font-weight: 800; }
+
+    .sk-progress-bar-wrap {
+        height: 8px;
+        background: var(--sk-primary-soft);
+        border-radius: 99px;
+        overflow: hidden;
+    }
+    .sk-progress-bar-fill {
+        height: 100%;
+        border-radius: 99px;
+        background: linear-gradient(90deg, var(--sk-primary), #6B7FFF);
+        transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+        width: 0%;
+    }
+
+    /* Tabs */
+    .sk-tabs { display: flex; gap: 6px; padding: 16px 28px; overflow-x: auto; border-bottom: 1px solid var(--sk-border); }
+    .sk-tabs::-webkit-scrollbar { display: none; }
+    .sk-tab {
+        flex-shrink: 0;
+        padding: 8px 16px;
+        border-radius: 10px;
+        font-size: 12.5px;
+        font-weight: 600;
+        border: 1.5px solid var(--sk-border);
+        cursor: pointer;
+        transition: all 0.2s;
+        color: var(--sk-muted);
+        background: var(--sk-surface);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        white-space: nowrap;
+        text-transform: capitalize;
+    }
+    .sk-tab.active {
+        background: var(--sk-primary);
+        border-color: var(--sk-primary);
+        color: white;
+        box-shadow: 0 4px 12px var(--sk-primary-glow);
+    }
+    .sk-tab-done-dot {
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        background: var(--sk-green);
+        display: none;
+    }
+    .sk-tab.tab-done .sk-tab-done-dot { display: block; }
+    .sk-tab.tab-done:not(.active) { border-color: rgba(16,185,129,0.3); color: var(--sk-green); }
+
+    /* Questions */
+    .sk-q-section { display: none; padding: 20px 28px 8px; }
+    .sk-q-section.active { display: block; animation: panelIn 0.3s ease both; }
+
+    .sk-section-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--sk-primary-soft);
+        border: 1px solid rgba(79,99,255,0.2);
+        color: var(--sk-primary);
+        padding: 5px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: capitalize;
+        margin-bottom: 18px;
+    }
+
+    .sk-question-card {
+        border: 1.5px solid var(--sk-border);
+        border-radius: 16px;
+        padding: 18px;
+        margin-bottom: 12px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .sk-question-card:hover { border-color: rgba(79,99,255,0.25); }
+    .sk-question-card.answered { border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.02); }
+
+    .sk-q-text {
+        font-size: 14px;
+        color: var(--sk-text);
+        line-height: 1.65;
+        margin-bottom: 14px;
+        display: flex;
+        gap: 10px;
+    }
+    .sk-q-num {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 800;
+        color: var(--sk-primary);
+        flex-shrink: 0;
+    }
+
+    .sk-options {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 6px;
+    }
+    .sk-option {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        padding: 10px 4px;
+        border-radius: 12px;
+        border: 1.5px solid var(--sk-border);
+        cursor: pointer;
+        transition: all 0.18s;
+        background: var(--sk-surface);
+        text-align: center;
+    }
+    .sk-option:hover { border-color: var(--sk-primary); background: var(--sk-primary-soft); }
+    .sk-option input[type="radio"] { position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0; }
+    .sk-option-num {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 900;
+        font-size: 18px;
+        color: var(--sk-muted);
+        line-height: 1;
+        transition: color 0.18s;
+    }
+    .sk-option-label {
+        font-size: 9.5px;
+        font-weight: 600;
+        color: var(--sk-faint);
+        line-height: 1.2;
+        transition: color 0.18s;
+    }
+    .sk-option.selected {
+        border-color: var(--sk-primary);
+        background: var(--sk-primary);
+    }
+    .sk-option.selected .sk-option-num { color: white; }
+    .sk-option.selected .sk-option-label { color: rgba(255,255,255,0.8); }
+
+    @media (max-width: 480px) {
+        .sk-option-label { font-size: 8.5px; }
+        .sk-options { gap: 4px; }
+        .sk-option { padding: 8px 2px; border-radius: 10px; }
+        .sk-option-num { font-size: 16px; }
+    }
+
+    /* Nav footer */
+    .sk-footer-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 18px 28px;
+        border-top: 1px solid var(--sk-border);
+        background: rgba(79,99,255,0.02);
+    }
+
+    /* Buttons */
+    .sk-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 11px 20px;
+        border-radius: 12px;
+        font-size: 13.5px;
+        font-weight: 700;
+        cursor: pointer;
+        border: none;
+        font-family: inherit;
+        transition: all 0.18s;
+        text-decoration: none;
+    }
+    .sk-btn-ghost {
+        background: none;
+        border: 1.5px solid var(--sk-border);
+        color: var(--sk-muted);
+    }
+    .sk-btn-ghost:hover { border-color: var(--sk-primary); color: var(--sk-primary); background: var(--sk-primary-soft); }
+    .sk-btn-primary {
+        background: linear-gradient(135deg, var(--sk-primary), var(--sk-primary-dark));
+        color: white;
+        box-shadow: 0 6px 16px var(--sk-primary-glow);
+    }
+    .sk-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(79,99,255,0.3); }
+    .sk-btn-primary:active { transform: translateY(0); }
+    .sk-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+    .sk-btn-green {
+        background: linear-gradient(135deg, var(--sk-green), #059669);
+        color: white;
+        box-shadow: 0 6px 16px rgba(16,185,129,0.2);
+    }
+    .sk-btn-green:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(16,185,129,0.28); }
+
+    /* Alert flash */
+    .sk-flash {
+        border-radius: 14px;
+        padding: 12px 18px;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13.5px;
+        font-weight: 600;
+    }
+    .sk-flash-success { background: var(--sk-green-soft); border: 1px solid rgba(16,185,129,0.25); color: #065f46; }
+    .sk-flash-error { background: rgba(220,38,38,0.07); border: 1px solid rgba(220,38,38,0.2); color: #991B1B; }
+
+    /* Already-rated info */
+    .sk-info-box {
+        border-radius: 14px;
+        padding: 14px 18px;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        background: rgba(79,99,255,0.06);
+        border: 1px solid rgba(79,99,255,0.15);
+        font-size: 13.5px;
+        color: var(--sk-text);
+    }
+    .sk-info-box i { color: var(--sk-primary); font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+</style>
+@endpush
 
 @section('content')
-    <div class="max-w-4xl mx-auto space-y-8">
+<div class="sk-wrap">
 
-        {{-- Header --}}
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div>
-                <h1 class="text-3xl font-bold" style="color:var(--text-main)" tracking-tight">Evaluasi Kinerja Guru</h1>
-                <p class="text-sm mt-2" style="color:var(--text-muted)">Isi kuesioner dengan jujur dan objektif.</p>
-            </div>
-
-            {{-- Pilih Guru --}}
-            <div class="w-full md:w-80">
-                <select id="pilihGuru" class="w-full px-4 py-3 rounded-2xl text-white text-sm outline-none transition-all"
-                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);"
-                    onchange="gantiGuru(this.value)">
-                    <option value="">-- Pilih Guru yang Dinilai --</option>
-                    @foreach ($guru as $g)
-                        <option value="{{ $g->id }}" style="background: #0a0a14;">
-                            {{ $g->nama }} - {{ $g->mata_pelajaran }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+    {{-- Flash messages --}}
+    @if (session('success'))
+        <div class="sk-flash sk-flash-success">
+            <i class="bi bi-check-circle-fill" style="font-size:18px;"></i>
+            {{ session('success') }}
         </div>
-
-        {{-- Info: belum pilih guru --}}
-        <div id="infoTidakAdaGuru" class="rounded-3xl p-6 flex items-start gap-5"
-            style="background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2);">
-            <svg class="w-7 h-7 text-blue-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <div>
-                <h3 class="font-semibold text-blue-300 text-lg">Pilih Guru Terlebih Dahulu</h3>
-                <p class="text-blue-400/80 mt-1 text-sm">
-                    Silakan pilih guru yang ingin Anda evaluasi dari dropdown di atas untuk memulai pengisian kuesioner.
-                </p>
-            </div>
+    @endif
+    @if (session('error'))
+        <div class="sk-flash sk-flash-error">
+            <i class="bi bi-exclamation-circle-fill" style="font-size:18px;"></i>
+            {{ session('error') }}
         </div>
+    @endif
 
-        {{-- Form Kuesioner (tersembunyi sampai guru dipilih) --}}
-        <div id="formKuesioner" class="hidden">
-            <form method="POST" action="{{ route('siswa.kuesioner.submit') }}" id="formKuesionerEl">
-                @csrf
-                <input type="hidden" name="guru_id" id="inputGuruId">
-
-                {{-- Progress Bar --}}
-                <div class="rounded-3xl overflow-hidden"
-                    style="background:var(--card-bg);border:1px solid var(--card-border);">
-
-                    <div class="p-8" style="border-bottom:1px solid var(--card-divider);">
-                        <div class="flex justify-between text-sm font-medium text-gray-400 mb-3">
-                            <span>Progress Pengisian</span>
-                            <span class="text-orange-400">
-                                <span id="progressPersen">0</span>%
-                                <span class="text-gray-500">
-                                    (<span id="progressIsi">0</span>/<span id="progressTotal">0</span>)
-                                </span>
-                            </span>
-                        </div>
-                        <div class="w-full rounded-full h-3"
-                            style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.05);">
-                            <div id="progressBar" class="h-full rounded-full transition-all duration-500"
-                                style="width: 0%; background: linear-gradient(90deg, #f97316, #eab308);"></div>
-                        </div>
-
-                        {{-- Tab Kategori --}}
-                        <div class="flex gap-3 mt-8 overflow-x-auto pb-2">
-                            @foreach ($pertanyaan as $kategori => $soalList)
-                                <button type="button" onclick="gantiKategori('{{ $kategori }}')"
-                                    id="tab-{{ $kategori }}"
-                                    class="px-5 py-2.5 rounded-2xl text-sm font-medium whitespace-nowrap transition-all capitalize">
-                                    {{ $kategori }}
-                                </button>
-                            @endforeach
-                        </div>
-                    </div>
-
-                    {{-- Soal per Kategori --}}
-                    @foreach ($pertanyaan as $kategori => $soalList)
-                        <div id="section-{{ $kategori }}" class="kategori-section hidden p-8">
-                            <h3 class="text-xl font-semibold text-white mb-8 flex items-center gap-4">
-                                <span class="px-3 py-1.5 rounded-xl text-sm font-bold capitalize"
-                                    style="background: rgba(249,115,22,0.15); color: #f97316; border: 1px solid rgba(249,115,22,0.2);">
-                                    Kompetensi {{ ucfirst($kategori) }}
-                                </span>
-                            </h3>
-
-                            <div class="space-y-6">
-                                @foreach ($soalList as $index => $soal)
-                                    <div class="rounded-3xl p-6 transition-all duration-300"
-                                        style="background:var(--card-bg-soft);border:1px solid var(--card-border-soft);"
-                                        onmouseover="this.style.background='rgba(255,255,255,0.04)'"
-                                        onmouseout="this.style.background='rgba(255,255,255,0.02)'">
-
-                                        <p class="font-medium text-gray-200 mb-6 flex gap-4 text-base leading-relaxed">
-                                            <span class="text-orange-500 font-bold shrink-0">{{ $loop->iteration }}.</span>
-                                            {{ $soal->teks_pertanyaan }}
-                                        </p>
-
-                                        <div class="grid grid-cols-5 gap-3">
-                                            @foreach ([1 => 'Sangat Tidak Setuju', 2 => 'Tidak Setuju', 3 => 'Cukup Setuju', 4 => 'Setuju', 5 => 'Sangat Setuju'] as $val => $label)
-                                                <label
-                                                    class="jawaban-option flex flex-col items-center justify-center p-4 rounded-2xl cursor-pointer transition-all text-center"
-                                                    style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); color: #9ca3af;"
-                                                    onmouseover="if(!this.classList.contains('selected')) { this.style.background='rgba(255,255,255,0.06)'; this.style.color='#e5e7eb'; }"
-                                                    onmouseout="if(!this.classList.contains('selected')) { this.style.background='rgba(255,255,255,0.03)'; this.style.color='#9ca3af'; }">
-                                                    <input type="radio" name="jawaban[{{ $soal->id }}]"
-                                                        value="{{ $val }}" class="sr-only"
-                                                        onchange="pilihjawaban(this)">
-                                                    <span class="text-2xl font-bold mb-2">{{ $val }}</span>
-                                                    <span
-                                                        class="text-[10px] leading-tight font-medium">{{ $label }}</span>
-                                                </label>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endforeach
-
-                    {{-- Footer Navigasi --}}
-                    <div class="p-8 flex justify-between items-center"
-                        style="border-top: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02);">
-                        <button type="button" onclick="prevKategori()" id="btnPrev"
-                            class="flex items-center gap-2 px-6 py-3 rounded-2xl text-sm font-medium text-gray-400 transition-all"
-                            style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                            </svg>
-                            Sebelumnya
-                        </button>
-
-                        <button type="button" onclick="nextKategori()" id="btnNext"
-                            class="flex items-center gap-2 px-6 py-3 rounded-2xl text-sm font-semibold text-white transition-all"
-                            style="background: linear-gradient(135deg, #f97316, #eab308);">
-                            Selanjutnya
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </button>
-
-                        <button type="submit" id="btnSubmit"
-                            class="hidden flex items-center gap-2 px-6 py-3 rounded-2xl text-sm font-semibold text-white transition-all"
-                            style="background: linear-gradient(135deg, #10b981, #059669);">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7" />
-                            </svg>
-                            Kirim Evaluasi
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
-
+    {{-- Page title --}}
+    <div class="sk-page-title">
+        <h1>Evaluasi Kinerja Guru 📋</h1>
+        <p>Ikuti langkah-langkah di bawah untuk mengisi kuesioner dengan benar.</p>
     </div>
 
-    <script>
-        const kategoriList = @json(array_keys($pertanyaan->toArray()));
-        const totalSoal = {{ $pertanyaan->flatten()->count() }};
-        let kategoriAktif = 0;
+    {{-- Stepper --}}
+    <div class="sk-stepper" id="stepper">
+        <div class="sk-step active" id="dot-1">
+            <div class="sk-step-dot">1</div>
+            <div class="sk-step-label">Baca Aturan</div>
+        </div>
+        <div class="sk-step" id="dot-2">
+            <div class="sk-step-dot">2</div>
+            <div class="sk-step-label">Pilih Guru</div>
+        </div>
+        <div class="sk-step" id="dot-3">
+            <div class="sk-step-dot">3</div>
+            <div class="sk-step-label">Isi Kuesioner</div>
+        </div>
+    </div>
 
-        // Ganti guru
-        function gantiGuru(id) {
-            document.getElementById('inputGuruId').value = id;
-            document.getElementById('infoTidakAdaGuru').classList.toggle('hidden', id !== '');
-            document.getElementById('formKuesioner').classList.toggle('hidden', id === '');
-            if (id !== '') gantiKategori(kategoriList[0]);
+    {{-- STEP 1: ATURAN --}}
+    <div class="sk-panel active" id="panel-1">
+        <div class="sk-card">
+            <div class="sk-rules-header">
+                <div class="sk-rules-header-top">
+                    <div class="sk-rules-icon"><i class="bi bi-info-circle-fill"></i></div>
+                    <div>
+                        <h2>Petunjuk Pengisian</h2>
+                        <p>Harap baca seluruh aturan sebelum memulai evaluasi</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sk-rules-body">
+                <div class="sk-rule-item">
+                    <div class="sk-rule-num">1</div>
+                    <div class="sk-rule-text">Evaluasi dilakukan secara <strong>jujur dan objektif</strong> berdasarkan pengalaman belajar kamu bersama guru tersebut.</div>
+                </div>
+                <div class="sk-rule-item">
+                    <div class="sk-rule-num">2</div>
+                    <div class="sk-rule-text">Pilih <strong>satu guru</strong> dari daftar yang tersedia. Kamu hanya dapat menilai setiap guru <strong>satu kali</strong> per periode.</div>
+                </div>
+                <div class="sk-rule-item">
+                    <div class="sk-rule-num">3</div>
+                    <div class="sk-rule-text">Jawab semua pertanyaan dengan memilih skala <strong>1 (Sangat Tidak Setuju)</strong> hingga <strong>5 (Sangat Setuju)</strong>.</div>
+                </div>
+                <div class="sk-rule-item">
+                    <div class="sk-rule-num">4</div>
+                    <div class="sk-rule-text">Identitas kamu bersifat <strong>rahasia</strong>. Hasil evaluasi hanya digunakan untuk kepentingan pengembangan kualitas guru.</div>
+                </div>
+                <div class="sk-rule-item">
+                    <div class="sk-rule-num">5</div>
+                    <div class="sk-rule-text">Pastikan semua pertanyaan telah dijawab sebelum menekan tombol <strong>Kirim Evaluasi</strong>. Jawaban tidak dapat diubah setelah dikirim.</div>
+                </div>
+            </div>
+
+            <div class="sk-confirm-row">
+                <input type="checkbox" id="confirmRead" onchange="toggleNextStep1()">
+                <label for="confirmRead">Saya sudah membaca dan memahami semua aturan di atas</label>
+            </div>
+
+            <div style="padding: 16px 28px; border-top: 1px solid var(--sk-border);">
+                <button class="sk-btn sk-btn-primary" id="btnStep1Next" onclick="goToStep(2)" disabled style="width:100%; justify-content:center;">
+                    Lanjut: Pilih Guru
+                    <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {{-- STEP 2: PILIH GURU --}}
+    <div class="sk-panel" id="panel-2">
+        <div class="sk-card">
+            <div class="sk-guru-header">
+                <h2>Pilih Guru yang Akan Dinilai</h2>
+                <p>Pilih guru yang mengajarmu. Guru yang sudah dinilai periode ini tidak dapat dipilih kembali.</p>
+            </div>
+
+            <div class="sk-search-wrap">
+                <div class="sk-search-inner">
+                    <i class="bi bi-search sk-search-icon"></i>
+                    <input type="text" class="sk-search-input" id="guruSearch" placeholder="Cari nama guru atau mata pelajaran..." oninput="filterGuru(this.value)">
+                </div>
+            </div>
+
+            <div class="sk-guru-list" id="guruList">
+                @foreach ($guru as $g)
+                    @php $sudah = in_array($g->id, $sudahDinilai); @endphp
+                    <div class="sk-guru-item {{ $sudah ? 'sudah' : '' }}"
+                        id="guru-item-{{ $g->id }}"
+                        data-id="{{ $g->id }}"
+                        data-nama="{{ strtolower($g->nama) }}"
+                        data-mapel="{{ strtolower($g->mata_pelajaran) }}"
+                        onclick="{{ $sudah ? '' : 'selectGuru(this)' }}">
+
+                        <div class="sk-guru-avatar">{{ strtoupper(substr($g->nama, 0, 1)) }}</div>
+                        <div class="sk-guru-info">
+                            <div class="sk-guru-nama">{{ $g->nama }}</div>
+                            <div class="sk-guru-mapel">{{ $g->mata_pelajaran }}</div>
+                        </div>
+                        @if ($sudah)
+                            <span class="sk-badge-sudah"><i class="bi bi-check2-circle"></i> Sudah Dinilai</span>
+                        @else
+                            <div class="sk-guru-check">
+                                <i class="bi bi-check2"></i>
+                            </div>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+
+            <div id="emptySearch" class="sk-empty-search" style="display:none;">
+                <i class="bi bi-search" style="font-size:28px; display:block; margin-bottom:8px; opacity:0.3;"></i>
+                Tidak ada guru yang cocok dengan pencarianmu.
+            </div>
+
+            <div class="sk-guru-selected-bar" id="selectedBar">
+                <i class="bi bi-person-check-fill" style="color: var(--sk-primary); font-size:20px;"></i>
+                <div>
+                    <div class="label">Guru dipilih:</div>
+                    <div class="name" id="selectedName">—</div>
+                    <div class="mapel" id="selectedMapel"></div>
+                </div>
+            </div>
+
+            <div style="padding: 16px 28px; border-top: 1px solid var(--sk-border); display:flex; gap:10px;">
+                <button class="sk-btn sk-btn-ghost" onclick="goToStep(1)">
+                    <i class="bi bi-arrow-left"></i> Kembali
+                </button>
+                <button class="sk-btn sk-btn-primary" id="btnStep2Next" onclick="goToStep(3)" disabled style="flex:1; justify-content:center;">
+                    Lanjut: Isi Kuesioner
+                    <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {{-- STEP 3: KUESIONER --}}
+    <div class="sk-panel" id="panel-3">
+        <form method="POST" action="{{ route('siswa.kuesioner.submit') }}" id="formKuesioner">
+            @csrf
+            <input type="hidden" name="guru_id" id="inputGuruId">
+
+            <div class="sk-card">
+                <div class="sk-q-header">
+                    <div class="sk-q-header-top">
+                        <h2 id="q-guru-name">Evaluasi Guru</h2>
+                        <div class="sk-progress-info">
+                            <span id="persen">0</span>% selesai
+                            (<span id="terisi">0</span>/<span id="total">{{ $pertanyaan->flatten()->count() }}</span>)
+                        </div>
+                    </div>
+                    <div class="sk-progress-bar-wrap">
+                        <div class="sk-progress-bar-fill" id="progressFill"></div>
+                    </div>
+                </div>
+
+                <div class="sk-tabs" id="tabsBar">
+                    @foreach ($pertanyaan as $kategori => $soalList)
+                        <button type="button" class="sk-tab" id="tab-{{ $kategori }}" onclick="gantiTab('{{ $kategori }}')">
+                            <div class="sk-tab-done-dot"></div>
+                            {{ ucfirst($kategori) }}
+                        </button>
+                    @endforeach
+                </div>
+
+                @foreach ($pertanyaan as $kategori => $soalList)
+                    <div class="sk-q-section" id="section-{{ $kategori }}">
+                        <div class="sk-section-label">
+                            <i class="bi bi-bookmark-fill"></i>
+                            Kompetensi {{ ucfirst($kategori) }}
+                        </div>
+
+                        @foreach ($soalList as $soal)
+                            <div class="sk-question-card" id="qcard-{{ $soal->id }}">
+                                <p class="sk-q-text">
+                                    <span class="sk-q-num">{{ $loop->iteration }}.</span>
+                                    <span>{{ $soal->teks_pertanyaan }}</span>
+                                </p>
+                                <div class="sk-options">
+                                    @foreach ([1 => 'Sangat Tidak Setuju', 2 => 'Tidak Setuju', 3 => 'Cukup', 4 => 'Setuju', 5 => 'Sangat Setuju'] as $val => $label)
+                                        <label class="sk-option" id="opt-{{ $soal->id }}-{{ $val }}">
+                                            <input type="radio" name="jawaban[{{ $soal->id }}]" value="{{ $val }}" onchange="pilihJawaban(this, {{ $soal->id }}, '{{ $kategori }}')">
+                                            <span class="sk-option-num">{{ $val }}</span>
+                                            <span class="sk-option-label">{{ $label }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endforeach
+
+                <div class="sk-footer-nav">
+                    <button type="button" class="sk-btn sk-btn-ghost" id="btnPrev" onclick="prevTab()" disabled>
+                        <i class="bi bi-chevron-left"></i> Sebelumnya
+                    </button>
+
+                    <button type="button" class="sk-btn sk-btn-primary" id="btnNext" onclick="nextTab()">
+                        Selanjutnya <i class="bi bi-chevron-right"></i>
+                    </button>
+
+                    <button type="submit" class="sk-btn sk-btn-green" id="btnKirim" style="display:none;" onclick="return konfirmasiKirim()">
+                        <i class="bi bi-send-fill"></i> Kirim Evaluasi
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<script>
+    // ── State ──
+    const kategoriList = @json(array_keys($pertanyaan->toArray()));
+    const totalSoal = {{ $pertanyaan->flatten()->count() }};
+    let currentStep = 1;
+    let selectedGuruId = null;
+    let currentTabIdx = 0;
+
+    // count answered per category
+    const answered = {}; // pertanyaan_id -> bool
+    kategoriList.forEach(k => { answered[k] = {}; });
+
+    // ── Step navigation ──
+    function goToStep(step) {
+        if (step === 3 && !selectedGuruId) return;
+
+        for (let i = 1; i <= 3; i++) {
+            document.getElementById('panel-' + i).classList.remove('active');
+            const dot = document.getElementById('dot-' + i);
+            dot.classList.remove('active', 'done');
+            if (i < step) dot.classList.add('done');
+            else if (i === step) dot.classList.add('active');
+
+            // Update dot content
+            const dotEl = dot.querySelector('.sk-step-dot');
+            if (i < step) dotEl.innerHTML = '<i class="bi bi-check2" style="font-size:15px;"></i>';
+            else dotEl.textContent = i;
         }
 
-        // Ganti kategori/tab
-        function gantiKategori(kategori) {
-            document.querySelectorAll('.kategori-section').forEach(el => el.classList.add('hidden'));
-            document.getElementById('section-' + kategori).classList.remove('hidden');
+        document.getElementById('panel-' + step).classList.add('active');
+        currentStep = step;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
 
-            kategoriAktif = kategoriList.indexOf(kategori);
-
-            // Update style tab
-            kategoriList.forEach(k => {
-                const tab = document.getElementById('tab-' + k);
-                if (k === kategori) {
-                    tab.style.background = 'linear-gradient(135deg, rgba(249,115,22,0.2), rgba(234,179,8,0.1))';
-                    tab.style.border = '1px solid rgba(249,115,22,0.3)';
-                    tab.style.color = 'white';
-                } else {
-                    tab.style.background = 'rgba(255,255,255,0.03)';
-                    tab.style.border = '1px solid rgba(255,255,255,0.06)';
-                    tab.style.color = '#9ca3af';
-                }
-            });
-
-            // Tombol prev/next/submit
-            document.getElementById('btnPrev').style.opacity = kategoriAktif === 0 ? '0.3' : '1';
-            document.getElementById('btnPrev').disabled = kategoriAktif === 0;
-            document.getElementById('btnNext').classList.toggle('hidden', kategoriAktif === kategoriList.length - 1);
-            document.getElementById('btnSubmit').classList.toggle('hidden', kategoriAktif !== kategoriList.length - 1);
+        if (step === 3) {
+            document.getElementById('inputGuruId').value = selectedGuruId;
+            gantiTab(kategoriList[0]);
         }
+    }
 
-        function nextKategori() {
-            if (kategoriAktif < kategoriList.length - 1) gantiKategori(kategoriList[kategoriAktif + 1]);
-        }
+    // ── Step 1: confirm checkbox ──
+    function toggleNextStep1() {
+        const checked = document.getElementById('confirmRead').checked;
+        document.getElementById('btnStep1Next').disabled = !checked;
+    }
 
-        function prevKategori() {
-            if (kategoriAktif > 0) gantiKategori(kategoriList[kategoriAktif - 1]);
-        }
+    // ── Step 2: guru selection ──
+    function selectGuru(el) {
+        document.querySelectorAll('.sk-guru-item').forEach(i => i.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedGuruId = el.dataset.id;
 
-        // Pilih jawaban → update style + progress
-        function pilihjawaban(input) {
-            const options = input.closest('.grid').querySelectorAll('.jawaban-option');
-            options.forEach(opt => {
-                opt.classList.remove('selected');
-                opt.style.background = 'rgba(255,255,255,0.03)';
-                opt.style.border = '1px solid rgba(255,255,255,0.06)';
-                opt.style.color = '#9ca3af';
-            });
-            const selected = input.closest('.jawaban-option');
-            selected.classList.add('selected');
-            selected.style.background = 'rgba(249,115,22,0.1)';
-            selected.style.border = '1px solid rgba(249,115,22,0.4)';
-            selected.style.color = '#f97316';
-            updateProgress();
-        }
+        const nama = el.querySelector('.sk-guru-nama').textContent;
+        const mapel = el.querySelector('.sk-guru-mapel').textContent;
 
-        // Update progress bar
-        function updateProgress() {
-            const terisi = document.querySelectorAll('input[type=radio]:checked').length;
-            const persen = Math.round(terisi / totalSoal * 100);
-            document.getElementById('progressBar').style.width = persen + '%';
-            document.getElementById('progressPersen').textContent = persen;
-            document.getElementById('progressIsi').textContent = terisi;
-            document.getElementById('progressTotal').textContent = totalSoal;
-        }
+        document.getElementById('selectedName').textContent = nama;
+        document.getElementById('selectedMapel').textContent = mapel;
+        document.getElementById('selectedBar').classList.add('show');
+        document.getElementById('btnStep2Next').disabled = false;
 
-        // Init
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('progressTotal').textContent = totalSoal;
+        // set q header name
+        document.getElementById('q-guru-name').textContent = 'Evaluasi: ' + nama;
+    }
+
+    function filterGuru(q) {
+        q = q.toLowerCase().trim();
+        let visible = 0;
+        document.querySelectorAll('.sk-guru-item').forEach(el => {
+            const match = el.dataset.nama.includes(q) || el.dataset.mapel.includes(q) || q === '';
+            el.style.display = match ? '' : 'none';
+            if (match) visible++;
         });
-    </script>
+        document.getElementById('emptySearch').style.display = visible === 0 ? 'block' : 'none';
+    }
+
+    // ── Step 3: tab/question logic ──
+    function gantiTab(kat) {
+        document.querySelectorAll('.sk-q-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.sk-tab').forEach(t => t.classList.remove('active'));
+
+        document.getElementById('section-' + kat).classList.add('active');
+        document.getElementById('tab-' + kat).classList.add('active');
+
+        currentTabIdx = kategoriList.indexOf(kat);
+
+        const isLast = currentTabIdx === kategoriList.length - 1;
+        const isFirst = currentTabIdx === 0;
+
+        document.getElementById('btnPrev').disabled = isFirst;
+        document.getElementById('btnNext').style.display = isLast ? 'none' : '';
+        document.getElementById('btnKirim').style.display = isLast ? '' : 'none';
+    }
+
+    function nextTab() {
+        if (currentTabIdx < kategoriList.length - 1)
+            gantiTab(kategoriList[currentTabIdx + 1]);
+    }
+
+    function prevTab() {
+        if (currentTabIdx > 0)
+            gantiTab(kategoriList[currentTabIdx - 1]);
+    }
+
+    function pilihJawaban(input, soalId, kategori) {
+        // Style all options in this question
+        const grid = input.closest('.sk-options');
+        grid.querySelectorAll('.sk-option').forEach(opt => opt.classList.remove('selected'));
+        input.closest('.sk-option').classList.add('selected');
+
+        // Mark question card as answered
+        document.getElementById('qcard-' + soalId).classList.add('answered');
+
+        // Track
+        answered[kategori][soalId] = true;
+        updateProgress();
+    }
+
+    function updateProgress() {
+        const terisi = document.querySelectorAll('input[type="radio"]:checked').length;
+        const pct = Math.round(terisi / totalSoal * 100);
+        document.getElementById('progressFill').style.width = pct + '%';
+        document.getElementById('persen').textContent = pct;
+        document.getElementById('terisi').textContent = terisi;
+
+        // Mark tabs done
+        kategoriList.forEach(kat => {
+            const section = document.getElementById('section-' + kat);
+            const radios = section.querySelectorAll('input[type="radio"]');
+            const groups = {};
+            radios.forEach(r => { groups[r.name] = (groups[r.name] || 0) + (r.checked ? 1 : 0); });
+            const allAnswered = Object.values(groups).every(v => v > 0) && Object.keys(groups).length > 0;
+            const tab = document.getElementById('tab-' + kat);
+            if (allAnswered) tab.classList.add('tab-done');
+            else tab.classList.remove('tab-done');
+        });
+    }
+
+    function konfirmasiKirim() {
+        const terisi = document.querySelectorAll('input[type="radio"]:checked').length;
+        if (terisi < totalSoal) {
+            const sisa = totalSoal - terisi;
+            return confirm('Masih ada ' + sisa + ' pertanyaan yang belum dijawab. Yakin ingin mengirim?');
+        }
+        return true;
+    }
+
+    // ── Init ──
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('total').textContent = totalSoal;
+    });
+</script>
 @endsection
