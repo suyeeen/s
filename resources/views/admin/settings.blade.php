@@ -66,7 +66,7 @@
                 </div>
             </div>
 
-            {{-- ── Integrasi RFID ── --}}
+            {{-- ── Integrasi RFID ──
             <div class="rounded-3xl overflow-hidden" style="background:var(--card-bg);border:1px solid var(--card-border);box-shadow:0 1px 8px rgba(26,22,19,0.05);">
                 <div class="p-5 flex items-center gap-4" style="border-bottom:1px solid var(--card-divider);background:var(--card-bg-soft);">
                     <div class="p-2.5 rounded-xl" style="background:rgba(29,111,191,0.1);border:1px solid rgba(29,111,191,0.2);">
@@ -95,7 +95,7 @@
                         </label>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
             {{-- ── Pengaturan Kuesioner ── --}}
             <div class="rounded-3xl overflow-hidden" style="background:var(--card-bg);border:1px solid var(--card-border);box-shadow:0 1px 8px rgba(26,22,19,0.05);">
