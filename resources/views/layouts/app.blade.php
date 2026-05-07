@@ -31,62 +31,62 @@
            Palet: Warm Neutral + Accent #E8560A (muted)
         ═══════════════════════════════════════════════════ */
 
-        /* ── LIGHT — warm professional ── */
+        /* ── LIGHT — modern clean ── */
         [data-theme="light"] {
             /* Surfaces */
-            --bg-page: #F5F2EE;
+            --bg-page: #F0F2F5;
             --bg-sidebar: #FFFFFF;
 
             /* Border */
-            --border-color: #E5DDD4;
+            --border-color: #E2E8F0;
 
             /* Text */
-            --text-main: #1A1613;
-            --text-muted: #7A6F67;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
 
             /* Mobile header */
-            --header-bg: rgba(245, 242, 238, 0.92);
+            --header-bg: rgba(255, 255, 255, 0.92);
 
             /* Theme toggle */
-            --toggle-bg: rgba(26, 22, 19, 0.06);
-            --toggle-border: rgba(26, 22, 19, 0.12);
-            --toggle-color: #5A4F47;
+            --toggle-bg: rgba(15, 23, 42, 0.06);
+            --toggle-border: rgba(15, 23, 42, 0.1);
+            --toggle-color: #475569;
 
             /* Nav */
-            --nav-active-bg: rgba(232, 86, 10, 0.09);
-            --nav-hover-bg: rgba(26, 22, 19, 0.04);
+            --nav-active-bg: rgba(232, 86, 10, 0.08);
+            --nav-hover-bg: rgba(15, 23, 42, 0.04);
 
             /* Icon circles */
-            --icon-bg: rgba(26, 22, 19, 0.06);
+            --icon-bg: rgba(15, 23, 42, 0.05);
 
             /* User info box */
-            --user-bg: #FAF8F5;
+            --user-bg: #F8FAFC;
 
             /* SweetAlert */
             --swal-bg: #FFFFFF;
-            --swal-color: #1A1613;
+            --swal-color: #0F172A;
 
             /* Cards */
             --card-bg: #FFFFFF;
-            --card-border: #E5DDD4;
-            --card-bg-soft: #FAF8F5;
-            --card-border-soft: #EDE7DF;
-            --card-footer-bg: #FAF8F5;
-            --card-divider: #E5DDD4;
+            --card-border: #E2E8F0;
+            --card-bg-soft: #F8FAFC;
+            --card-border-soft: #E2E8F0;
+            --card-footer-bg: #F8FAFC;
+            --card-divider: #E2E8F0;
 
             /* Inputs */
             --input-bg: #FFFFFF;
-            --input-border: #D5CCC4;
+            --input-border: #CBD5E1;
 
             /* Buttons */
-            --btn-bg: rgba(26, 22, 19, 0.06);
-            --btn-border: #D5CCC4;
+            --btn-bg: rgba(15, 23, 42, 0.05);
+            --btn-border: #CBD5E1;
 
-            /* Accent — lebih muted dari orange murni */
+            /* Accent */
             --accent: #E8560A;
             --accent-hover: #C44608;
-            --accent-soft: rgba(232, 86, 10, 0.09);
-            --accent-ring: rgba(232, 86, 10, 0.15);
+            --accent-soft: rgba(232, 86, 10, 0.08);
+            --accent-ring: rgba(232, 86, 10, 0.18);
         }
 
         /* ── DARK — tetap dipertahankan ── */
