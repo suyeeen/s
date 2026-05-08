@@ -184,30 +184,7 @@
             border-radius: 1.25rem !important;
         }
 
-        /* ── Fixed sidebar, scrollable content area ── */
-        html,
-        body {
-            height: 100%;
-            overflow: hidden;
-        }
-
-        .app-shell {
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .app-sidebar {
-            width: 256px;
-            /* w-64 */
-            flex-shrink: 0;
-            height: 100vh;
-            overflow-y: auto;
-            overflow-x: hidden;
-            position: relative;
-            /* tidak perlu sticky/fixed */
-        }
-
+        /* ── Layout scroll ── */
         .app-sidebar::-webkit-scrollbar {
             width: 4px;
         }
@@ -221,46 +198,30 @@
             border-radius: 4px;
         }
 
-        .app-main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-            /* main sendiri tidak scroll */
-            min-width: 0;
-        }
-
-        .app-content {
-            flex: 1;
-            overflow-y: auto;
-            /* HANYA area ini yang scroll */
-            overflow-x: hidden;
-        }
-
-        .app-content::-webkit-scrollbar {
+        .app-main::-webkit-scrollbar {
             width: 6px;
         }
 
-        .app-content::-webkit-scrollbar-track {
+        .app-main::-webkit-scrollbar-track {
             background: transparent;
         }
 
-        .app-content::-webkit-scrollbar-thumb {
+        .app-main::-webkit-scrollbar-thumb {
             background: var(--border-color);
             border-radius: 4px;
         }
 
-        .app-content::-webkit-scrollbar-thumb:hover {
+        .app-main::-webkit-scrollbar-thumb:hover {
             background: var(--text-muted);
         }
     </style>
 </head>
 
 <body x-data="{ sidebarOpen: false }">
-    <div class="app-shell">
+    <div class="app-shell" style="display:flex; height:100vh; height:100dvh;">
 
-        <aside class="app-sidebar hidden md:flex flex-col border-r">
+        <aside class="app-sidebar hidden md:flex flex-col border-r"
+            style="width:256px; flex-shrink:0; height:100vh; height:100dvh; overflow-y:auto; overflow-x:hidden; position:sticky; top:0;">
             @include('layouts.sidebar')
         </aside>
 
@@ -273,7 +234,7 @@
             @include('layouts.sidebar')
         </aside>
 
-        <main class="app-main">
+        <main class="app-main" style="flex:1; min-width:0; overflow-y:auto; overflow-x:hidden;">
             <header class="md:hidden flex items-center justify-between p-4 border-b backdrop-blur flex-shrink-0">
                 <span class="font-bold text-lg" style="color:var(--text-main)">STQM</span>
                 <div class="flex items-center gap-2">
@@ -299,7 +260,7 @@
                 </div>
             </header>
 
-            <div class="app-content p-4 md:p-8">
+            <div class="app-content p-4 md:p-8" style="min-height:100%;">
                 @yield('content')
             </div>
         </main>

@@ -16,15 +16,31 @@ class GuruController extends Controller
         $guru       = Guru::where('id', '!=', auth()->user()->guru->id)->get();
         $pertanyaan = Pertanyaan::orderBy('urutan')->get()->groupBy('kategori');
 
-        return view('guru.kuesioner', compact('guru', 'pertanyaan'));
+        $penilai     = auth()->user()->guru;
+        $tahunAjaran = \Illuminate\Support\Facades\Cache::get('stqm_tahun_ajaran', '2024/2025');
+        $semester    = \Illuminate\Support\Facades\Cache::get('stqm_semester', 'ganjil');
+        $maksimal    = (int) \Illuminate\Support\Facades\Cache::get('stqm_maks_penilaian', 1);
+
+        // Guru yang sudah dinilai oleh penilai pada periode ini
+        // ->toArray() wajib agar view bisa pakai in_array() dengan benar
+        $sudahDinilai = Kuesioner::where('penilai_guru_id', $penilai->id)
+            ->where('tahun_ajaran', $tahunAjaran)
+            ->where('semester', $semester)
+            ->where('tipe', 'guru')
+            ->selectRaw('guru_id, COUNT(*) as jumlah')
+            ->groupBy('guru_id')
+            ->pluck('jumlah', 'guru_id')
+            ->toArray();
+
+        return view('guru.kuesioner', compact('guru', 'pertanyaan', 'sudahDinilai', 'maksimal'));
     }
 
     public function submitKuesioner(Request $request)
     {
         $request->validate([
-            'guru_id'    => 'required|exists:guru,id',
-            'jawaban'    => 'required|array',
-            'jawaban.*'  => 'required|integer|min:1|max:5',
+            'guru_id'     => 'required|exists:guru,id',
+            'jawaban'     => 'required|array',
+            'jawaban.*'   => 'required|integer|min:1|max:5',
             'kesan_pesan' => 'nullable|string|max:1000',
         ]);
 
@@ -87,14 +103,14 @@ class GuruController extends Controller
             ->with('jawaban.pertanyaan')
             ->get();
 
-        $totalPenilai = $kuesioner->count();
-        $skorKategori = ['pedagogik' => 0, 'kepribadian' => 0, 'sosial' => 0, 'profesional' => 0];
+        $totalPenilai   = $kuesioner->count();
+        $skorKategori   = ['pedagogik' => 0, 'kepribadian' => 0, 'sosial' => 0, 'profesional' => 0];
         $hitungKategori = ['pedagogik' => 0, 'kepribadian' => 0, 'sosial' => 0, 'profesional' => 0];
 
         foreach ($kuesioner as $k) {
             foreach ($k->jawaban as $j) {
                 if ($j->pertanyaan && isset($skorKategori[$j->pertanyaan->kategori])) {
-                    $skorKategori[$j->pertanyaan->kategori] += $j->nilai;
+                    $skorKategori[$j->pertanyaan->kategori]   += $j->nilai;
                     $hitungKategori[$j->pertanyaan->kategori]++;
                 }
             }
@@ -106,9 +122,7 @@ class GuruController extends Controller
                 : 0;
         }
 
-        $nilaiAda = array_filter($skorKategori, function ($v) {
-            return $v > 0;
-        });
+        $nilaiAda = array_filter($skorKategori, fn($v) => $v > 0);
         $skorRata = count($nilaiAda) > 0
             ? round(array_sum($nilaiAda) / count($nilaiAda), 2)
             : 0;
