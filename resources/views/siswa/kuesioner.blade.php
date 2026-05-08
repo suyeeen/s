@@ -6,7 +6,10 @@
     <style>
         /* ═══════════════════════════════════════════════════
                SISWA KUESIONER — Multi-guru, Step-based flow
+               Enhanced with animated background
             ═══════════════════════════════════════════════════ */
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Outfit:wght@400;600;700;800;900&display=swap');
+
         :root {
             --sk-primary: #4F63FF;
             --sk-primary-dark: #3A4FE8;
@@ -17,19 +20,263 @@
             --sk-orange: #F97316;
             --sk-orange-soft: rgba(249, 115, 22, 0.1);
             --sk-amber: #F59E0B;
-            --sk-surface: var(--card-bg, #fff);
-            --sk-border: var(--card-border, rgba(79, 99, 255, 0.13));
-            --sk-text: var(--text-main, #1A1D3A);
-            --sk-muted: var(--text-muted, #5A6070);
-            --sk-faint: var(--text-faint, #9AA0B5);
+            --sk-surface: rgba(255, 255, 255, 0.95);
+            --sk-border: rgba(79, 99, 255, 0.15);
+            --sk-text: #1A1D3A;
+            --sk-muted: #5A6070;
+            --sk-faint: #9AA0B5;
             --sk-radius: 20px;
-            --sk-shadow: 0 8px 32px rgba(79, 99, 255, 0.08);
+            --sk-shadow: 0 8px 40px rgba(79, 99, 255, 0.14), 0 2px 8px rgba(0,0,0,0.06);
         }
 
+        /* ── Background animasi hanya di area konten, sidebar tidak terganggu ── */
+
+        .app-content:has(.sk-page-outer) {
+            padding: 0 !important;
+        }
+
+        .sk-page-outer {
+            position: relative;
+            padding: 32px 16px 60px;
+            min-height: 100%;
+            overflow: hidden; /* clip animasi agar tidak keluar area konten */
+            background: linear-gradient(160deg, #0d1240 0%, #151060 35%, #0e1848 65%, #0a0e30 100%);
+        }
+
+        /* Layer 1 – gradient mesh bergerak */
+        .sk-page-outer::before {
+            content: '';
+            position: absolute;
+            inset: -50%;          /* lebih besar dari container agar gerakan tidak terlihat terpotong */
+            pointer-events: none;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse 60% 50% at 20% 20%, rgba(79,99,255,0.55)   0%, transparent 55%),
+                radial-gradient(ellipse 55% 55% at 80% 80%, rgba(139,92,246,0.40)  0%, transparent 55%),
+                radial-gradient(ellipse 45% 40% at 75% 15%, rgba(79,99,255,0.20)   0%, transparent 50%),
+                radial-gradient(ellipse 40% 45% at 15% 75%, rgba(249,115,22,0.15)  0%, transparent 50%);
+            animation: meshMove 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes meshMove {
+            0%   { transform: translate(0%, 0%) scale(1); }
+            33%  { transform: translate(3%, -4%) scale(1.04); }
+            66%  { transform: translate(-4%, 3%) scale(0.97); }
+            100% { transform: translate(2%, 5%) scale(1.02); }
+        }
+
+        /* Layer 2 – orb besar mengambang */
+        .sk-page-outer::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background-image:
+                radial-gradient(circle 200px at 12% 20%, rgba(99,132,255,0.28)  0%, transparent 65%),
+                radial-gradient(circle 160px at 88% 12%, rgba(167,139,250,0.22) 0%, transparent 65%),
+                radial-gradient(circle 180px at 70% 75%, rgba(52,211,153,0.15)  0%, transparent 65%),
+                radial-gradient(circle 120px at 25% 82%, rgba(249,115,22,0.18)  0%, transparent 65%),
+                radial-gradient(circle 140px at 92% 55%, rgba(99,132,255,0.14)  0%, transparent 65%);
+            animation: orbDrift 14s ease-in-out infinite alternate;
+        }
+
+        @keyframes orbDrift {
+            0%   { transform: translateY(0px); }
+            50%  { transform: translateY(-18px); }
+            100% { transform: translateY(8px); }
+        }
+
+        /* Layer 3 – titik bintang */
+        .sk-bg-stars {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background-image:
+                radial-gradient(1.5px 1.5px at 8%  12%, rgba(255,255,255,0.55) 0%, transparent 100%),
+                radial-gradient(1px   1px   at 23% 38%, rgba(255,255,255,0.38) 0%, transparent 100%),
+                radial-gradient(2px   2px   at 38%  5%, rgba(255,255,255,0.42) 0%, transparent 100%),
+                radial-gradient(1px   1px   at 54% 28%, rgba(255,255,255,0.32) 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 68% 18%, rgba(255,255,255,0.48) 0%, transparent 100%),
+                radial-gradient(1px   1px   at 83% 48%, rgba(255,255,255,0.32) 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at  6% 62%, rgba(255,255,255,0.42) 0%, transparent 100%),
+                radial-gradient(1px   1px   at 19% 78%, rgba(255,255,255,0.28) 0%, transparent 100%),
+                radial-gradient(2px   2px   at 34% 88%, rgba(255,255,255,0.38) 0%, transparent 100%),
+                radial-gradient(1px   1px   at 58% 72%, rgba(255,255,255,0.32) 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 76% 85%, rgba(255,255,255,0.42) 0%, transparent 100%),
+                radial-gradient(1px   1px   at 91%  8%, rgba(255,255,255,0.38) 0%, transparent 100%),
+                radial-gradient(1px   1px   at 46% 52%, rgba(255,255,255,0.28) 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 61% 42%, rgba(255,255,255,0.32) 0%, transparent 100%),
+                radial-gradient(1px   1px   at 95% 68%, rgba(255,255,255,0.38) 0%, transparent 100%);
+            animation: starTwinkle 7s ease-in-out infinite alternate;
+        }
+
+        @keyframes starTwinkle {
+            0%   { opacity: 0.55; }
+            50%  { opacity: 1; }
+            100% { opacity: 0.65; }
+        }
+
+        /* Layer 4 – bentuk geometris mengambang */
+        .sk-bg-shapes {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .sk-shape {
+            position: absolute;
+            border-radius: 50%;
+            animation: shapeFloat linear infinite;
+        }
+
+        .sk-shape-1 {
+            width: 320px; height: 320px;
+            background: linear-gradient(135deg, rgba(79,99,255,0.12), rgba(139,92,246,0.10));
+            top: -100px; left: -100px;
+            animation-duration: 22s;
+        }
+
+        .sk-shape-2 {
+            width: 220px; height: 220px;
+            background: linear-gradient(135deg, rgba(16,185,129,0.10), rgba(59,130,246,0.08));
+            bottom: 5%; right: -70px;
+            animation-duration: 18s;
+            animation-direction: reverse;
+        }
+
+        .sk-shape-3 {
+            width: 160px; height: 160px;
+            border-radius: 35%;
+            background: linear-gradient(135deg, rgba(249,115,22,0.10), rgba(245,158,11,0.08));
+            top: 42%; left: 1%;
+            animation-duration: 26s;
+        }
+
+        .sk-shape-4 {
+            width: 110px; height: 110px;
+            border-radius: 25%;
+            background: linear-gradient(135deg, rgba(236,72,153,0.08), rgba(139,92,246,0.08));
+            top: 18%; right: 1%;
+            animation-duration: 20s;
+        }
+
+        @keyframes shapeFloat {
+            0%   { transform: translateY(0px) rotate(0deg); }
+            50%  { transform: translateY(-28px) rotate(180deg); }
+            100% { transform: translateY(0px) rotate(360deg); }
+        }
+
+        /* Semua konten di atas layer background */
         .sk-wrap {
             max-width: 720px;
             margin: 0 auto;
             padding: 0 0 48px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── Page title override for dark bg ── */
+        .sk-page-title h1 {
+            color: #ffffff !important;
+            text-shadow: 0 2px 20px rgba(79, 99, 255, 0.5);
+        }
+
+        .sk-page-title p {
+            color: rgba(255, 255, 255, 0.65) !important;
+        }
+
+        /* ── Stepper override for dark bg ── */
+        .sk-stepper::before {
+            background: rgba(255,255,255,0.15) !important;
+        }
+
+        .sk-step-dot {
+            background: rgba(255,255,255,0.1) !important;
+            border-color: rgba(255,255,255,0.2) !important;
+            color: rgba(255,255,255,0.5) !important;
+        }
+
+        .sk-step.active .sk-step-dot {
+            background: var(--sk-primary) !important;
+            border-color: var(--sk-primary) !important;
+            color: white !important;
+            box-shadow: 0 4px 20px rgba(79, 99, 255, 0.5) !important;
+        }
+
+        .sk-step.done .sk-step-dot {
+            background: var(--sk-green) !important;
+            border-color: var(--sk-green) !important;
+        }
+
+        .sk-step-label {
+            color: rgba(255,255,255,0.5) !important;
+        }
+
+        .sk-step.active .sk-step-label {
+            color: rgba(255,255,255,0.95) !important;
+        }
+
+        .sk-step.done .sk-step-label {
+            color: var(--sk-green) !important;
+        }
+
+        /* ── Card dengan shadow kuat di atas bg gelap ── */
+        .sk-card {
+            background: rgba(255, 255, 255, 0.97) !important;
+            border: 1px solid rgba(255, 255, 255, 0.25) !important;
+            box-shadow:
+                0 8px 40px rgba(0, 0, 0, 0.35),
+                0 20px 60px rgba(79, 99, 255, 0.12) !important;
+        }
+
+        /* ── Flash messages on dark bg ── */
+        .sk-flash {
+            border-radius: 14px;
+        }
+
+        .sk-flash-success {
+            background: rgba(16, 185, 129, 0.15) !important;
+            border: 1px solid rgba(16, 185, 129, 0.35) !important;
+            color: #6ee7b7 !important;
+        }
+
+        .sk-flash-error {
+            background: rgba(220, 38, 38, 0.15) !important;
+            border: 1px solid rgba(220, 38, 38, 0.35) !important;
+            color: #fca5a5 !important;
+        }
+
+        /* ── Decorative top banner chip ── */
+        .sk-top-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.85);
+            padding: 6px 14px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: 0.03em;
+        }
+
+        .sk-top-badge span {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #10B981;
+            box-shadow: 0 0 6px #10B981;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
         }
 
         /* ── Stepper header ── */
@@ -956,6 +1203,16 @@
 @endpush
 
 @section('content')
+    {{-- Background decorative elements --}}
+    <div class="sk-bg-stars"></div>
+    <div class="sk-bg-shapes">
+        <div class="sk-shape sk-shape-1"></div>
+        <div class="sk-shape sk-shape-2"></div>
+        <div class="sk-shape sk-shape-3"></div>
+        <div class="sk-shape sk-shape-4"></div>
+    </div>
+
+    <div class="sk-page-outer">
     <div class="sk-wrap">
 
         {{-- Flash messages --}}
@@ -974,6 +1231,10 @@
 
         {{-- Page title — bahasa siswa --}}
         <div class="sk-page-title">
+            <div class="sk-top-badge">
+                <span></span>
+                Kuesioner Penilaian Guru
+            </div>
             <h1>Yuk, Nilai Guru Kamu! 📋</h1>
             <p>Ikuti langkah-langkahnya pelan-pelan ya. Gampang kok, nggak sampai 10 menit!</p>
         </div>
@@ -1237,6 +1498,7 @@
         </div>
 
     </div>
+    </div>{{-- /sk-page-outer --}}
 
     <script>
         const kategoriList = @json(array_keys($pertanyaan->toArray()));
