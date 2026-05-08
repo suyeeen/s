@@ -22,9 +22,10 @@ class GuruController extends Controller
     public function submitKuesioner(Request $request)
     {
         $request->validate([
-            'guru_id'   => 'required|exists:guru,id',
-            'jawaban'   => 'required|array',
-            'jawaban.*' => 'required|integer|min:1|max:5',
+            'guru_id'    => 'required|exists:guru,id',
+            'jawaban'    => 'required|array',
+            'jawaban.*'  => 'required|integer|min:1|max:5',
+            'kesan_pesan' => 'nullable|string|max:1000',
         ]);
 
         // Cek batas waktu kuesioner
@@ -62,6 +63,7 @@ class GuruController extends Controller
             'tanggal'         => now()->toDateString(),
             'tahun_ajaran'    => $tahunAjaran,
             'semester'        => $semester,
+            'kesan_pesan'     => $request->filled('kesan_pesan') ? trim($request->kesan_pesan) : null,
         ]);
 
         foreach ($request->jawaban as $pertanyaan_id => $nilai) {
@@ -111,12 +113,12 @@ class GuruController extends Controller
             ? round(array_sum($nilaiAda) / count($nilaiAda), 2)
             : 0;
 
-        // Kesan & pesan — tanpa identitas penilai
+        // Kesan & pesan — gabungan dari guru (tipe=guru) DAN siswa (tipe=siswa)
         $kesanPesan = \App\Models\Kuesioner::where('guru_id', $guru->id)
-            ->where('tipe', 'guru')
+            ->whereIn('tipe', ['guru', 'siswa'])
             ->whereNotNull('kesan_pesan')
             ->where('kesan_pesan', '!=', '')
-            ->select('kesan_pesan', 'tanggal', 'tahun_ajaran', 'semester')
+            ->select('kesan_pesan', 'tanggal', 'tahun_ajaran', 'semester', 'tipe')
             ->orderByDesc('tanggal')
             ->get();
 

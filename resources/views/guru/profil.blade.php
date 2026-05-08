@@ -545,9 +545,19 @@
                         <p class="text-xs" style="color:var(--text-muted)">Identitas penilai dirahasiakan sepenuhnya</p>
                     </div>
                 </div>
-                <div class="px-3 py-1.5 rounded-xl text-xs font-black"
-                    style="background:rgba(96,165,250,0.1); color:#60a5fa; border:1px solid rgba(96,165,250,0.2); font-family:'Outfit',sans-serif;">
-                    {{ $kesanPesan->count() }} <span class="font-normal opacity-70">ulasan</span>
+                <div class="flex items-center gap-2">
+                    <div class="px-3 py-1.5 rounded-xl text-xs font-black"
+                        style="background:rgba(96,165,250,0.1); color:#60a5fa; border:1px solid rgba(96,165,250,0.2); font-family:'Outfit',sans-serif;">
+                        {{ $kesanPesan->count() }} <span class="font-normal opacity-70">ulasan</span>
+                    </div>
+                    <div class="px-2 py-1 rounded-xl text-xs font-semibold"
+                        style="background:rgba(16,185,129,0.1); color:#10b981; border:1px solid rgba(16,185,129,0.2); font-family:'Outfit',sans-serif;">
+                        {{ $kesanPesan->where('tipe','siswa')->count() }} siswa
+                    </div>
+                    <div class="px-2 py-1 rounded-xl text-xs font-semibold"
+                        style="background:rgba(168,85,247,0.1); color:#a855f7; border:1px solid rgba(168,85,247,0.2); font-family:'Outfit',sans-serif;">
+                        {{ $kesanPesan->where('tipe','guru')->count() }} guru
+                    </div>
                 </div>
             </div>
 
@@ -562,7 +572,7 @@
                         </svg>
                     </div>
                     <p class="text-sm font-medium" style="color:var(--text-muted)">Belum ada kesan &amp; pesan.</p>
-                    <p class="text-xs mt-1" style="color:var(--text-muted); opacity:0.6">Akan muncul setelah rekan mengisi
+                    <p class="text-xs mt-1" style="color:var(--text-muted); opacity:0.6">Akan muncul setelah rekan guru atau siswa mengisi
                         kuesioner.</p>
                 </div>
             @else
@@ -581,7 +591,14 @@
                                     {{ $inisial }}
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-xs font-bold" style="color:var(--text-main)">Anonim</p>
+                                    <div class="flex items-center gap-2">
+                                        <p class="text-xs font-bold" style="color:var(--text-main)">Anonim</p>
+                                        @if($item->tipe === 'siswa')
+                                            <span class="text-xs px-1.5 py-0.5 rounded-md font-semibold" style="background:rgba(16,185,129,0.12); color:#10b981; font-family:'Outfit',sans-serif;">Siswa</span>
+                                        @else
+                                            <span class="text-xs px-1.5 py-0.5 rounded-md font-semibold" style="background:rgba(168,85,247,0.12); color:#a855f7; font-family:'Outfit',sans-serif;">Guru</span>
+                                        @endif
+                                    </div>
                                     <p class="text-xs" style="color:var(--text-muted)">{{ $tgl }} &middot;
                                         {{ $item->tahun_ajaran }}/{{ ucfirst($item->semester) }}</p>
                                 </div>

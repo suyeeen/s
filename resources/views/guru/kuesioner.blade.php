@@ -108,6 +108,11 @@
                                     Kompetensi {{ ucfirst($kategori) }}
                                 </button>
                             @endforeach
+                            {{-- Tab Kesan & Pesan --}}
+                            <button type="button" onclick="gantiKategori('kesan_pesan')" id="tab-kesan_pesan"
+                                class="kuesioner-tab-btn px-5 py-2.5 rounded-2xl text-sm font-medium whitespace-nowrap transition-all">
+                                Kesan &amp; Pesan
+                            </button>
                         </div>
                     </div>
 
@@ -148,6 +153,42 @@
                             </div>
                         </div>
                     @endforeach
+
+                    {{-- Section Kesan & Pesan --}}
+                    <div id="section-kesan_pesan" class="kategori-section hidden p-8">
+                        <h3 class="text-xl font-semibold mb-2 flex items-center gap-3" style="color:var(--text-main);">
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                                style="background:rgba(96,165,250,0.12); border:1px solid rgba(96,165,250,0.2);">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
+                                    stroke="#60a5fa" class="w-4 h-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+                                </svg>
+                            </div>
+                            Kesan &amp; Pesan
+                        </h3>
+                        <p class="text-sm mb-8" style="color:var(--text-muted);">
+                            Tuliskan kesan dan pesan Anda untuk rekan guru ini. Identitas Anda akan dirahasiakan sepenuhnya.
+                            <span class="italic">(Opsional)</span>
+                        </p>
+
+                        <div class="soal-card rounded-3xl p-6"
+                            style="background:var(--card-bg-soft); border:1px solid var(--card-border-soft);">
+                            <label class="block text-sm font-semibold mb-3" style="color:var(--text-main);">
+                                Kesan &amp; Pesan untuk Rekan Guru
+                            </label>
+                            <textarea name="kesan_pesan" id="kesanPesanGuru" rows="5" maxlength="1000"
+                                placeholder="Tuliskan kesan dan pesan Anda di sini... (opsional, maks. 1000 karakter)"
+                                class="w-full px-4 py-3 rounded-2xl text-sm resize-none transition-all outline-none"
+                                style="background:var(--input-bg); border:1px solid var(--input-border); color:var(--text-main);"
+                                oninput="updateKesanCount(this)" onfocus="this.style.borderColor='rgba(96,165,250,0.5)'"
+                                onblur="this.style.borderColor='var(--input-border)'"></textarea>
+                            <div class="flex justify-end mt-2">
+                                <span id="kesanCount" class="text-xs" style="color:var(--text-muted);">0 / 1000
+                                    karakter</span>
+                            </div>
+                        </div>
+                    </div>
 
                     {{-- Footer Navigasi --}}
                     <div class="p-8 flex justify-between items-center"
@@ -253,6 +294,18 @@
             color: #fb923c;
         }
 
+        /* Tab kesan pesan aktif pakai warna biru */
+        #tab-kesan_pesan.active {
+            background: rgba(96, 165, 250, 0.12);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            color: #2563eb;
+        }
+
+        [data-theme="dark"] #tab-kesan_pesan.active {
+            background: rgba(96, 165, 250, 0.15);
+            color: #60a5fa;
+        }
+
         /* ─── Soal Card hover ─── */
         .soal-card:hover {
             border-color: var(--card-border) !important;
@@ -311,12 +364,23 @@
             opacity: 0.35;
             cursor: not-allowed;
         }
+
+        /* ─── Textarea Kesan Pesan ─── */
+        textarea:focus {
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
+        }
     </style>
 
     <script>
+        // Tambahkan 'kesan_pesan' sebagai tab terakhir
         const kategoriList = @json(array_keys($pertanyaan->toArray()));
+        const allTabList = [...kategoriList, 'kesan_pesan'];
         const totalSoal = {{ $pertanyaan->flatten()->count() }};
         let kategoriAktif = 0;
+
+        function updateKesanCount(el) {
+            document.getElementById('kesanCount').textContent = el.value.length + ' / 1000 karakter';
+        }
 
         function toggleDropdown() {
             const list = document.getElementById('dropdownList');
@@ -346,31 +410,33 @@
             document.getElementById('inputGuruId').value = id;
             document.getElementById('infoTidakAdaGuru').classList.toggle('hidden', id !== '');
             document.getElementById('formKuesioner').classList.toggle('hidden', id === '');
-            if (id !== '') gantiKategori(kategoriList[0]);
+            if (id !== '') gantiKategori(allTabList[0]);
         }
 
         function gantiKategori(kategori) {
             document.querySelectorAll('.kategori-section').forEach(el => el.classList.add('hidden'));
             document.getElementById('section-' + kategori).classList.remove('hidden');
-            kategoriAktif = kategoriList.indexOf(kategori);
+            kategoriAktif = allTabList.indexOf(kategori);
 
-            kategoriList.forEach(k => {
+            allTabList.forEach(k => {
                 const tab = document.getElementById('tab-' + k);
-                tab.classList.toggle('active', k === kategori);
+                if (tab) tab.classList.toggle('active', k === kategori);
             });
 
             const btnPrev = document.getElementById('btnPrev');
             btnPrev.disabled = kategoriAktif === 0;
-            document.getElementById('btnNext').classList.toggle('hidden', kategoriAktif === kategoriList.length - 1);
-            document.getElementById('btnSubmit').classList.toggle('hidden', kategoriAktif !== kategoriList.length - 1);
+
+            const isLast = kategoriAktif === allTabList.length - 1;
+            document.getElementById('btnNext').classList.toggle('hidden', isLast);
+            document.getElementById('btnSubmit').classList.toggle('hidden', !isLast);
         }
 
         function nextKategori() {
-            if (kategoriAktif < kategoriList.length - 1) gantiKategori(kategoriList[kategoriAktif + 1]);
+            if (kategoriAktif < allTabList.length - 1) gantiKategori(allTabList[kategoriAktif + 1]);
         }
 
         function prevKategori() {
-            if (kategoriAktif > 0) gantiKategori(kategoriList[kategoriAktif - 1]);
+            if (kategoriAktif > 0) gantiKategori(allTabList[kategoriAktif - 1]);
         }
 
         function pilihJawaban(input) {
