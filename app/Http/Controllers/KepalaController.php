@@ -74,7 +74,15 @@ class KepalaController extends Controller
         $totalAbsen = $guru->absensi->count();
         $persenHadir = $totalAbsen > 0 ? round($totalHadir / $totalAbsen * 100) : 0;
 
-        return view('kepala.detail-guru', compact('guru', 'persenHadir'));
+        $kesanPesan = \App\Models\Kuesioner::where('guru_id', $guru->id)
+            ->whereIn('tipe', ['siswa', 'guru'])
+            ->whereNotNull('kesan_pesan')
+            ->where('kesan_pesan', '!=', '')
+            ->select('kesan_pesan', 'tanggal', 'tahun_ajaran', 'semester', 'tipe')
+            ->orderByDesc('tanggal')
+            ->get();
+
+        return view('kepala.detail-guru', compact('guru', 'persenHadir', 'kesanPesan'));
     }
 
     public function export()

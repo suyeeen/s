@@ -29,17 +29,18 @@
             --sk-shadow: 0 8px 40px rgba(79, 99, 255, 0.14), 0 2px 8px rgba(0,0,0,0.06);
         }
 
-        /* ── Background animasi hanya di area konten, sidebar tidak terganggu ── */
+        /* ── Background animasi HANYA di dalam sk-page-outer — sidebar tidak tersentuh ── */
 
         .app-content:has(.sk-page-outer) {
             padding: 0 !important;
+            min-height: 100%;
         }
 
         .sk-page-outer {
-            position: relative;
+            position: relative;   /* stacking context — semua child absolute terkurung di sini */
             padding: 32px 16px 60px;
             min-height: 100%;
-            overflow: hidden; /* clip animasi agar tidak keluar area konten */
+            overflow: hidden;     /* clip semua animasi agar tidak keluar ke sidebar */
             background: linear-gradient(160deg, #0d1240 0%, #151060 35%, #0e1848 65%, #0a0e30 100%);
         }
 
@@ -170,6 +171,109 @@
             100% { transform: translateY(0px) rotate(360deg); }
         }
 
+        /* ══════════════════════════════════════════════════════
+           LIGHT MODE — animasi background berubah jadi cerah & hangat
+           Palet: putih bersih + aksen orange/amber/biru lembut
+        ══════════════════════════════════════════════════════ */
+        [data-theme="light"] .sk-page-outer {
+            background: linear-gradient(160deg, #e8f0ff 0%, #f0eaff 30%, #fff5ea 65%, #e8f5ff 100%);
+            transition: background 0.5s ease;
+        }
+
+        /* Layer 1 – gradient mesh light: biru & ungu pastel */
+        [data-theme="light"] .sk-page-outer::before {
+            background:
+                radial-gradient(ellipse 60% 50% at 20% 20%, rgba(79,99,255,0.18)   0%, transparent 55%),
+                radial-gradient(ellipse 55% 55% at 80% 80%, rgba(139,92,246,0.14)  0%, transparent 55%),
+                radial-gradient(ellipse 45% 40% at 75% 15%, rgba(232,86,10,0.10)   0%, transparent 50%),
+                radial-gradient(ellipse 40% 45% at 15% 75%, rgba(249,115,22,0.12)  0%, transparent 50%);
+        }
+
+        /* Layer 2 – orb besar light: lebih transparan & warna hangat */
+        [data-theme="light"] .sk-page-outer::after {
+            background-image:
+                radial-gradient(circle 200px at 12% 20%, rgba(79,99,255,0.12)   0%, transparent 65%),
+                radial-gradient(circle 160px at 88% 12%, rgba(167,139,250,0.10) 0%, transparent 65%),
+                radial-gradient(circle 180px at 70% 75%, rgba(232,86,10,0.08)   0%, transparent 65%),
+                radial-gradient(circle 120px at 25% 82%, rgba(249,115,22,0.10)  0%, transparent 65%),
+                radial-gradient(circle 140px at 92% 55%, rgba(79,99,255,0.08)   0%, transparent 65%);
+        }
+
+        /* Layer 3 – bintang light: titik-titik warna pastel */
+        [data-theme="light"] .sk-bg-stars {
+            background-image:
+                radial-gradient(1.5px 1.5px at 8%  12%, rgba(79,99,255,0.35)  0%, transparent 100%),
+                radial-gradient(1px   1px   at 23% 38%, rgba(139,92,246,0.25) 0%, transparent 100%),
+                radial-gradient(2px   2px   at 38%  5%, rgba(232,86,10,0.22)  0%, transparent 100%),
+                radial-gradient(1px   1px   at 54% 28%, rgba(79,99,255,0.20)  0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 68% 18%, rgba(249,115,22,0.28) 0%, transparent 100%),
+                radial-gradient(1px   1px   at 83% 48%, rgba(139,92,246,0.20) 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at  6% 62%, rgba(79,99,255,0.25)  0%, transparent 100%),
+                radial-gradient(1px   1px   at 19% 78%, rgba(232,86,10,0.18)  0%, transparent 100%),
+                radial-gradient(2px   2px   at 34% 88%, rgba(139,92,246,0.22) 0%, transparent 100%),
+                radial-gradient(1px   1px   at 58% 72%, rgba(79,99,255,0.18)  0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 76% 85%, rgba(249,115,22,0.25) 0%, transparent 100%),
+                radial-gradient(1px   1px   at 91%  8%, rgba(79,99,255,0.22)  0%, transparent 100%),
+                radial-gradient(1px   1px   at 46% 52%, rgba(139,92,246,0.18) 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 61% 42%, rgba(232,86,10,0.20)  0%, transparent 100%),
+                radial-gradient(1px   1px   at 95% 68%, rgba(79,99,255,0.20)  0%, transparent 100%);
+        }
+
+        /* Layer 4 – shapes light: warna cerah tapi transparan agar tidak berat */
+        [data-theme="light"] .sk-shape-1 {
+            background: linear-gradient(135deg, rgba(79,99,255,0.10), rgba(139,92,246,0.08));
+        }
+        [data-theme="light"] .sk-shape-2 {
+            background: linear-gradient(135deg, rgba(232,86,10,0.10), rgba(249,115,22,0.08));
+        }
+        [data-theme="light"] .sk-shape-3 {
+            background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(79,99,255,0.06));
+        }
+        [data-theme="light"] .sk-shape-4 {
+            background: linear-gradient(135deg, rgba(249,115,22,0.08), rgba(232,86,10,0.06));
+        }
+
+        /* ── Page title: dark → putih, light → warna gelap ── */
+        [data-theme="light"] .sk-page-title h1 {
+            color: #1A1D3A !important;
+            text-shadow: 0 2px 12px rgba(79, 99, 255, 0.15) !important;
+        }
+        [data-theme="light"] .sk-page-title p {
+            color: #5A6070 !important;
+        }
+
+        /* ── Stepper: dark → putih transparan, light → normal ── */
+        [data-theme="light"] .sk-stepper::before {
+            background: rgba(79,99,255,0.18) !important;
+        }
+        [data-theme="light"] .sk-step-dot {
+            background: rgba(255,255,255,0.90) !important;
+            border-color: rgba(79,99,255,0.25) !important;
+            color: #9AA0B5 !important;
+        }
+        [data-theme="light"] .sk-step-label {
+            color: #9AA0B5 !important;
+        }
+
+        /* ── Top badge light ── */
+        [data-theme="light"] .sk-top-badge {
+            background: rgba(79,99,255,0.08);
+            border-color: rgba(79,99,255,0.18);
+            color: #3A4FE8;
+        }
+
+        /* Transisi smooth semua elemen animasi saat ganti mode */
+        .sk-page-outer,
+        .sk-page-outer::before,
+        .sk-page-outer::after,
+        .sk-bg-stars,
+        .sk-shape-1,
+        .sk-shape-2,
+        .sk-shape-3,
+        .sk-shape-4 {
+            transition: background 0.6s ease, background-image 0.6s ease, background-color 0.6s ease;
+        }
+
         /* Semua konten di atas layer background */
         .sk-wrap {
             max-width: 720px;
@@ -179,22 +283,22 @@
             z-index: 1;
         }
 
-        /* ── Page title override for dark bg ── */
-        .sk-page-title h1 {
+        /* ── Page title: dark mode putih, light mode handled di atas ── */
+        [data-theme="dark"] .sk-page-title h1 {
             color: #ffffff !important;
             text-shadow: 0 2px 20px rgba(79, 99, 255, 0.5);
         }
 
-        .sk-page-title p {
+        [data-theme="dark"] .sk-page-title p {
             color: rgba(255, 255, 255, 0.65) !important;
         }
 
         /* ── Stepper override for dark bg ── */
-        .sk-stepper::before {
+        [data-theme="dark"] .sk-stepper::before {
             background: rgba(255,255,255,0.15) !important;
         }
 
-        .sk-step-dot {
+        [data-theme="dark"] .sk-step-dot {
             background: rgba(255,255,255,0.1) !important;
             border-color: rgba(255,255,255,0.2) !important;
             color: rgba(255,255,255,0.5) !important;
@@ -212,11 +316,11 @@
             border-color: var(--sk-green) !important;
         }
 
-        .sk-step-label {
+        [data-theme="dark"] .sk-step-label {
             color: rgba(255,255,255,0.5) !important;
         }
 
-        .sk-step.active .sk-step-label {
+        [data-theme="dark"] .sk-step.active .sk-step-label {
             color: rgba(255,255,255,0.95) !important;
         }
 
@@ -224,13 +328,25 @@
             color: var(--sk-green) !important;
         }
 
-        /* ── Card dengan shadow kuat di atas bg gelap ── */
-        .sk-card {
+        /* ── Card: sedikit berbeda di light mode (shadow lebih ringan) ── */
+        [data-theme="dark"] .sk-card {
             background: rgba(255, 255, 255, 0.97) !important;
             border: 1px solid rgba(255, 255, 255, 0.25) !important;
             box-shadow:
                 0 8px 40px rgba(0, 0, 0, 0.35),
                 0 20px 60px rgba(79, 99, 255, 0.12) !important;
+        }
+        [data-theme="light"] .sk-card {
+            background: rgba(255, 255, 255, 0.92) !important;
+            border: 1px solid rgba(79, 99, 255, 0.12) !important;
+            box-shadow:
+                0 4px 24px rgba(79, 99, 255, 0.10),
+                0 2px 8px rgba(0, 0, 0, 0.05) !important;
+        }
+
+        /* Transition smooth pada card saat ganti mode */
+        .sk-card {
+            transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
         }
 
         /* ── Flash messages on dark bg ── */
@@ -255,15 +371,20 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(255,255,255,0.12);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: rgba(255,255,255,0.85);
             padding: 6px 14px;
             border-radius: 99px;
             font-size: 12px;
             font-weight: 700;
             margin-bottom: 12px;
             letter-spacing: 0.03em;
+            transition: background 0.5s ease, border-color 0.5s ease, color 0.5s ease;
+        }
+
+        /* dark mode badge */
+        [data-theme="dark"] .sk-top-badge {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.85);
         }
 
         .sk-top-badge span {
@@ -1203,7 +1324,8 @@
 @endpush
 
 @section('content')
-    {{-- Background decorative elements --}}
+    <div class="sk-page-outer">
+    {{-- Background decorative elements — dikurung dalam sk-page-outer agar animasi tidak keluar ke sidebar --}}
     <div class="sk-bg-stars"></div>
     <div class="sk-bg-shapes">
         <div class="sk-shape sk-shape-1"></div>
@@ -1212,7 +1334,6 @@
         <div class="sk-shape sk-shape-4"></div>
     </div>
 
-    <div class="sk-page-outer">
     <div class="sk-wrap">
 
         {{-- Flash messages --}}

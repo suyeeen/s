@@ -302,6 +302,105 @@
                         @endif
                     </ul>
                 </div>
+
+                {{-- ══ KESAN & PESAN ══ --}}
+                <div class="rounded-3xl overflow-hidden"
+                    style="background:var(--card-bg); border:1px solid var(--card-border);">
+
+                    {{-- Header --}}
+                    <div class="px-6 py-5 flex items-center justify-between"
+                        style="border-bottom:1px solid rgba(255,255,255,0.05); background:rgba(255,255,255,0.02);">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                                style="background:rgba(96,165,250,0.12); border:1px solid rgba(96,165,250,0.2);">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
+                                    stroke="#60a5fa" class="w-4 h-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-black text-base text-white" style="font-family:'Outfit',sans-serif;">
+                                    Kesan &amp; Pesan</h3>
+                                <p class="text-xs text-gray-400">Identitas penilai dirahasiakan sepenuhnya</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <div class="px-3 py-1.5 rounded-xl text-xs font-black"
+                                style="background:rgba(96,165,250,0.1); color:#60a5fa; border:1px solid rgba(96,165,250,0.2); font-family:'Outfit',sans-serif;">
+                                {{ $kesanPesan->count() }} <span class="font-normal opacity-70">ulasan</span>
+                            </div>
+                            <div class="px-2 py-1 rounded-xl text-xs font-semibold"
+                                style="background:rgba(16,185,129,0.1); color:#10b981; border:1px solid rgba(16,185,129,0.2);">
+                                {{ $kesanPesan->where('tipe','siswa')->count() }} siswa
+                            </div>
+                            <div class="px-2 py-1 rounded-xl text-xs font-semibold"
+                                style="background:rgba(168,85,247,0.1); color:#a855f7; border:1px solid rgba(168,85,247,0.2);">
+                                {{ $kesanPesan->where('tipe','guru')->count() }} guru
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Content --}}
+                    @if($kesanPesan->isEmpty())
+                        <div class="p-10 text-center">
+                            <div class="w-14 h-14 mx-auto mb-4 rounded-2xl flex items-center justify-center"
+                                style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                    stroke="currentColor" class="w-6 h-6 text-gray-500">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+                                </svg>
+                            </div>
+                            <p class="text-sm font-medium text-gray-400">Belum ada kesan &amp; pesan.</p>
+                            <p class="text-xs mt-1 text-gray-500">Akan muncul setelah siswa atau guru mengisi kuesioner.</p>
+                        </div>
+                    @else
+                        @php $avatarColors = ['#3b82f6','#a855f7','#10b981','#f59e0b','#ef4444','#06b6d4','#ec4899','#8b5cf6']; @endphp
+                        <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+                            @foreach($kesanPesan as $idx => $item)
+                                @php
+                                    $colorPick = $avatarColors[$idx % count($avatarColors)];
+                                    $inisial   = chr(65 + ($idx % 26)) . str_pad($idx + 1, 2, '0', STR_PAD_LEFT);
+                                    $tgl       = $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d M Y') : '—';
+                                @endphp
+                                <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07);
+                                            border-radius:16px; padding:16px; transition:border-color .2s;"
+                                    onmouseover="this.style.borderColor='{{ $colorPick }}44'"
+                                    onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
+                                    <div class="flex items-start gap-3 mb-3">
+                                        <div style="width:36px; height:36px; border-radius:10px; flex-shrink:0;
+                                                    background:linear-gradient(135deg,{{ $colorPick }},{{ $colorPick }}99);
+                                                    display:flex; align-items:center; justify-content:center;
+                                                    font-size:11px; font-weight:800; color:white; font-family:'Outfit',sans-serif;">
+                                            {{ $inisial }}
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex items-center gap-2 flex-wrap">
+                                                <p class="text-xs font-bold text-white">Anonim</p>
+                                                @if($item->tipe === 'siswa')
+                                                    <span class="text-xs px-1.5 py-0.5 rounded-md font-semibold"
+                                                        style="background:rgba(16,185,129,0.12); color:#10b981;">Siswa</span>
+                                                @else
+                                                    <span class="text-xs px-1.5 py-0.5 rounded-md font-semibold"
+                                                        style="background:rgba(168,85,247,0.12); color:#a855f7;">Guru</span>
+                                                @endif
+                                            </div>
+                                            <p class="text-xs text-gray-500 mt-0.5">
+                                                {{ $tgl }} · {{ $item->tahun_ajaran }}/{{ ucfirst($item->semester) }}
+                                            </p>
+                                        </div>
+                                        <div class="w-2 h-2 rounded-full mt-1 flex-shrink-0"
+                                            style="background:{{ $colorPick }};"></div>
+                                    </div>
+                                    <p class="text-sm text-gray-300" style="line-height:1.65;">
+                                        "{{ $item->kesan_pesan }}"
+                                    </p>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
             </div>
         </div>
     </div>
