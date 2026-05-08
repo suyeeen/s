@@ -13,240 +13,259 @@ class PertanyaanSeeder extends Seeder
 
             // ══════════════════════════════════════════════════════════════════
             // PERTANYAAN UNTUK SISWA
-            // Sumber: Permendiknas No.16/2007 Tabel 3
-            // Disesuaikan dengan sudut pandang siswa SMA/SMP
+            // Sumber: Permendiknas No.16/2007 — Standar Kualifikasi Akademik
+            //         dan Kompetensi Guru (Tabel 3: Kompetensi Inti Guru)
+            // Bahasa: Santai & akrab, sudut pandang siswa SMP/SMA
+            //         (gunakan "kamu/aku", hindari istilah teknis)
             // ══════════════════════════════════════════════════════════════════
 
             // ── Pedagogik (untuk siswa) ────────────────────────────────────
+            // Merujuk pada: Kompetensi 1–4 Permendiknas 16/2007
+            // (memahami karakteristik peserta didik, merancang & melaksanakan
+            //  pembelajaran, memanfaatkan TIK, mengevaluasi hasil belajar)
             [
-                'kategori'       => 'pedagogik',
-                'untuk_penilai'  => 'siswa',
-                'urutan'         => 1,
-                'teks_pertanyaan' => 'Guru menyampaikan materi pelajaran dengan cara yang mudah saya pahami.',
+                'kategori'        => 'pedagogik',
+                'untuk_penilai'   => 'siswa',
+                'urutan'          => 1,
+                'teks_pertanyaan' => 'Guru menjelaskan materi dengan cara yang mudah aku pahami, bukan cuma baca buku.',
             ],
             [
-                'kategori'       => 'pedagogik',
-                'untuk_penilai'  => 'siswa',
-                'urutan'         => 2,
-                'teks_pertanyaan' => 'Guru menggunakan contoh nyata dan media yang membantu saya memahami materi pelajaran.',
+                'kategori'        => 'pedagogik',
+                'untuk_penilai'   => 'siswa',
+                'urutan'          => 2,
+                'teks_pertanyaan' => 'Guru pakai contoh nyata atau media (gambar, video, alat peraga) biar materi lebih gampang masuk.',
             ],
             [
-                'kategori'       => 'pedagogik',
-                'untuk_penilai'  => 'siswa',
-                'urutan'         => 3,
-                'teks_pertanyaan' => 'Guru memberikan kesempatan kepada saya untuk bertanya dan menjawab pertanyaan selama pembelajaran.',
+                'kategori'        => 'pedagogik',
+                'untuk_penilai'   => 'siswa',
+                'urutan'          => 3,
+                'teks_pertanyaan' => 'Guru kasih kesempatan buat aku bertanya atau menjawab saat pelajaran, bukan cuma ceramah terus.',
             ],
             [
-                'kategori'       => 'pedagogik',
-                'untuk_penilai'  => 'siswa',
-                'urutan'         => 4,
-                'teks_pertanyaan' => 'Guru memanfaatkan teknologi (komputer, proyektor, internet) untuk mendukung pembelajaran.',
+                'kategori'        => 'pedagogik',
+                'untuk_penilai'   => 'siswa',
+                'urutan'          => 4,
+                'teks_pertanyaan' => 'Guru memanfaatkan teknologi (laptop, proyektor, atau aplikasi) untuk bantu belajar di kelas.',
             ],
             [
-                'kategori'       => 'pedagogik',
-                'untuk_penilai'  => 'siswa',
-                'urutan'         => 5,
-                'teks_pertanyaan' => 'Guru memberikan penilaian yang adil dan objektif terhadap hasil belajar saya.',
+                'kategori'        => 'pedagogik',
+                'untuk_penilai'   => 'siswa',
+                'urutan'          => 5,
+                'teks_pertanyaan' => 'Nilai atau penilaian yang aku dapat terasa adil dan sesuai dengan usaha belajar aku.',
             ],
             [
-                'kategori'       => 'pedagogik',
-                'untuk_penilai'  => 'siswa',
-                'urutan'         => 6,
-                'teks_pertanyaan' => 'Guru memberikan tugas dan latihan yang membantu saya memahami materi lebih dalam.',
+                'kategori'        => 'pedagogik',
+                'untuk_penilai'   => 'siswa',
+                'urutan'          => 6,
+                'teks_pertanyaan' => 'Tugas yang diberikan guru membantu aku makin paham materi, bukan sekadar mengisi waktu.',
             ],
             [
-                'kategori'       => 'pedagogik',
-                'untuk_penilai'  => 'siswa',
-                'urutan'         => 7,
-                'teks_pertanyaan' => 'Guru mendorong saya untuk mengembangkan potensi dan kreativitas dalam belajar.',
+                'kategori'        => 'pedagogik',
+                'untuk_penilai'   => 'siswa',
+                'urutan'          => 7,
+                'teks_pertanyaan' => 'Guru mendorong aku untuk berani berpendapat, berkreasi, dan berpikir sendiri dalam belajar.',
             ],
 
             // ── Kepribadian (untuk siswa) ──────────────────────────────────
+            // Merujuk pada: Kompetensi 5–7 Permendiknas 16/2007
+            // (bertindak sesuai norma, menampilkan diri sebagai pribadi
+            //  berakhlak mulia, berwibawa, dan menjadi teladan)
             [
-                'kategori'       => 'kepribadian',
-                'untuk_penilai'  => 'siswa',
-                'urutan'         => 1,
-                'teks_pertanyaan' => 'Guru bersikap adil kepada semua siswa tanpa membeda-bedakan latar belakang.',
+                'kategori'        => 'kepribadian',
+                'untuk_penilai'   => 'siswa',
+                'urutan'          => 1,
+                'teks_pertanyaan' => 'Guru bersikap adil ke semua siswa — nggak pilih kasih karena latar belakang atau kedekatan.',
             ],
             [
-                'kategori'       => 'kepribadian',
-                'untuk_penilai'  => 'siswa',
-                'urutan'         => 2,
-                'teks_pertanyaan' => 'Guru berperilaku jujur dan menjadi teladan yang baik bagi saya sebagai siswa.',
+                'kategori'        => 'kepribadian',
+                'untuk_penilai'   => 'siswa',
+                'urutan'          => 2,
+                'teks_pertanyaan' => 'Guru jujur dan bisa jadi contoh yang baik — tidak pernah menyuruh hal yang beliau sendiri tidak lakukan.',
             ],
             [
-                'kategori'       => 'kepribadian',
-                'untuk_penilai'  => 'siswa',
-                'urutan'         => 3,
-                'teks_pertanyaan' => 'Guru bersikap sabar dan tenang dalam menghadapi berbagai situasi di kelas.',
+                'kategori'        => 'kepribadian',
+                'untuk_penilai'   => 'siswa',
+                'urutan'          => 3,
+                'teks_pertanyaan' => 'Guru tetap sabar dan nggak mudah marah meskipun situasi kelas lagi ramai atau ada masalah.',
             ],
             [
-                'kategori'       => 'kepribadian',
-                'untuk_penilai'  => 'siswa',
-                'urutan'         => 4,
-                'teks_pertanyaan' => 'Guru hadir dan masuk kelas tepat waktu sesuai jadwal yang telah ditentukan.',
+                'kategori'        => 'kepribadian',
+                'untuk_penilai'   => 'siswa',
+                'urutan'          => 4,
+                'teks_pertanyaan' => 'Guru selalu masuk kelas tepat waktu dan tidak sering meninggalkan kelas tanpa alasan jelas.',
             ],
 
             // ── Sosial (untuk siswa) ───────────────────────────────────────
+            // Merujuk pada: Kompetensi 8–9 Permendiknas 16/2007
+            // (berkomunikasi secara efektif, empatik, dan santun;
+            //  beradaptasi di tempat bertugas)
             [
-                'kategori'       => 'sosial',
-                'untuk_penilai'  => 'siswa',
-                'urutan'         => 1,
-                'teks_pertanyaan' => 'Guru berkomunikasi dengan saya secara ramah, sopan, dan mudah dipahami.',
+                'kategori'        => 'sosial',
+                'untuk_penilai'   => 'siswa',
+                'urutan'          => 1,
+                'teks_pertanyaan' => 'Guru ngobrol sama aku dengan cara yang ramah, sopan, dan mudah aku mengerti.',
             ],
             [
-                'kategori'       => 'sosial',
-                'untuk_penilai'  => 'siswa',
-                'urutan'         => 2,
-                'teks_pertanyaan' => 'Guru peduli terhadap kesulitan belajar yang saya hadapi dan memberikan bantuan.',
+                'kategori'        => 'sosial',
+                'untuk_penilai'   => 'siswa',
+                'urutan'          => 2,
+                'teks_pertanyaan' => 'Kalau aku kesulitan belajar, guru mau bantu dan tidak membiarkan aku bingung sendirian.',
             ],
             [
-                'kategori'       => 'sosial',
-                'untuk_penilai'  => 'siswa',
-                'urutan'         => 3,
-                'teks_pertanyaan' => 'Guru menciptakan suasana kelas yang nyaman dan menyenangkan untuk belajar.',
+                'kategori'        => 'sosial',
+                'untuk_penilai'   => 'siswa',
+                'urutan'          => 3,
+                'teks_pertanyaan' => 'Suasana kelas terasa nyaman dan menyenangkan ketika guru ini mengajar.',
             ],
 
             // ── Profesional (untuk siswa) ──────────────────────────────────
+            // Merujuk pada: Kompetensi 10–11 Permendiknas 16/2007
+            // (menguasai materi, struktur, konsep keilmuan yang mendukung
+            //  mata pelajaran; mengembangkan materi secara kreatif)
             [
-                'kategori'       => 'profesional',
-                'untuk_penilai'  => 'siswa',
-                'urutan'         => 1,
-                'teks_pertanyaan' => 'Guru menguasai materi pelajaran yang diajarkan dengan baik dan mendalam.',
+                'kategori'        => 'profesional',
+                'untuk_penilai'   => 'siswa',
+                'urutan'          => 1,
+                'teks_pertanyaan' => 'Guru benar-benar ngerti materi yang diajarkan — kalau aku tanya, beliau bisa jawab dengan jelas.',
             ],
             [
-                'kategori'       => 'profesional',
-                'untuk_penilai'  => 'siswa',
-                'urutan'         => 2,
-                'teks_pertanyaan' => 'Guru menyampaikan materi sesuai dengan kurikulum dan tujuan pembelajaran.',
+                'kategori'        => 'profesional',
+                'untuk_penilai'   => 'siswa',
+                'urutan'          => 2,
+                'teks_pertanyaan' => 'Materi yang disampaikan guru sesuai dengan yang ada di pelajaran dan tujuan belajar kami.',
             ],
             [
-                'kategori'       => 'profesional',
-                'untuk_penilai'  => 'siswa',
-                'urutan'         => 3,
-                'teks_pertanyaan' => 'Guru mengaitkan materi pelajaran dengan kehidupan nyata sehingga mudah dipahami.',
+                'kategori'        => 'profesional',
+                'untuk_penilai'   => 'siswa',
+                'urutan'          => 3,
+                'teks_pertanyaan' => 'Guru sering mengaitkan materi pelajaran dengan kejadian nyata di kehidupan sehari-hari, jadi lebih relevan.',
             ],
+
 
             // ══════════════════════════════════════════════════════════════════
             // PERTANYAAN UNTUK GURU TEMAN SEJAWAT (PEER ASSESSMENT)
-            // Sumber: Lampiran MP1 Buku 2 Pedoman PKG Kemendikbud
-            // Menilai 4 aspek: Perilaku, Hubungan Sejawat, Profesional, Pembelajaran
+            // Sumber: Lampiran MP1 — Buku 2 Pedoman PKG Kemendikbud
+            //         (Format Penilaian Kinerja Guru oleh Teman Sejawat)
+            // 4 Aspek: A) Perilaku Sehari-hari  B) Hubungan dengan Teman
+            //          C) Perilaku Profesional   D) Pelaksanaan Pembelajaran
+            // Bahasa: Profesional, kolegal, sesama rekan guru
+            //         (gunakan "Bapak/Ibu Guru" atau "beliau")
             // ══════════════════════════════════════════════════════════════════
 
-            // ── Kepribadian: Perilaku Sehari-hari (Lampiran MP1 Aspek A) ───
+            // ── Aspek A: Perilaku Sehari-hari (Lampiran MP1 No.1–5) ────────
             [
-                'kategori'       => 'kepribadian',
-                'untuk_penilai'  => 'guru',
-                'urutan'         => 1,
-                'teks_pertanyaan' => 'Guru hadir di sekolah dan masuk kelas tepat waktu sesuai jadwal yang telah ditetapkan.',
+                'kategori'        => 'kepribadian',
+                'untuk_penilai'   => 'guru',
+                'urutan'          => 1,
+                'teks_pertanyaan' => 'Bapak/Ibu Guru selalu hadir di sekolah dan masuk kelas tepat sesuai jadwal yang ditetapkan.',
             ],
             [
-                'kategori'       => 'kepribadian',
-                'untuk_penilai'  => 'guru',
-                'urutan'         => 2,
-                'teks_pertanyaan' => 'Guru berpakaian rapi, bersih, dan sopan sesuai dengan norma dan aturan yang berlaku di sekolah.',
+                'kategori'        => 'kepribadian',
+                'untuk_penilai'   => 'guru',
+                'urutan'          => 2,
+                'teks_pertanyaan' => 'Bapak/Ibu Guru berpenampilan rapi, bersih, dan sopan yang mencerminkan profesionalisme sebagai pendidik.',
             ],
             [
-                'kategori'       => 'kepribadian',
-                'untuk_penilai'  => 'guru',
-                'urutan'         => 3,
-                'teks_pertanyaan' => 'Guru memberikan tugas kepada peserta didik apabila berhalangan hadir untuk mengajar.',
+                'kategori'        => 'kepribadian',
+                'untuk_penilai'   => 'guru',
+                'urutan'          => 3,
+                'teks_pertanyaan' => 'Ketika berhalangan hadir mengajar, beliau selalu meninggalkan tugas atau materi bagi peserta didik.',
             ],
             [
-                'kategori'       => 'kepribadian',
-                'untuk_penilai'  => 'guru',
-                'urutan'         => 4,
-                'teks_pertanyaan' => 'Guru menjalankan ibadah sesuai dengan agama dan kepercayaan yang dianutnya dengan konsisten.',
+                'kategori'        => 'kepribadian',
+                'untuk_penilai'   => 'guru',
+                'urutan'          => 4,
+                'teks_pertanyaan' => 'Bapak/Ibu Guru menjalankan ibadah sesuai keyakinannya secara konsisten dan menjadi teladan bagi warga sekolah.',
             ],
             [
-                'kategori'       => 'kepribadian',
-                'untuk_penilai'  => 'guru',
-                'urutan'         => 5,
-                'teks_pertanyaan' => 'Guru bersikap jujur, terbuka, dan bertanggung jawab dalam melaksanakan tugas sebagai pendidik.',
-            ],
-
-            // ── Sosial: Hubungan dengan Teman Sejawat (Lampiran MP1 Aspek B)
-            [
-                'kategori'       => 'sosial',
-                'untuk_penilai'  => 'guru',
-                'urutan'         => 1,
-                'teks_pertanyaan' => 'Guru bersikap ramah, santun, dan terbuka dalam berkomunikasi dengan sesama rekan guru.',
-            ],
-            [
-                'kategori'       => 'sosial',
-                'untuk_penilai'  => 'guru',
-                'urutan'         => 2,
-                'teks_pertanyaan' => 'Guru memberikan informasi kepada rekan guru lain jika berhalangan hadir untuk mengajar.',
-            ],
-            [
-                'kategori'       => 'sosial',
-                'untuk_penilai'  => 'guru',
-                'urutan'         => 3,
-                'teks_pertanyaan' => 'Guru bersedia membantu rekan guru yang mengalami kesulitan dalam melaksanakan tugas mengajar.',
-            ],
-            [
-                'kategori'       => 'sosial',
-                'untuk_penilai'  => 'guru',
-                'urutan'         => 4,
-                'teks_pertanyaan' => 'Guru memperlakukan peserta didik dengan penuh kasih sayang tanpa membeda-bedakan latar belakang.',
-            ],
-            [
-                'kategori'       => 'sosial',
-                'untuk_penilai'  => 'guru',
-                'urutan'         => 5,
-                'teks_pertanyaan' => 'Guru aktif berpartisipasi dalam kegiatan kolektif sekolah seperti rapat, upacara, dan kegiatan bersama.',
+                'kategori'        => 'kepribadian',
+                'untuk_penilai'   => 'guru',
+                'urutan'          => 5,
+                'teks_pertanyaan' => 'Beliau menunjukkan sikap jujur, terbuka, dan bertanggung jawab dalam menjalankan tugas sebagai pendidik.',
             ],
 
-            // ── Profesional: Perilaku Profesional (Lampiran MP1 Aspek C) ───
+            // ── Aspek B: Hubungan dengan Teman Sejawat (Lampiran MP1 No.6–10)
             [
-                'kategori'       => 'profesional',
-                'untuk_penilai'  => 'guru',
-                'urutan'         => 1,
-                'teks_pertanyaan' => 'Guru menguasai materi pelajaran yang diampu secara mendalam dan mampu menjelaskan dengan baik.',
+                'kategori'        => 'sosial',
+                'untuk_penilai'   => 'guru',
+                'urutan'          => 1,
+                'teks_pertanyaan' => 'Bapak/Ibu Guru bersikap ramah, santun, dan terbuka saat berkomunikasi dengan sesama rekan pendidik.',
             ],
             [
-                'kategori'       => 'profesional',
-                'untuk_penilai'  => 'guru',
-                'urutan'         => 2,
-                'teks_pertanyaan' => 'Guru aktif mengikuti kegiatan pengembangan profesi seperti pelatihan, seminar, MGMP, atau KKG.',
+                'kategori'        => 'sosial',
+                'untuk_penilai'   => 'guru',
+                'urutan'          => 2,
+                'teks_pertanyaan' => 'Beliau selalu menginformasikan kepada rekan sejawat jika berhalangan hadir, sehingga tidak mengganggu kegiatan belajar.',
             ],
             [
-                'kategori'       => 'profesional',
-                'untuk_penilai'  => 'guru',
-                'urutan'         => 3,
-                'teks_pertanyaan' => 'Guru mengembangkan inovasi dan kreativitas dalam metode dan media pembelajaran.',
+                'kategori'        => 'sosial',
+                'untuk_penilai'   => 'guru',
+                'urutan'          => 3,
+                'teks_pertanyaan' => 'Bapak/Ibu Guru bersedia meluangkan waktu untuk membantu rekan yang mengalami kesulitan dalam tugas mengajar.',
             ],
             [
-                'kategori'       => 'profesional',
-                'untuk_penilai'  => 'guru',
-                'urutan'         => 4,
-                'teks_pertanyaan' => 'Guru memanfaatkan teknologi informasi untuk mendukung dan meningkatkan kualitas pembelajaran.',
+                'kategori'        => 'sosial',
+                'untuk_penilai'   => 'guru',
+                'urutan'          => 4,
+                'teks_pertanyaan' => 'Beliau memperlakukan peserta didik dengan penuh kasih sayang tanpa membeda-bedakan latar belakang sosial atau kemampuan akademik.',
+            ],
+            [
+                'kategori'        => 'sosial',
+                'untuk_penilai'   => 'guru',
+                'urutan'          => 5,
+                'teks_pertanyaan' => 'Bapak/Ibu Guru aktif berpartisipasi dalam kegiatan kolektif sekolah seperti rapat, upacara, dan program bersama.',
             ],
 
-            // ── Pedagogik: Pelaksanaan Pembelajaran (Lampiran MP1 Aspek D) ─
+            // ── Aspek C: Perilaku Profesional (Lampiran MP1 No.11–14) ──────
             [
-                'kategori'       => 'pedagogik',
-                'untuk_penilai'  => 'guru',
-                'urutan'         => 1,
-                'teks_pertanyaan' => 'Guru menyusun Rencana Pelaksanaan Pembelajaran (RPP) sebelum melaksanakan kegiatan mengajar.',
+                'kategori'        => 'profesional',
+                'untuk_penilai'   => 'guru',
+                'urutan'          => 1,
+                'teks_pertanyaan' => 'Bapak/Ibu Guru menguasai bidang studi yang diampu secara mendalam dan mampu menjelaskannya dengan tepat kepada peserta didik.',
             ],
             [
-                'kategori'       => 'pedagogik',
-                'untuk_penilai'  => 'guru',
-                'urutan'         => 2,
-                'teks_pertanyaan' => 'Guru melaksanakan pembelajaran secara terstruktur dan sistematis sesuai tujuan yang telah ditetapkan.',
+                'kategori'        => 'profesional',
+                'untuk_penilai'   => 'guru',
+                'urutan'          => 2,
+                'teks_pertanyaan' => 'Beliau aktif mengikuti kegiatan pengembangan keprofesian berkelanjutan (PKB) seperti pelatihan, seminar, MGMP, atau KKG.',
             ],
             [
-                'kategori'       => 'pedagogik',
-                'untuk_penilai'  => 'guru',
-                'urutan'         => 3,
-                'teks_pertanyaan' => 'Guru melakukan penilaian hasil belajar peserta didik secara objektif dan berkesinambungan.',
+                'kategori'        => 'profesional',
+                'untuk_penilai'   => 'guru',
+                'urutan'          => 3,
+                'teks_pertanyaan' => 'Bapak/Ibu Guru senantiasa mengembangkan inovasi dalam metode dan media pembelajaran demi meningkatkan kualitas pengajaran.',
             ],
             [
-                'kategori'       => 'pedagogik',
-                'untuk_penilai'  => 'guru',
-                'urutan'         => 4,
-                'teks_pertanyaan' => 'Guru melakukan refleksi dan evaluasi terhadap proses pembelajaran yang telah dilaksanakan.',
+                'kategori'        => 'profesional',
+                'untuk_penilai'   => 'guru',
+                'urutan'          => 4,
+                'teks_pertanyaan' => 'Beliau memanfaatkan teknologi informasi dan komunikasi secara efektif untuk mendukung proses pembelajaran.',
+            ],
+
+            // ── Aspek D: Pelaksanaan Pembelajaran (Lampiran MP1 No.15–18) ──
+            [
+                'kategori'        => 'pedagogik',
+                'untuk_penilai'   => 'guru',
+                'urutan'          => 1,
+                'teks_pertanyaan' => 'Bapak/Ibu Guru menyusun Rencana Pelaksanaan Pembelajaran (RPP) sebelum mengajar dan sesuai dengan kurikulum yang berlaku.',
+            ],
+            [
+                'kategori'        => 'pedagogik',
+                'untuk_penilai'   => 'guru',
+                'urutan'          => 2,
+                'teks_pertanyaan' => 'Beliau melaksanakan pembelajaran secara terstruktur: ada kegiatan pembuka, inti, dan penutup yang jelas dan terarah.',
+            ],
+            [
+                'kategori'        => 'pedagogik',
+                'untuk_penilai'   => 'guru',
+                'urutan'          => 3,
+                'teks_pertanyaan' => 'Bapak/Ibu Guru melakukan penilaian hasil belajar peserta didik secara objektif, berkesinambungan, dan beragam.',
+            ],
+            [
+                'kategori'        => 'pedagogik',
+                'untuk_penilai'   => 'guru',
+                'urutan'          => 4,
+                'teks_pertanyaan' => 'Beliau melakukan refleksi dan evaluasi setelah mengajar sebagai bahan perbaikan pembelajaran ke depan.',
             ],
         ];
 
@@ -274,17 +293,17 @@ class PertanyaanSeeder extends Seeder
 
         $this->command->info('✅ ' . count($pertanyaan) . ' pertanyaan berhasil di-seed.');
         $this->command->table(
-            ['Penilai', 'Kategori', 'Jumlah Soal', 'Sumber'],
+            ['Penilai', 'Kategori', 'Jumlah Soal', 'Sumber & Bahasa'],
             [
-                ['Siswa', 'Pedagogik',   '7 soal', 'Permendiknas 16/2007 (sudut pandang siswa)'],
-                ['Siswa', 'Kepribadian', '4 soal', 'Permendiknas 16/2007 (sudut pandang siswa)'],
-                ['Siswa', 'Sosial',      '3 soal', 'Permendiknas 16/2007 (sudut pandang siswa)'],
-                ['Siswa', 'Profesional', '3 soal', 'Permendiknas 16/2007 (sudut pandang siswa)'],
+                ['Siswa', 'Pedagogik',   '7 soal', 'Permendiknas 16/2007 Komp.1–4 | Bahasa santai siswa'],
+                ['Siswa', 'Kepribadian', '4 soal', 'Permendiknas 16/2007 Komp.5–7 | Bahasa santai siswa'],
+                ['Siswa', 'Sosial',      '3 soal', 'Permendiknas 16/2007 Komp.8–9 | Bahasa santai siswa'],
+                ['Siswa', 'Profesional', '3 soal', 'Permendiknas 16/2007 Komp.10–11 | Bahasa santai siswa'],
                 ['---',   '---',         '---',    '---'],
-                ['Guru',  'Kepribadian', '5 soal', 'Lampiran MP1 PKG Kemendikbud (Aspek A)'],
-                ['Guru',  'Sosial',      '5 soal', 'Lampiran MP1 PKG Kemendikbud (Aspek B)'],
-                ['Guru',  'Profesional', '4 soal', 'Lampiran MP1 PKG Kemendikbud (Aspek C)'],
-                ['Guru',  'Pedagogik',   '4 soal', 'Lampiran MP1 PKG Kemendikbud (Aspek D)'],
+                ['Guru',  'Kepribadian', '5 soal', 'Lampiran MP1 PKG Aspek A | Bahasa profesional guru'],
+                ['Guru',  'Sosial',      '5 soal', 'Lampiran MP1 PKG Aspek B | Bahasa profesional guru'],
+                ['Guru',  'Profesional', '4 soal', 'Lampiran MP1 PKG Aspek C | Bahasa profesional guru'],
+                ['Guru',  'Pedagogik',   '4 soal', 'Lampiran MP1 PKG Aspek D | Bahasa profesional guru'],
             ]
         );
         $this->command->info("Total siswa: {$siswaCount} soal | Total guru sejawat: {$guruCount} soal");

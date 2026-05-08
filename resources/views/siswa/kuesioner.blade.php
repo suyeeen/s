@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Evaluasi Kinerja Guru')
+@section('title', 'Penilaian Guru — Kuesioner Siswa')
 
 @push('styles')
     <style>
         /* ═══════════════════════════════════════════════════
-           SISWA KUESIONER — Multi-guru, Step-based flow
-        ═══════════════════════════════════════════════════ */
+               SISWA KUESIONER — Multi-guru, Step-based flow
+            ═══════════════════════════════════════════════════ */
         :root {
             --sk-primary: #4F63FF;
             --sk-primary-dark: #3A4FE8;
@@ -264,7 +264,7 @@
             cursor: pointer;
         }
 
-        /* ═══ STEP 2: Pilih Guru (multi-select) ═══ */
+        /* ═══ STEP 2: Pilih Guru ═══ */
         .sk-guru-header {
             padding: 24px 28px;
             border-bottom: 1px solid var(--sk-border);
@@ -458,7 +458,6 @@
             font-size: 13.5px;
         }
 
-        /* Selected guru chips bar */
         .sk-selected-chips-wrap {
             display: none;
             padding: 14px 28px;
@@ -512,7 +511,6 @@
         }
 
         /* ═══ STEP 3: Kuesioner per guru ═══ */
-        /* Guru progress nav */
         .sk-guru-progress {
             padding: 16px 28px;
             border-bottom: 1px solid var(--sk-border);
@@ -974,17 +972,17 @@
             </div>
         @endif
 
-        {{-- Page title --}}
+        {{-- Page title — bahasa siswa --}}
         <div class="sk-page-title">
-            <h1>Evaluasi Kinerja Guru 📋</h1>
-            <p>Ikuti langkah-langkah di bawah untuk mengisi kuesioner dengan benar.</p>
+            <h1>Yuk, Nilai Guru Kamu! 📋</h1>
+            <p>Ikuti langkah-langkahnya pelan-pelan ya. Gampang kok, nggak sampai 10 menit!</p>
         </div>
 
         {{-- Stepper --}}
         <div class="sk-stepper" id="stepper">
             <div class="sk-step active" id="dot-1">
                 <div class="sk-step-dot">1</div>
-                <div class="sk-step-label">Baca Aturan</div>
+                <div class="sk-step-label">Baca Dulu</div>
             </div>
             <div class="sk-step" id="dot-2">
                 <div class="sk-step-dot">2</div>
@@ -997,7 +995,7 @@
         </div>
 
         {{-- ════════════════════════════════════
-        STEP 1: ATURAN
+        STEP 1: ATURAN — bahasa santai siswa
         ════════════════════════════════════ --}}
         <div class="sk-panel active" id="panel-1">
             <div class="sk-card">
@@ -1005,8 +1003,8 @@
                     <div class="sk-rules-header-top">
                         <div class="sk-rules-icon"><i class="bi bi-info-circle-fill"></i></div>
                         <div>
-                            <h2>Petunjuk Pengisian</h2>
-                            <p>Harap baca seluruh aturan sebelum memulai evaluasi</p>
+                            <h2>Sebelum Mulai, Baca Ini Dulu ya 👋</h2>
+                            <p>Cuma sebentar kok — biar pengisiannya lancar dan hasilnya berguna!</p>
                         </div>
                     </div>
                 </div>
@@ -1014,38 +1012,48 @@
                 <div class="sk-rules-body">
                     <div class="sk-rule-item">
                         <div class="sk-rule-num">1</div>
-                        <div class="sk-rule-text">Evaluasi dilakukan secara <strong>jujur dan objektif</strong> berdasarkan
-                            pengalaman belajar kamu bersama guru tersebut.</div>
+                        <div class="sk-rule-text">
+                            Jawab dengan <strong>jujur sesuai pengalaman belajar kamu</strong> bareng guru tersebut.
+                            Nggak ada jawaban benar atau salah — yang penting sesuai kenyataan.
+                        </div>
                     </div>
                     <div class="sk-rule-item">
                         <div class="sk-rule-num">2</div>
-                        <div class="sk-rule-text">Kamu dapat memilih <strong>lebih dari satu guru</strong> sekaligus.
-                            Kuesioner akan diisi satu per satu untuk setiap guru yang dipilih.</div>
+                        <div class="sk-rule-text">
+                            Kamu bisa pilih <strong>lebih dari satu guru sekaligus</strong>.
+                            Nanti kuesionernya diisi satu per satu untuk tiap guru yang kamu pilih.
+                        </div>
                     </div>
                     <div class="sk-rule-item">
                         <div class="sk-rule-num">3</div>
-                        <div class="sk-rule-text">Jawab semua pertanyaan dengan memilih skala <strong>1 (Sangat Tidak
-                                Setuju)</strong> hingga <strong>5 (Sangat Setuju)</strong>.</div>
+                        <div class="sk-rule-text">
+                            Pilih angka dari <strong>1 (Sangat Tidak Setuju)</strong> sampai
+                            <strong>5 (Sangat Setuju)</strong> buat tiap pernyataan.
+                        </div>
                     </div>
                     <div class="sk-rule-item">
                         <div class="sk-rule-num">4</div>
-                        <div class="sk-rule-text">Identitas kamu bersifat <strong>rahasia</strong>. Hasil evaluasi hanya
-                            digunakan untuk kepentingan pengembangan kualitas guru.</div>
+                        <div class="sk-rule-text">
+                            Nama kamu <strong>tidak akan ditampilkan</strong> ke siapapun.
+                            Hasil ini hanya dipakai untuk bantu guru berkembang lebih baik.
+                        </div>
                     </div>
                     <div class="sk-rule-item">
                         <div class="sk-rule-num">5</div>
-                        <div class="sk-rule-text">Pastikan semua guru sudah selesai dinilai sebelum menekan tombol
-                            <strong>Kirim Semua Evaluasi</strong>. Jawaban tidak dapat diubah setelah dikirim.</div>
+                        <div class="sk-rule-text">
+                            Pastikan semua guru sudah selesai kamu nilai sebelum tekan tombol
+                            <strong>Kirim Semua</strong>. Setelah dikirim, jawaban nggak bisa diubah lagi ya.
+                        </div>
                     </div>
                 </div>
 
                 <div class="sk-confirm-row">
                     <input type="checkbox" id="confirmRead" onchange="toggleNextStep1()">
-                    <label for="confirmRead">Saya sudah membaca dan memahami semua aturan di atas</label>
+                    <label for="confirmRead">Oke, aku udah baca dan ngerti semua aturannya!</label>
                 </div>
 
                 <div style="padding: 16px 28px; border-top: 1px solid var(--sk-border);">
-                    <button class="sk-btn sk-btn-primary" id="btnStep1Next" onclick="goToStep(2)" disabled
+                    <button type="button" class="sk-btn sk-btn-primary" id="btnStep1Next" onclick="goToStep(2)" disabled
                         style="width:100%; justify-content:center;">
                         Lanjut: Pilih Guru
                         <i class="bi bi-arrow-right"></i>
@@ -1055,13 +1063,13 @@
         </div>
 
         {{-- ════════════════════════════════════
-        STEP 2: PILIH GURU (multi-select)
+        STEP 2: PILIH GURU
         ════════════════════════════════════ --}}
         <div class="sk-panel" id="panel-2">
             <div class="sk-card">
                 <div class="sk-guru-header">
-                    <h2>Pilih Guru yang Akan Dinilai</h2>
-                    <p>Kamu bisa memilih lebih dari satu guru. Centang semua guru yang ingin kamu nilai.</p>
+                    <h2>Guru Mana yang Mau Kamu Nilai? 🎯</h2>
+                    <p>Boleh pilih lebih dari satu. Centang semua guru yang pernah ngajar kamu ya.</p>
                 </div>
 
                 <div class="sk-search-wrap">
@@ -1097,22 +1105,21 @@
 
                 <div id="emptySearch" class="sk-empty-search" style="display:none;">
                     <i class="bi bi-search" style="font-size:28px; display:block; margin-bottom:8px; opacity:0.3;"></i>
-                    Tidak ada guru yang cocok dengan pencarianmu.
+                    Nggak ketemu guru yang kamu cari. Coba kata kunci lain?
                 </div>
 
-                {{-- Selected chips --}}
                 <div class="sk-selected-chips-wrap" id="selectedChipsWrap">
-                    <div class="sk-chips-label">Guru dipilih:</div>
+                    <div class="sk-chips-label">Guru yang sudah kamu pilih:</div>
                     <div class="sk-chips" id="selectedChips"></div>
                 </div>
 
                 <div style="padding: 16px 28px; border-top: 1px solid var(--sk-border); display:flex; gap:10px;">
-                    <button class="sk-btn sk-btn-ghost" onclick="goToStep(1)">
+                    <button type="button" class="sk-btn sk-btn-ghost" onclick="goToStep(1)">
                         <i class="bi bi-arrow-left"></i> Kembali
                     </button>
-                    <button class="sk-btn sk-btn-primary" id="btnStep2Next" onclick="startKuesioner()" disabled
-                        style="flex:1; justify-content:center;">
-                        Mulai Isi Kuesioner
+                    <button type="button" class="sk-btn sk-btn-primary" id="btnStep2Next" onclick="startKuesioner()"
+                        disabled style="flex:1; justify-content:center;">
+                        Ayo Mulai Isi!
                         <i class="bi bi-arrow-right"></i>
                     </button>
                 </div>
@@ -1125,7 +1132,6 @@
         <div class="sk-panel" id="panel-3">
             <form method="POST" action="{{ route('siswa.kuesioner.submit') }}" id="formKuesioner">
                 @csrf
-                {{-- Hidden inputs for selected guru IDs --}}
                 <div id="guruIdsContainer"></div>
 
                 <div class="sk-card">
@@ -1141,7 +1147,7 @@
                     {{-- Question header with progress bar --}}
                     <div class="sk-q-header">
                         <div class="sk-q-header-top">
-                            <h2 id="q-guru-name">Evaluasi Guru</h2>
+                            <h2 id="q-guru-name">Penilaian Guru</h2>
                             <div class="sk-progress-info">
                                 <span id="persen">0</span>% selesai
                                 (<span id="terisi">0</span>/<span id="total">{{ $pertanyaan->flatten()->count() }}</span>)
@@ -1167,7 +1173,7 @@
                         <div class="sk-q-section" id="section-{{ $kategori }}">
                             <div class="sk-section-label">
                                 <i class="bi bi-bookmark-fill"></i>
-                                Kompetensi {{ ucfirst($kategori) }}
+                                Aspek {{ ucfirst($kategori) }}
                             </div>
 
                             @foreach ($soalList as $soal)
@@ -1176,9 +1182,8 @@
                                         <span class="sk-q-num">{{ $loop->iteration }}.</span>
                                         <span>{{ $soal->teks_pertanyaan }}</span>
                                     </p>
-                                    {{-- Input name akan di-set dinamis via JS: jawaban[guruId][soalId] --}}
                                     <div class="sk-options" data-soal-id="{{ $soal->id }}" data-kategori="{{ $kategori }}">
-                                        @foreach ([1 => 'Sangat Tidak Setuju', 2 => 'Tidak Setuju', 3 => 'Cukup', 4 => 'Setuju', 5 => 'Sangat Setuju'] as $val => $label)
+                                        @foreach ([1 => 'Banget Nggak', 2 => 'Nggak', 3 => 'Biasa Aja', 4 => 'Setuju', 5 => 'Banget!'] as $val => $label)
                                             <label class="sk-option" id="opt-{{ $soal->id }}-{{ $val }}">
                                                 <input type="radio" class="soal-radio" data-soal="{{ $soal->id }}"
                                                     data-kategori="{{ $kategori }}" value="{{ $val }}" onchange="pilihJawaban(this)">
@@ -1192,17 +1197,19 @@
                         </div>
                     @endforeach
 
-                    {{-- Kesan & Pesan --}}
+                    {{-- Kesan & Pesan — bahasa siswa --}}
                     <div class="sk-kesan-pesan" id="kesanPesanSection" style="display:none;">
                         <div class="sk-kesan-label">
                             <i class="bi bi-chat-heart-fill"></i>
-                            Kesan & Pesan untuk Guru ini
+                            Ada pesan buat guru ini? 💬
                         </div>
                         <textarea class="sk-kesan-textarea" id="kesanPesanInput"
-                            placeholder="Tuliskan kesan dan pesanmu untuk guru ini (opsional)..."
+                            placeholder="Tulis kesan atau pesan buat guru ini (boleh dikosongin)..."
                             maxlength="500"></textarea>
-                        <div class="sk-kesan-hint"><i class="bi bi-info-circle"></i> Opsional — Jawaban bersifat anonim dan
-                            hanya dibaca oleh guru yang bersangkutan.</div>
+                        <div class="sk-kesan-hint">
+                            <i class="bi bi-info-circle"></i>
+                            Opsional — nama kamu tetap dirahasiakan. Pesan ini cuma dibaca oleh guru yang bersangkutan.
+                        </div>
                     </div>
 
                     {{-- Footer nav --}}
@@ -1215,16 +1222,14 @@
                             Selanjutnya <i class="bi bi-chevron-right"></i>
                         </button>
 
-                        {{-- Guru berikutnya (bukan guru terakhir, tab terakhir) --}}
                         <button type="button" class="sk-btn sk-btn-orange" id="btnGuruNext" style="display:none;"
                             onclick="lanjutGuruBerikutnya()">
                             Guru Berikutnya <i class="bi bi-arrow-right-circle-fill"></i>
                         </button>
 
-                        {{-- Kirim semua (guru terakhir, tab terakhir) --}}
                         <button type="submit" class="sk-btn sk-btn-green" id="btnKirim" style="display:none;"
                             onclick="return konfirmasiKirim()">
-                            <i class="bi bi-send-fill"></i> Kirim Semua Evaluasi
+                            <i class="bi bi-send-fill"></i> Kirim Semua Penilaian
                         </button>
                     </div>
                 </div>
@@ -1234,51 +1239,45 @@
     </div>
 
     <script>
-        // ══════════════════════════════════════════════
-        // DATA
-        // ══════════════════════════════════════════════
         const kategoriList = @json(array_keys($pertanyaan->toArray()));
         const totalSoal = {{ $pertanyaan->flatten()->count() }};
         let currentStep = 1;
         let currentTabIdx = 0;
 
-        // Multi-guru state
-        let selectedGurus = []; // [{id, nama, mapel}]
+        let selectedGurus = [];
         let currentGuruIndex = 0;
 
-        // Jawaban per guru: { guruId: { soalId: nilai } }
         const allJawaban = {};
-        // Kesan pesan per guru: { guruId: string }
         const allKesanPesan = {};
 
-        // ══════════════════════════════════════════════
-        // STEP NAVIGATION
-        // ══════════════════════════════════════════════
+        // ─── Step navigation ───────────────────────────────────────────────
         function goToStep(step) {
             for (let i = 1; i <= 3; i++) {
                 document.getElementById('panel-' + i).classList.remove('active');
                 const dot = document.getElementById('dot-' + i);
-                dot.classList.remove('active', 'done');
-                if (i < step) dot.classList.add('done');
-                else if (i === step) dot.classList.add('active');
-
                 const dotEl = dot.querySelector('.sk-step-dot');
-                if (i < step) dotEl.innerHTML = '<i class="bi bi-check2" style="font-size:15px;"></i>';
-                else dotEl.textContent = i;
+                dot.classList.remove('active', 'done');
+                if (i < step) {
+                    dot.classList.add('done');
+                    dotEl.innerHTML = '<i class="bi bi-check2" style="font-size:15px;"></i>';
+                } else if (i === step) {
+                    dot.classList.add('active');
+                    dotEl.textContent = i;
+                } else {
+                    dotEl.textContent = i;
+                }
             }
             document.getElementById('panel-' + step).classList.add('active');
             currentStep = step;
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Step 1: checkbox
         function toggleNextStep1() {
-            document.getElementById('btnStep1Next').disabled = !document.getElementById('confirmRead').checked;
+            document.getElementById('btnStep1Next').disabled =
+                !document.getElementById('confirmRead').checked;
         }
 
-        // ══════════════════════════════════════════════
-        // STEP 2: MULTI-SELECT GURU
-        // ══════════════════════════════════════════════
+        // ─── Step 2: Multi-select guru ──────────────────────────────────────
         function toggleGuruSelect(el) {
             const id = el.dataset.id;
             const nama = el.querySelector('.sk-guru-nama').textContent;
@@ -1286,15 +1285,12 @@
 
             const idx = selectedGurus.findIndex(g => g.id === id);
             if (idx >= 0) {
-                // Deselect
                 selectedGurus.splice(idx, 1);
                 el.classList.remove('selected');
             } else {
-                // Select
                 selectedGurus.push({ id, nama, mapel });
                 el.classList.add('selected');
             }
-
             renderChips();
             document.getElementById('btnStep2Next').disabled = selectedGurus.length === 0;
         }
@@ -1302,17 +1298,12 @@
         function renderChips() {
             const wrap = document.getElementById('selectedChipsWrap');
             const chips = document.getElementById('selectedChips');
-
-            if (selectedGurus.length === 0) {
-                wrap.classList.remove('show');
-                return;
-            }
+            if (selectedGurus.length === 0) { wrap.classList.remove('show'); return; }
             wrap.classList.add('show');
             chips.innerHTML = selectedGurus.map(g =>
-                `<span class="sk-chip">
-                    ${g.nama}
-                    <button type="button" onclick="removeGuruChip('${g.id}')" title="Hapus">×</button>
-                </span>`
+                `<span class="sk-chip">${g.nama}
+                        <button type="button" onclick="removeGuruChip('${g.id}')" title="Hapus">×</button>
+                    </span>`
             ).join('');
         }
 
@@ -1335,18 +1326,10 @@
             document.getElementById('emptySearch').style.display = visible === 0 ? 'block' : 'none';
         }
 
-        // ══════════════════════════════════════════════
-        // STEP 3: KUESIONER PER GURU
-        // ══════════════════════════════════════════════
+        // ─── Step 3: Kuesioner per guru ─────────────────────────────────────
         function startKuesioner() {
             if (selectedGurus.length === 0) return;
-
-            // Init jawaban storage
-            selectedGurus.forEach(g => {
-                allJawaban[g.id] = {};
-                allKesanPesan[g.id] = '';
-            });
-
+            selectedGurus.forEach(g => { allJawaban[g.id] = {}; allKesanPesan[g.id] = ''; });
             currentGuruIndex = 0;
             renderGuruDots();
             loadGuru(0);
@@ -1354,10 +1337,8 @@
         }
 
         function renderGuruDots() {
-            const container = document.getElementById('guruDots');
-            container.innerHTML = selectedGurus.map((g, i) =>
-                `<div class="sk-guru-dot" id="gdot-${i}"></div>`
-            ).join('');
+            document.getElementById('guruDots').innerHTML =
+                selectedGurus.map((g, i) => `<div class="sk-guru-dot" id="gdot-${i}"></div>`).join('');
         }
 
         function loadGuru(idx) {
@@ -1365,12 +1346,11 @@
             currentGuruIndex = idx;
             currentTabIdx = 0;
 
-            // Update header
-            document.getElementById('currentGuruLabel').textContent = `Guru ${idx + 1} dari ${selectedGurus.length}`;
+            document.getElementById('currentGuruLabel').textContent =
+                `Guru ke-${idx + 1} dari ${selectedGurus.length}`;
             document.getElementById('currentGuruName').textContent = guru.mapel;
-            document.getElementById('q-guru-name').textContent = 'Evaluasi: ' + guru.nama;
+            document.getElementById('q-guru-name').textContent = 'Nilai: ' + guru.nama;
 
-            // Update dots
             selectedGurus.forEach((_, i) => {
                 const dot = document.getElementById('gdot-' + i);
                 dot.classList.remove('current', 'done');
@@ -1378,37 +1358,25 @@
                 else if (i === idx) dot.classList.add('current');
             });
 
-            // Restore/reset radio inputs for this guru
             restoreOrClearJawaban(guru.id);
-
-            // Restore kesan pesan
             document.getElementById('kesanPesanInput').value = allKesanPesan[guru.id] || '';
-
-            // Reset tabs
             document.querySelectorAll('.sk-tab').forEach(t => t.classList.remove('tab-done'));
-
             gantiTab(kategoriList[0]);
             updateProgress();
         }
 
         function restoreOrClearJawaban(guruId) {
             const saved = allJawaban[guruId] || {};
-
             document.querySelectorAll('.soal-radio').forEach(radio => {
                 const soalId = radio.dataset.soal;
                 radio.name = `jawaban[${guruId}][${soalId}]`;
-                radio.checked = (saved[soalId] && parseInt(saved[soalId]) === parseInt(radio.value));
+                radio.checked = !!(saved[soalId] && parseInt(saved[soalId]) === parseInt(radio.value));
 
-                // Visual
                 const opt = radio.closest('.sk-option');
-                if (radio.checked) opt.classList.add('selected');
-                else opt.classList.remove('selected');
-
-                // Card
                 const card = document.getElementById('qcard-' + soalId);
+                if (radio.checked) opt.classList.add('selected'); else opt.classList.remove('selected');
                 if (card) {
-                    const anyChecked = !!saved[soalId];
-                    if (anyChecked) card.classList.add('answered');
+                    if (saved[soalId]) card.classList.add('answered');
                     else card.classList.remove('answered');
                 }
             });
@@ -1417,21 +1385,17 @@
         function saveCurrentJawaban() {
             const guru = selectedGurus[currentGuruIndex];
             if (!guru) return;
-
             document.querySelectorAll('.soal-radio:checked').forEach(radio => {
                 allJawaban[guru.id][radio.dataset.soal] = radio.value;
             });
             allKesanPesan[guru.id] = document.getElementById('kesanPesanInput').value;
         }
 
-        // Tab navigation
         function gantiTab(kat) {
             document.querySelectorAll('.sk-q-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.sk-tab').forEach(t => t.classList.remove('active'));
-
             document.getElementById('section-' + kat).classList.add('active');
             document.getElementById('tab-' + kat).classList.add('active');
-
             currentTabIdx = kategoriList.indexOf(kat);
 
             const isLastTab = currentTabIdx === kategoriList.length - 1;
@@ -1446,46 +1410,36 @@
         }
 
         function nextTab() {
-            if (currentTabIdx < kategoriList.length - 1)
-                gantiTab(kategoriList[currentTabIdx + 1]);
+            if (currentTabIdx < kategoriList.length - 1) gantiTab(kategoriList[currentTabIdx + 1]);
         }
 
         function prevTab() {
-            if (currentTabIdx > 0)
-                gantiTab(kategoriList[currentTabIdx - 1]);
+            if (currentTabIdx > 0) gantiTab(kategoriList[currentTabIdx - 1]);
         }
 
         function lanjutGuruBerikutnya() {
             saveCurrentJawaban();
-
             const sisa = totalSoal - Object.keys(allJawaban[selectedGurus[currentGuruIndex].id]).length;
             if (sisa > 0) {
-                if (!confirm(`Masih ada ${sisa} pertanyaan yang belum dijawab untuk guru ini. Lanjut ke guru berikutnya?`)) return;
+                if (!confirm(`Masih ada ${sisa} pertanyaan yang belum kamu isi untuk guru ini. Lanjut ke guru berikutnya?`)) return;
             }
-
             loadGuru(currentGuruIndex + 1);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Pilih jawaban
         function pilihJawaban(radio) {
             const soalId = radio.dataset.soal;
-            const kategori = radio.dataset.kategori;
             const guruId = selectedGurus[currentGuruIndex]?.id;
 
-            // Visual update
             const grid = radio.closest('.sk-options');
             grid.querySelectorAll('.sk-option').forEach(opt => opt.classList.remove('selected'));
             radio.closest('.sk-option').classList.add('selected');
-
             document.getElementById('qcard-' + soalId).classList.add('answered');
 
-            // Save to current guru jawaban
             if (guruId) {
                 if (!allJawaban[guruId]) allJawaban[guruId] = {};
                 allJawaban[guruId][soalId] = radio.value;
             }
-
             updateProgress();
         }
 
@@ -1499,36 +1453,30 @@
             document.getElementById('persen').textContent = pct;
             document.getElementById('terisi').textContent = terisi;
 
-            // Mark tabs done
             kategoriList.forEach(kat => {
                 const section = document.getElementById('section-' + kat);
-                const soalIds = Array.from(section.querySelectorAll('.soal-radio[value="1"]')).map(r => r.dataset.soal);
+                const soalIds = Array.from(section.querySelectorAll('.soal-radio[value="1"]'))
+                    .map(r => r.dataset.soal);
                 const allDone = soalIds.length > 0 && soalIds.every(id => saved[id]);
                 const tab = document.getElementById('tab-' + kat);
-                if (allDone) tab.classList.add('tab-done');
-                else tab.classList.remove('tab-done');
+                if (allDone) tab.classList.add('tab-done'); else tab.classList.remove('tab-done');
             });
         }
 
-        // Final submit
         function konfirmasiKirim() {
             saveCurrentJawaban();
 
-            // Build hidden inputs
             const container = document.getElementById('guruIdsContainer');
             container.innerHTML = '';
 
-            selectedGurus.forEach((guru, idx) => {
-                // guru_ids[]
+            selectedGurus.forEach(guru => {
                 const hiddenId = document.createElement('input');
                 hiddenId.type = 'hidden';
                 hiddenId.name = 'guru_ids[]';
                 hiddenId.value = guru.id;
                 container.appendChild(hiddenId);
 
-                // jawaban[guruId][soalId] — from allJawaban
-                const jw = allJawaban[guru.id] || {};
-                Object.entries(jw).forEach(([soalId, nilai]) => {
+                Object.entries(allJawaban[guru.id] || {}).forEach(([soalId, nilai]) => {
                     const inp = document.createElement('input');
                     inp.type = 'hidden';
                     inp.name = `jawaban[${guru.id}][${soalId}]`;
@@ -1536,7 +1484,6 @@
                     container.appendChild(inp);
                 });
 
-                // kesan_pesan[guruId]
                 const kp = document.createElement('input');
                 kp.type = 'hidden';
                 kp.name = `kesan_pesan[${guru.id}]`;
@@ -1544,19 +1491,19 @@
                 container.appendChild(kp);
             });
 
-            // Disable radio inputs so they don't duplicate
             document.querySelectorAll('.soal-radio').forEach(r => r.disabled = true);
 
-            const totalAnswered = selectedGurus.reduce((sum, g) => sum + Object.keys(allJawaban[g.id] || {}).length, 0);
+            const totalAnswered = selectedGurus.reduce((sum, g) =>
+                sum + Object.keys(allJawaban[g.id] || {}).length, 0);
             const totalRequired = selectedGurus.length * totalSoal;
+
             if (totalAnswered < totalRequired) {
                 const sisa = totalRequired - totalAnswered;
-                return confirm(`Masih ada ${sisa} pertanyaan yang belum dijawab dari semua guru. Tetap kirim?`);
+                return confirm(`Masih ada ${sisa} pertanyaan yang belum kamu jawab. Tetap kirim?`);
             }
             return true;
         }
 
-        // Init
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('total').textContent = totalSoal;
         });
