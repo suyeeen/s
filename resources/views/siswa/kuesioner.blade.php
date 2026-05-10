@@ -1541,11 +1541,19 @@
                     </div>
 
                     {{-- Category tabs --}}
+                    @php
+                        $labelKategoriSiswa = [
+                            'pedagogik'    => 'Pedagogik',
+                            'kepribadian'  => 'Kepribadian',
+                            'sosial'       => 'Sosial',
+                            'profesional'  => 'Profesional',
+                        ];
+                    @endphp
                     <div class="sk-tabs" id="tabsBar">
                         @foreach ($pertanyaan as $kategori => $soalList)
                             <button type="button" class="sk-tab" id="tab-{{ $kategori }}" onclick="gantiTab('{{ $kategori }}')">
                                 <div class="sk-tab-done-dot"></div>
-                                {{ ucfirst($kategori) }}
+                                {{ $labelKategoriSiswa[$kategori] ?? ucfirst($kategori) }}
                             </button>
                         @endforeach
                     </div>
@@ -1555,7 +1563,7 @@
                         <div class="sk-q-section" id="section-{{ $kategori }}">
                             <div class="sk-section-label">
                                 <i class="bi bi-bookmark-fill"></i>
-                                Aspek {{ ucfirst($kategori) }}
+                                Kompetensi {{ $labelKategoriSiswa[$kategori] ?? ucfirst($kategori) }}
                             </div>
 
                             @foreach ($soalList as $soal)

@@ -14,7 +14,8 @@ class GuruController extends Controller
     public function kuesioner()
     {
         $guru       = Guru::where('id', '!=', auth()->user()->guru->id)->get();
-        $pertanyaan = Pertanyaan::orderBy('urutan')->get()->groupBy('kategori');
+        $pertanyaan = Pertanyaan::whereIn('untuk_penilai', ['guru', 'keduanya'])
+            ->orderBy('urutan')->get()->groupBy('kategori');
 
         $penilai     = auth()->user()->guru;
         $tahunAjaran = \Illuminate\Support\Facades\Cache::get('stqm_tahun_ajaran', '2024/2025');
@@ -40,7 +41,7 @@ class GuruController extends Controller
         $request->validate([
             'guru_id'     => 'required|exists:guru,id',
             'jawaban'     => 'required|array',
-            'jawaban.*'   => 'required|integer|min:1|max:5',
+            'jawaban.*'   => 'required|integer|min:0|max:2',
             'kesan_pesan' => 'nullable|string|max:1000',
         ]);
 

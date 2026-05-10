@@ -5,9 +5,9 @@
 @push('styles')
     <style>
         /* ═══════════════════════════════════════════════════
-               GURU SEJAWAT KUESIONER — Multi-guru, Step-based
-               Bahasa: Profesional, kolegal sesama pendidik
-            ═══════════════════════════════════════════════════ */
+                   GURU SEJAWAT KUESIONER — Multi-guru, Step-based
+                   Bahasa: Profesional, kolegal sesama pendidik
+                ═══════════════════════════════════════════════════ */
         :root {
             --sk-primary: #4F63FF;
             --sk-primary-dark: #3A4FE8;
@@ -1023,8 +1023,9 @@
                     <div class="sk-rule-item">
                         <div class="sk-rule-num">3</div>
                         <div class="sk-rule-text">
-                            Berikan skor <strong>1 (Sangat Tidak Setuju)</strong> hingga
-                            <strong>5 (Sangat Setuju)</strong> untuk setiap pernyataan secara jujur dan objektif.
+                            Berikan pilihan <strong>TP (Tidak Pernah, skor 0)</strong>,
+                            <strong>KD (Kadang-kadang, skor 1)</strong>, atau
+                            <strong>SR (Sering, skor 2)</strong> untuk setiap pernyataan secara jujur dan objektif.
                         </div>
                     </div>
                     <div class="sk-rule-item">
@@ -1161,11 +1162,18 @@
                     </div>
 
                     {{-- Category tabs --}}
+                    @php
+                        $labelKategoriGuru = [
+                            'perilaku_harian' => 'Perilaku Sehari-hari',
+                            'hubungan_sejawat' => 'Hubungan Teman Sejawat',
+                            'profesional_guru' => 'Perilaku Profesional',
+                        ];
+                    @endphp
                     <div class="sk-tabs" id="tabsBar">
                         @foreach ($pertanyaan as $kategori => $soalList)
                             <button type="button" class="sk-tab" id="tab-{{ $kategori }}" onclick="gantiTab('{{ $kategori }}')">
                                 <div class="sk-tab-done-dot"></div>
-                                {{ ucfirst($kategori) }}
+                                {{ $labelKategoriGuru[$kategori] ?? ucfirst(str_replace('_', ' ', $kategori)) }}
                             </button>
                         @endforeach
                     </div>
@@ -1175,7 +1183,7 @@
                         <div class="sk-q-section" id="section-{{ $kategori }}">
                             <div class="sk-section-label">
                                 <i class="bi bi-bookmark-fill"></i>
-                                Kompetensi {{ ucfirst($kategori) }}
+                                {{ $labelKategoriGuru[$kategori] ?? ucfirst(str_replace('_', ' ', $kategori)) }}
                             </div>
 
                             @foreach ($soalList as $soal)
@@ -1184,13 +1192,17 @@
                                         <span class="sk-q-num">{{ $loop->iteration }}.</span>
                                         <span>{{ $soal->teks_pertanyaan }}</span>
                                     </p>
-                                    <div class="sk-options" data-soal-id="{{ $soal->id }}" data-kategori="{{ $kategori }}">
-                                        @foreach ([1 => 'Sangat Tidak Setuju', 2 => 'Tidak Setuju', 3 => 'Cukup', 4 => 'Setuju', 5 => 'Sangat Setuju'] as $val => $label)
+                                    <div class="sk-options" data-soal-id="{{ $soal->id }}" data-kategori="{{ $kategori }}"
+                                        style="grid-template-columns: repeat(3, 1fr);">
+                                        @foreach ([0 => ['kode' => 'TP', 'label' => 'Tidak Pernah', 'skor' => 0], 1 => ['kode' => 'KD', 'label' => 'Kadang-kadang', 'skor' => 1], 2 => ['kode' => 'SR', 'label' => 'Sering', 'skor' => 2]] as $val => $opt)
                                             <label class="sk-option" id="opt-{{ $soal->id }}-{{ $val }}">
                                                 <input type="radio" class="soal-radio" data-soal="{{ $soal->id }}"
                                                     data-kategori="{{ $kategori }}" value="{{ $val }}" onchange="pilihJawaban(this)">
-                                                <span class="sk-option-num">{{ $val }}</span>
-                                                <span class="sk-option-label">{{ $label }}</span>
+                                                <span class="sk-option-num"
+                                                    style="font-size:15px; font-weight:900; letter-spacing:0.04em;">{{ $opt['kode'] }}</span>
+                                                <span class="sk-option-label" style="font-size:9.5px;">{{ $opt['label'] }}</span>
+                                                <span class="sk-option-label" style="font-size:9px; opacity:0.6;">Skor
+                                                    {{ $opt['skor'] }}</span>
                                             </label>
                                         @endforeach
                                     </div>
@@ -1305,8 +1317,8 @@
             wrap.classList.add('show');
             chips.innerHTML = selectedGurus.map(g =>
                 `<span class="sk-chip">${g.nama}
-                        <button type="button" onclick="removeGuruChip('${g.id}')" title="Hapus">×</button>
-                    </span>`
+                            <button type="button" onclick="removeGuruChip('${g.id}')" title="Hapus">×</button>
+                        </span>`
             ).join('');
         }
 

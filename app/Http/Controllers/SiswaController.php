@@ -24,7 +24,8 @@ class SiswaController extends Controller
         }
 
         $guru       = Guru::all();
-        $pertanyaan = Pertanyaan::orderBy('kategori')->orderBy('urutan')->get()->groupBy('kategori');
+        $pertanyaan = Pertanyaan::whereIn('untuk_penilai', ['siswa', 'keduanya'])
+            ->orderBy('kategori')->orderBy('urutan')->get()->groupBy('kategori');
 
         $tahunAjaran = \Illuminate\Support\Facades\Cache::get('stqm_tahun_ajaran', '2024/2025');
         $semester    = \Illuminate\Support\Facades\Cache::get('stqm_semester', 'ganjil');
