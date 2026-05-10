@@ -3,6 +3,15 @@
 @section('title', 'Manajemen Pengguna')
 
 @section('content')
+    {{--
+        Kumpulkan ID yang BISA dipilih (exclude akun sendiri) di sini,
+        sekali saja, agar konsisten dipakai di toggleAll, allSelected,
+        dan atribut indeterminate.
+    --}}
+    @php
+        $selectableIds = $users->reject(fn($u) => $u->id === auth()->id())->pluck('id')->values();
+    @endphp
+
     <div class="max-w-6xl mx-auto space-y-8" x-data="{ modalOpen: false, editUser: null, importOpen: false }">
 
         {{-- Header --}}
@@ -244,9 +253,13 @@
             </div>
         @endif
 
-        {{-- Tabel --}}
+        {{-- =========================================================
+             TABEL — x-data menerima daftar ID yang selectable (tanpa
+             akun sendiri) langsung dari Blade agar konsisten di semua
+             fungsi AlpineJS.
+        ========================================================= --}}
         <div class="rounded-3xl overflow-hidden" style="background:var(--card-bg);border:1px solid var(--card-border);"
-            x-data="bulkDelete()">
+            x-data="bulkDelete({{ $selectableIds->toJson() }})">
 
             {{-- Search + Filter --}}
             <div class="p-6 flex flex-col sm:flex-row sm:items-center gap-4"
@@ -277,28 +290,52 @@
                 </form>
             </div>
 
-            {{-- Toolbar Bulk Delete (muncul saat ada yang dicentang) --}}
-            <div x-show="selected.length > 0" x-transition class="px-6 py-3 flex items-center justify-between"
-                style="background:rgba(239,68,68,0.06);border-bottom:1px solid rgba(239,68,68,0.15);">
-                <span class="text-sm font-medium" style="color:#f87171">
-                    <span x-text="selected.length"></span> akun dipilih
-                </span>
-                <form method="POST" action="{{ route('admin.users.bulk-destroy') }}"
-                    @submit.prevent="confirmBulkDelete($el)">
-                    @csrf
-                    <template x-for="id in selected" :key="id">
-                        <input type="hidden" name="user_ids[]" :value="id">
-                    </template>
-                    <button type="submit"
-                        class="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white"
-                        style="background:linear-gradient(135deg,#ef4444,#dc2626);box-shadow:0 4px 16px rgba(239,68,68,0.3);">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {{-- Toolbar Bulk Delete --}}
+            {{-- Gunakan :style display binding (bukan x-show) agar 100% reaktif --}}
+            <div
+                :style="selected.length > 0 ? 'display:flex' : 'display:none'"
+                class="px-6 py-4 items-center justify-between gap-4 flex-wrap"
+                style="display:none;background:rgba(239,68,68,0.08);border-bottom:2px solid rgba(239,68,68,0.25);">
+
+                {{-- Info jumlah dipilih --}}
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl flex items-center justify-center"
+                        style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);">
+                        <svg class="w-4 h-4" fill="none" stroke="#f87171" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
-                        Hapus yang Dipilih
+                    </div>
+                    <span class="text-sm font-semibold" style="color:#f87171">
+                        <span x-text="selected.length">0</span> akun dipilih untuk dihapus
+                    </span>
+                </div>
+
+                {{-- Tombol aksi --}}
+                <div class="flex items-center gap-3">
+                    {{-- Batalkan seleksi --}}
+                    <button type="button" @click="selected = []"
+                        class="px-4 py-2 rounded-xl text-sm font-medium transition-all"
+                        style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#9ca3af;">
+                        Batalkan
                     </button>
-                </form>
+
+                    {{-- Hapus yang dipilih --}}
+                    <form method="POST" action="{{ route('admin.users.bulk-destroy') }}"
+                        @submit.prevent="confirmBulkDelete($el)">
+                        @csrf
+                        <div id="bulk-hidden-inputs"></div>
+                        <button type="submit"
+                            class="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold text-white transition-all"
+                            style="background:linear-gradient(135deg,#ef4444,#dc2626);box-shadow:0 4px 16px rgba(239,68,68,0.4);">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            Hapus <span x-text="selected.length">0</span> Akun
+                        </button>
+                    </form>
+                </div>
             </div>
 
             <div class="overflow-x-auto">
@@ -307,10 +344,25 @@
                         <tr class="text-xs"
                             style="color:var(--text-muted);border-bottom:1px solid var(--card-divider);background:var(--card-bg-soft);">
                             <th class="p-5 font-medium w-10">
-                                {{-- Checkbox pilih semua --}}
-                                <input type="checkbox" class="w-4 h-4 rounded cursor-pointer accent-red-500"
-                                    @change="toggleAll($event, [{{ $users->pluck('id')->join(',') }}])"
-                                    :checked="allSelected([{{ $users->pluck('id')->join(',') }}])">
+                                {{--
+                                    FIX: Checkbox "Pilih Semua"
+                                    - :checked   → true hanya jika SEMUA ID selectable sudah dipilih
+                                    - x-ref      → digunakan JS untuk set indeterminate state
+                                    - @change    → toggleAll menggunakan selectableIds (tanpa akun sendiri)
+                                    - Dinonaktifkan jika tidak ada row yang bisa dipilih (halaman hanya berisi akun sendiri)
+                                --}}
+                                @if($selectableIds->isNotEmpty())
+                                    <input type="checkbox"
+                                        x-ref="checkAll"
+                                        class="w-4 h-4 rounded cursor-pointer accent-red-500"
+                                        :checked="allSelected()"
+                                        @change="toggleAll($event)"
+                                        title="Pilih / batalkan semua">
+                                @else
+                                    <div class="w-4 h-4 rounded"
+                                        style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);"
+                                        title="Tidak ada akun yang dapat dipilih"></div>
+                                @endif
                             </th>
                             <th class="p-5 font-medium">Nama Lengkap</th>
                             <th class="p-5 font-medium">Email</th>
@@ -328,8 +380,10 @@
 
                                 <td class="p-5 w-10">
                                     @if($user->id !== auth()->id())
-                                        <input type="checkbox" class="w-4 h-4 rounded cursor-pointer accent-red-500"
-                                            :checked="selected.includes({{ $user->id }})" @change="toggle({{ $user->id }})">
+                                        <input type="checkbox"
+                                            class="w-4 h-4 rounded cursor-pointer accent-red-500 row-checkbox"
+                                            :checked="selected.includes({{ $user->id }})"
+                                            @change="toggle({{ $user->id }})">
                                     @else
                                         {{-- Akun sendiri tidak bisa dipilih --}}
                                         <div class="w-4 h-4 rounded"
@@ -351,11 +405,11 @@
                                 <td class="p-5">
                                     @php
                                         $rs = match ($user->role) {
-                                            'admin' => ['bg' => 'rgba(139,92,246,0.1)', 'color' => '#a78bfa', 'border' => 'rgba(139,92,246,0.2)', 'label' => 'Admin'],
-                                            'kepsek' => ['bg' => 'rgba(16,185,129,0.1)', 'color' => '#34d399', 'border' => 'rgba(16,185,129,0.2)', 'label' => 'Kepala Sekolah'],
-                                            'guru' => ['bg' => 'rgba(249,115,22,0.1)', 'color' => '#fb923c', 'border' => 'rgba(249,115,22,0.2)', 'label' => 'Guru'],
-                                            'siswa' => ['bg' => 'rgba(59,130,246,0.1)', 'color' => '#60a5fa', 'border' => 'rgba(59,130,246,0.2)', 'label' => 'Siswa'],
-                                            default => ['bg' => 'rgba(255,255,255,0.05)', 'color' => '#9ca3af', 'border' => 'rgba(255,255,255,0.1)', 'label' => $user->role],
+                                            'admin'  => ['bg' => 'rgba(139,92,246,0.1)',  'color' => '#a78bfa', 'border' => 'rgba(139,92,246,0.2)',  'label' => 'Admin'],
+                                            'kepsek' => ['bg' => 'rgba(16,185,129,0.1)',  'color' => '#34d399', 'border' => 'rgba(16,185,129,0.2)',  'label' => 'Kepala Sekolah'],
+                                            'guru'   => ['bg' => 'rgba(249,115,22,0.1)',  'color' => '#fb923c', 'border' => 'rgba(249,115,22,0.2)',  'label' => 'Guru'],
+                                            'siswa'  => ['bg' => 'rgba(59,130,246,0.1)',  'color' => '#60a5fa', 'border' => 'rgba(59,130,246,0.2)',  'label' => 'Siswa'],
+                                            default  => ['bg' => 'rgba(255,255,255,0.05)', 'color' => '#9ca3af', 'border' => 'rgba(255,255,255,0.1)', 'label' => $user->role],
                                         };
                                     @endphp
                                     <span class="px-3 py-1.5 rounded-xl text-xs font-bold"
@@ -363,8 +417,7 @@
                                         {{ $rs['label'] }}
                                     </span>
                                 </td>
-                                <td class="p-5 text-xs" style="color:var(--text-muted)">{{ $user->created_at->format('d M Y') }}
-                                </td>
+                                <td class="p-5 text-xs" style="color:var(--text-muted)">{{ $user->created_at->format('d M Y') }}</td>
                                 <td class="p-5">
                                     <div class="flex items-center justify-end gap-2">
                                         <button @click="modalOpen = true; editUser = {{ $user->toJson() }}"
@@ -409,6 +462,7 @@
                 <div class="p-5" style="border-top:1px solid rgba(255,255,255,0.06);">{{ $users->links() }}</div>
             @endif
         </div>
+
         {{-- Modal Tambah / Edit --}}
         <div x-show="modalOpen" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4"
             style="background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);">
@@ -533,35 +587,116 @@
                 </div>
             </div>
         </div>
+
         @push('scripts')
-            <script>
-                function bulkDelete() {
-                    return {
-                        selected: [],
+        <script>
+        /**
+         * bulkDelete(selectableIds)
+         *
+         * Menerima array ID yang boleh dipilih (sudah exclude akun sendiri)
+         * langsung dari Blade melalui $selectableIds->toJson().
+         *
+         * Perbaikan dari versi lama:
+         * 1. toggleAll / allSelected tidak perlu menerima `ids` sebagai argumen —
+         *    cukup pakai this.pageIds yang sudah pasti benar.
+         * 2. Indeterminate state pada checkbox header diperbarui setiap kali
+         *    `selected` berubah melalui $watch.
+         * 3. Hidden input dibuat secara dinamis saat submit agar tidak ada konflik
+         *    dengan AlpineJS template x-for di dalam form.
+         */
+        function bulkDelete(pageIds) {
+            return {
+                // ID yang dapat dipilih di halaman ini (tanpa akun sendiri)
+                pageIds: pageIds || [],
 
-                        toggle(id) {
-                            if (this.selected.includes(id)) {
-                                this.selected = this.selected.filter(i => i !== id);
-                            } else {
-                                this.selected.push(id);
-                            }
-                        },
+                // ID yang saat ini dicentang
+                selected: [],
 
-                        toggleAll(event, ids) {
-                            this.selected = event.target.checked ? [...ids] : [];
-                        },
+                init() {
+                    // Pantau perubahan selected → perbarui indeterminate checkbox header
+                    this.$watch('selected', () => {
+                        this.syncCheckAll();
+                    });
+                },
 
-                        allSelected(ids) {
-                            return ids.length > 0 && ids.every(id => this.selected.includes(id));
-                        },
+                syncCheckAll() {
+                    const el = this.$refs.checkAll;
+                    if (!el) return;
 
-                        confirmBulkDelete(form) {
-                            if (!confirm(`Yakin hapus ${this.selected.length} akun? Tindakan ini tidak bisa dibatalkan.`)) return;
-                            form.submit();
-                        }
+                    const total     = this.pageIds.length;
+                    const checked   = this.selected.length;
+
+                    if (total === 0) {
+                        el.indeterminate = false;
+                        el.checked       = false;
+                    } else if (checked === 0) {
+                        el.indeterminate = false;
+                        el.checked       = false;
+                    } else if (checked === total) {
+                        el.indeterminate = false;
+                        el.checked       = true;
+                    } else {
+                        el.indeterminate = true;
+                        el.checked       = false;
                     }
+                },
+
+                /**
+                 * Toggle satu baris.
+                 */
+                toggle(id) {
+                    if (this.selected.includes(id)) {
+                        this.selected = this.selected.filter(i => i !== id);
+                    } else {
+                        this.selected.push(id);
+                    }
+                },
+
+                /**
+                 * Pilih / batalkan semua.
+                 * Hanya menggunakan this.pageIds — sudah exclude akun sendiri.
+                 */
+                toggleAll(event) {
+                    this.selected = event.target.checked ? [...this.pageIds] : [];
+                },
+
+                /**
+                 * Cek apakah semua baris yang bisa dipilih sudah dicentang.
+                 * Digunakan oleh :checked pada checkbox header sebagai inisialisasi.
+                 */
+                allSelected() {
+                    return this.pageIds.length > 0 &&
+                           this.pageIds.every(id => this.selected.includes(id));
+                },
+
+                /**
+                 * Konfirmasi lalu submit form hapus massal.
+                 * Input hidden dibuat secara dinamis agar tidak bergantung
+                 * pada x-for AlpineJS yang kadang tidak di-render sebelum submit.
+                 */
+                confirmBulkDelete(form) {
+                    if (this.selected.length === 0) return;
+
+                    if (!confirm(`Yakin hapus ${this.selected.length} akun?\nTindakan ini tidak bisa dibatalkan.`)) {
+                        return;
+                    }
+
+                    // Bersihkan hidden inputs lama, buat yang baru
+                    const container = form.querySelector('#bulk-hidden-inputs');
+                    container.innerHTML = '';
+                    this.selected.forEach(id => {
+                        const input = document.createElement('input');
+                        input.type  = 'hidden';
+                        input.name  = 'user_ids[]';
+                        input.value = id;
+                        container.appendChild(input);
+                    });
+
+                    form.submit();
                 }
-            </script>
+            };
+        }
+        </script>
         @endpush
     </div>
 @endsection
