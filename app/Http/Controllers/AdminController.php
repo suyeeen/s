@@ -24,6 +24,12 @@ class AdminController extends Controller
         }
         $users = $query->paginate(15)->withQueryString();
 
+        // Hitung selectableIds dari items halaman ini, exclude akun sendiri
+        $selectableIds = collect($users->items())
+            ->reject(fn($u) => $u->id === auth()->id())
+            ->pluck('id')
+            ->values();
+
         $stats = [
             'total_guru'   => \App\Models\Guru::count(),
             'total_siswa'  => \App\Models\Siswa::count(),
@@ -32,7 +38,7 @@ class AdminController extends Controller
             'total_kepsek' => User::where('role', 'kepsek')->count(),
         ];
 
-        return view('admin.users', compact('users', 'stats', 'roleFilter'));
+        return view('admin.users', compact('users', 'stats', 'roleFilter', 'selectableIds'));
     }
 
     public function store(Request $request)

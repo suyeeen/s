@@ -366,6 +366,7 @@
             else { sun.classList.add('hidden'); moon.classList.remove('hidden'); }
         }
     </script>
+    @stack('scripts')
 </body>
 
 </html>

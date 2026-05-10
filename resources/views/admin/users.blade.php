@@ -3,15 +3,6 @@
 @section('title', 'Manajemen Pengguna')
 
 @section('content')
-    {{--
-        Kumpulkan ID yang BISA dipilih (exclude akun sendiri) di sini,
-        sekali saja, agar konsisten dipakai di toggleAll, allSelected,
-        dan atribut indeterminate.
-    --}}
-    @php
-        $selectableIds = $users->reject(fn($u) => $u->id === auth()->id())->pluck('id')->values();
-    @endphp
-
     <div class="max-w-6xl mx-auto space-y-8" x-data="{ modalOpen: false, editUser: null, importOpen: false }">
 
         {{-- Header --}}
@@ -257,7 +248,6 @@
                 </div>
 
                 {{-- Baris 2: Tombol Toggle Mode Seleksi --}}
-                @if($selectableIds->isNotEmpty())
                 <div class="flex items-center gap-3 flex-wrap">
 
                     {{-- ★ TOMBOL UTAMA: Aktifkan / Nonaktifkan Mode Seleksi ★ --}}
@@ -292,14 +282,14 @@
                     </span>
 
                 </div>
-                @endif
             </div>
 
             {{-- ── Toolbar Bulk Delete (muncul saat ada yang dicentang) ── --}}
             <div
-                :style="selected.length > 0 ? 'display:flex' : 'display:none'"
-                class="px-6 py-4 items-center justify-between gap-4 flex-wrap"
-                style="display:none;background:rgba(239,68,68,0.08);border-bottom:2px solid rgba(239,68,68,0.25);">
+                x-show="selected.length > 0"
+                x-transition
+                class="px-6 py-4 flex items-center justify-between gap-4 flex-wrap"
+                style="background:rgba(239,68,68,0.08);border-bottom:2px solid rgba(239,68,68,0.25);">
 
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-xl flex items-center justify-center"
@@ -360,15 +350,13 @@
                             <th class="font-medium transition-all duration-300"
                                 :class="selectionMode ? 'p-5' : 'p-0'"
                                 :style="selectionMode ? 'width:3.5rem;opacity:1;' : 'width:0;overflow:hidden;opacity:0;'">
-                                @if($selectableIds->isNotEmpty())
-                                    <input type="checkbox"
-                                        x-ref="checkAll"
-                                        x-show="selectionMode"
-                                        class="w-4 h-4 rounded cursor-pointer accent-red-500"
-                                        :checked="allSelected()"
-                                        @change="toggleAll($event)"
-                                        title="Pilih / batalkan semua">
-                                @endif
+                                <input type="checkbox"
+                                    x-ref="checkAll"
+                                    x-show="selectionMode"
+                                    class="w-4 h-4 rounded cursor-pointer accent-red-500"
+                                    x-effect="$el.checked = allSelected()"
+                                    @change="toggleAll($event)"
+                                    title="Pilih / batalkan semua">
                             </th>
                             <th class="p-5 font-medium">Nama Lengkap</th>
                             <th class="p-5 font-medium">Email</th>
@@ -381,8 +369,8 @@
                         @forelse($users as $user)
                             <tr style="border-bottom:1px solid var(--card-border-soft);transition:background 0.15s ease;"
                                 :style="selected.includes({{ $user->id }}) ? 'background:rgba(239,68,68,0.06);' : ''"
-                                onmouseover="if(!this.style.background.includes('239'))this.style.background='rgba(255,255,255,0.02)'"
-                                onmouseout="if(!this.style.background.includes('239'))this.style.background=''">
+                                @mouseenter="if(!selected.includes({{ $user->id }})) $el.style.background='rgba(255,255,255,0.02)'"
+                                @mouseleave="if(!selected.includes({{ $user->id }})) $el.style.background=''">
 
                                 {{-- Sel checkbox --}}
                                 <td class="transition-all duration-300"
@@ -392,7 +380,7 @@
                                         <input type="checkbox"
                                             x-show="selectionMode"
                                             class="w-4 h-4 rounded cursor-pointer accent-red-500 row-checkbox"
-                                            :checked="selected.includes({{ $user->id }})"
+                                            x-effect="$el.checked = selected.includes({{ $user->id }})"
                                             @change="toggle({{ $user->id }})">
                                     @else
                                         <div x-show="selectionMode"
@@ -460,36 +448,35 @@
                                         </button>
 
                                         @if($user->id !== auth()->id())
-                                            {{-- Hapus satu (hanya saat mode NONAKTIF) --}}
-                                            <div x-show="!selectionMode" x-transition:leave="transition-opacity duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-                                                <form method="POST" action="{{ route('admin.users.destroy', $user->id) }}"
-                                                    class="swal-delete" data-nama="{{ $user->name }}">
-                                                    @csrf @method('DELETE')
-                                                    <button type="submit" class="p-2.5 rounded-xl transition-all"
-                                                        style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);color:#9ca3af;"
-                                                        onmouseover="this.style.background='rgba(239,68,68,0.1)';this.style.borderColor='rgba(239,68,68,0.2)';this.style.color='#f87171'"
-                                                        onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.borderColor='rgba(255,255,255,0.05)';this.style.color='#9ca3af'"
-                                                        title="Hapus pengguna ini">
-                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                        </svg>
-                                                    </button>
-                                                </form>
-                                            </div>
+                                            {{-- Tombol hapus: selalu tampil, sembunyikan lewat CSS saat mode seleksi aktif --}}
+                                            <form method="POST" action="{{ route('admin.users.destroy', $user->id) }}"
+                                                class="swal-delete hapus-single"
+                                                data-nama="{{ $user->name }}"
+                                                :style="selectionMode ? 'display:none' : ''">
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="p-2.5 rounded-xl transition-all"
+                                                    style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);color:#9ca3af;"
+                                                    onmouseover="this.style.background='rgba(239,68,68,0.1)';this.style.borderColor='rgba(239,68,68,0.2)';this.style.color='#f87171'"
+                                                    onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.borderColor='rgba(255,255,255,0.05)';this.style.color='#9ca3af'"
+                                                    title="Hapus pengguna ini">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                </button>
+                                            </form>
 
-                                            {{-- Toggle pilih baris (hanya saat mode AKTIF) --}}
+                                            {{-- Tombol centang baris saat mode seleksi aktif --}}
                                             <button
-                                                x-show="selectionMode"
-                                                x-transition:enter="transition-opacity duration-150"
-                                                x-transition:enter-start="opacity-0"
-                                                x-transition:enter-end="opacity-100"
                                                 type="button"
                                                 @click="toggle({{ $user->id }})"
                                                 class="p-2.5 rounded-xl transition-all"
-                                                :style="selected.includes({{ $user->id }})
-                                                    ? 'background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.35);color:#f87171;'
-                                                    : 'background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);color:#6b7280;'"
+                                                style="display:none"
+                                                :style="selectionMode
+                                                    ? (selected.includes({{ $user->id }})
+                                                        ? 'display:flex;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.35);color:#f87171;'
+                                                        : 'display:flex;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);color:#6b7280;')
+                                                    : 'display:none'"
                                                 :title="selected.includes({{ $user->id }}) ? 'Batalkan pilihan' : 'Tandai untuk dihapus'">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path x-show="!selected.includes({{ $user->id }})"
@@ -701,23 +688,34 @@
 
                 confirmBulkDelete(form) {
                     if (this.selected.length === 0) return;
-                    const ok = confirm(
-                        `Hapus ${this.selected.length} akun pengguna?\n\n` +
-                        `Tindakan ini TIDAK DAPAT DIBATALKAN.\n` +
-                        `Semua data terkait akun tersebut akan ikut terhapus.`
-                    );
-                    if (!ok) return;
-
-                    const container = form.querySelector('#bulk-hidden-inputs');
-                    container.innerHTML = '';
-                    this.selected.forEach(id => {
-                        const input = document.createElement('input');
-                        input.type  = 'hidden';
-                        input.name  = 'user_ids[]';
-                        input.value = id;
-                        container.appendChild(input);
+                    const jumlah = this.selected.length;
+                    const t = getSwalTheme();
+                    Swal.fire({
+                        icon: 'warning',
+                        title: `Hapus ${jumlah} akun pengguna?`,
+                        html: `Tindakan ini <strong>tidak dapat dibatalkan</strong>.<br>Semua data terkait akun tersebut akan ikut terhapus.`,
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#6b7280',
+                        confirmButtonText: `Ya, Hapus ${jumlah} Akun!`,
+                        cancelButtonText: 'Batal',
+                        background: t.background,
+                        color: t.color,
+                        customClass: { popup: 'swal2-popup' }
+                    }).then((result) => {
+                        if (!result.isConfirmed) return;
+                        const container = form.querySelector('#bulk-hidden-inputs');
+                        if (!container) return;
+                        container.innerHTML = '';
+                        this.selected.forEach(id => {
+                            const input = document.createElement('input');
+                            input.type  = 'hidden';
+                            input.name  = 'user_ids[]';
+                            input.value = id;
+                            container.appendChild(input);
+                        });
+                        form.submit();
                     });
-                    form.submit();
                 }
             };
         }
