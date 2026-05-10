@@ -22,7 +22,6 @@
             </div>
 
             <div class="flex items-center gap-3 flex-wrap">
-
                 {{-- Tombol Download Template --}}
                 <a href="{{ route('admin.users.template') }}"
                     class="flex items-center gap-2 px-4 py-3 rounded-2xl font-semibold text-sm transition-all"
@@ -80,8 +79,7 @@
                                 style="border:2px dashed rgba(16,185,129,0.4);background:rgba(16,185,129,0.05);"
                                 x-data="{ filename: '' }" @dragover.prevent
                                 @drop.prevent="filename = $event.dataTransfer.files[0]?.name ?? ''; $refs.fileInput.files = $event.dataTransfer.files;">
-                                <svg class="w-8 h-8 mb-2" style="color:#10b981" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
+                                <svg class="w-8 h-8 mb-2" style="color:#10b981" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                         d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                                 </svg>
@@ -98,8 +96,7 @@
 
                             <p class="text-xs mt-3" style="color:var(--text-muted)">
                                 Belum punya template?
-                                <a href="{{ route('admin.users.template') }}" class="underline"
-                                    style="color:#10b981;">Download di sini</a>
+                                <a href="{{ route('admin.users.template') }}" class="underline" style="color:#10b981;">Download di sini</a>
                             </p>
 
                             <div class="flex gap-3 mt-6">
@@ -121,13 +118,10 @@
 
         {{-- Stats Cards --}}
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-            <div class="rounded-3xl p-5 flex items-center gap-4"
-                style="background:var(--card-bg);border:1px solid var(--card-border);">
-                <div class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0"
-                    style="background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);">
+            <div class="rounded-3xl p-5 flex items-center gap-4" style="background:var(--card-bg);border:1px solid var(--card-border);">
+                <div class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0" style="background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);">
                     <svg class="w-5 h-5" fill="none" stroke="#60a5fa" stroke-width="1.8" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                 </div>
                 <div>
@@ -135,13 +129,10 @@
                     <p class="text-2xl font-bold" style="color:#60a5fa">{{ $stats['total_users'] }}</p>
                 </div>
             </div>
-            <div class="rounded-3xl p-5 flex items-center gap-4"
-                style="background:var(--card-bg);border:1px solid var(--card-border);">
-                <div class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0"
-                    style="background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.2);">
+            <div class="rounded-3xl p-5 flex items-center gap-4" style="background:var(--card-bg);border:1px solid var(--card-border);">
+                <div class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0" style="background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.2);">
                     <svg class="w-5 h-5" fill="none" stroke="#fb923c" stroke-width="1.8" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                     </svg>
                 </div>
                 <div>
@@ -149,13 +140,10 @@
                     <p class="text-2xl font-bold" style="color:#fb923c">{{ $stats['total_guru'] }}</p>
                 </div>
             </div>
-            <div class="rounded-3xl p-5 flex items-center gap-4"
-                style="background:var(--card-bg);border:1px solid var(--card-border);">
-                <div class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0"
-                    style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);">
+            <div class="rounded-3xl p-5 flex items-center gap-4" style="background:var(--card-bg);border:1px solid var(--card-border);">
+                <div class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);">
                     <svg class="w-5 h-5" fill="none" stroke="#fbbf24" stroke-width="1.8" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
                     </svg>
                 </div>
                 <div>
@@ -163,13 +151,10 @@
                     <p class="text-2xl font-bold" style="color:#fbbf24">{{ $stats['total_siswa'] }}</p>
                 </div>
             </div>
-            <div class="rounded-3xl p-5 flex items-center gap-4"
-                style="background:var(--card-bg);border:1px solid var(--card-border);">
-                <div class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0"
-                    style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);">
+            <div class="rounded-3xl p-5 flex items-center gap-4" style="background:var(--card-bg);border:1px solid var(--card-border);">
+                <div class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0" style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);">
                     <svg class="w-5 h-5" fill="none" stroke="#34d399" stroke-width="1.8" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                     </svg>
                 </div>
                 <div>
@@ -177,13 +162,10 @@
                     <p class="text-2xl font-bold" style="color:#34d399">{{ $stats['total_kepsek'] }}</p>
                 </div>
             </div>
-            <div class="rounded-3xl p-5 flex items-center gap-4"
-                style="background:var(--card-bg);border:1px solid var(--card-border);">
-                <div class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0"
-                    style="background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.2);">
+            <div class="rounded-3xl p-5 flex items-center gap-4" style="background:var(--card-bg);border:1px solid var(--card-border);">
+                <div class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0" style="background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.2);">
                     <svg class="w-5 h-5" fill="none" stroke="#a78bfa" stroke-width="1.8" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                 </div>
                 <div>
@@ -195,11 +177,9 @@
 
         {{-- Notifikasi Hasil Import --}}
         @if (session('import_success'))
-            <div class="rounded-3xl p-6 space-y-4"
-                style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);">
+            <div class="rounded-3xl p-6 space-y-4" style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);">
                 <div class="flex items-start gap-3">
-                    <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-                        style="background:rgba(16,185,129,0.15);">
+                    <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0" style="background:rgba(16,185,129,0.15);">
                         <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                         </svg>
@@ -208,21 +188,14 @@
                         <p class="font-semibold text-emerald-400 text-sm">{{ session('import_success') }}</p>
                         <div class="flex gap-4 mt-2 text-xs" style="color:var(--text-muted)">
                             <span>✓ {{ session('import_berhasil') }} berhasil</span>
-                            @if(session('import_duplikat') > 0)
-                                <span>⚠ {{ session('import_duplikat') }} duplikat</span>
-                            @endif
-                            @if(session('import_gagal') > 0)
-                                <span>✗ {{ session('import_gagal') }} gagal validasi</span>
-                            @endif
+                            @if(session('import_duplikat') > 0)<span>⚠ {{ session('import_duplikat') }} duplikat</span>@endif
+                            @if(session('import_gagal') > 0)<span>✗ {{ session('import_gagal') }} gagal validasi</span>@endif
                         </div>
                     </div>
                 </div>
                 @if(session('import_log') && count(session('import_log')) > 0)
                     <div class="rounded-2xl overflow-hidden" style="border:1px solid rgba(255,255,255,0.06);">
-                        <div class="px-4 py-3 text-xs font-semibold"
-                            style="background:rgba(255,255,255,0.04);color:var(--text-muted);">
-                            Detail baris bermasalah
-                        </div>
+                        <div class="px-4 py-3 text-xs font-semibold" style="background:rgba(255,255,255,0.04);color:var(--text-muted);">Detail baris bermasalah</div>
                         <table class="w-full text-xs">
                             <thead>
                                 <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
@@ -238,12 +211,7 @@
                                         <td class="px-4 py-2" style="color:var(--text-muted);">#{{ $log['baris'] }}</td>
                                         <td class="px-4 py-2" style="color:var(--text-main);">{{ $log['nama'] }}</td>
                                         <td class="px-4 py-2" style="color:var(--text-muted);">{{ $log['email'] }}</td>
-                                        <td class="px-4 py-2">
-                                            <span class="px-2 py-0.5 rounded-lg text-xs"
-                                                style="background:rgba(239,68,68,0.1);color:#f87171;">
-                                                {{ $log['alasan'] }}
-                                            </span>
-                                        </td>
+                                        <td class="px-4 py-2"><span class="px-2 py-0.5 rounded-lg text-xs" style="background:rgba(239,68,68,0.1);color:#f87171;">{{ $log['alasan'] }}</span></td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -254,50 +222,85 @@
         @endif
 
         {{-- =========================================================
-             TABEL — x-data menerima daftar ID yang selectable (tanpa
-             akun sendiri) langsung dari Blade agar konsisten di semua
-             fungsi AlpineJS.
+             TABEL UTAMA — selectionMode mengontrol tampilan checkbox
         ========================================================= --}}
         <div class="rounded-3xl overflow-hidden" style="background:var(--card-bg);border:1px solid var(--card-border);"
             x-data="bulkDelete({{ $selectableIds->toJson() }})">
 
-            {{-- Search + Filter --}}
-            <div class="p-6 flex flex-col sm:flex-row sm:items-center gap-4"
+            {{-- Search + Filter + Tombol Mode Seleksi --}}
+            <div class="p-6 flex flex-col gap-4"
                 style="border-bottom:1px solid var(--card-divider);background:var(--card-bg-soft);">
-                <form method="GET" action="{{ route('admin.users.index') }}" class="flex-1">
-                    <input type="hidden" name="role" value="{{ $roleFilter }}">
-                    <div class="relative w-full max-w-sm">
-                        <svg class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2" style="color:var(--text-muted)"
-                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+                {{-- Baris 1: Search + Filter Role --}}
+                <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                    <form method="GET" action="{{ route('admin.users.index') }}" class="flex-1">
+                        <input type="hidden" name="role" value="{{ $roleFilter }}">
+                        <div class="relative w-full max-w-sm">
+                            <svg class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2" style="color:var(--text-muted)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama atau email..."
+                                class="w-full pl-12 pr-4 py-3 rounded-2xl text-sm outline-none"
+                                style="background:var(--input-bg);border:1.5px solid var(--input-border);color:var(--text-main);">
+                        </div>
+                    </form>
+                    <form method="GET" action="{{ route('admin.users.index') }}" class="flex gap-2 flex-wrap">
+                        @if(request('search'))<input type="hidden" name="search" value="{{ request('search') }}">@endif
+                        @foreach (['semua' => 'Semua', 'admin' => 'Admin', 'guru' => 'Guru', 'siswa' => 'Siswa', 'kepsek' => 'Kepsek'] as $val => $label)
+                            <button type="submit" name="role" value="{{ $val }}"
+                                class="px-4 py-1.5 rounded-xl text-xs font-medium transition-all"
+                                style="{{ $roleFilter === $val ? 'background: linear-gradient(135deg, #f97316, #eab308); color: white;' : 'background: var(--btn-bg); border: 1px solid var(--btn-border); color: var(--text-muted);' }}">
+                                {{ $label }}
+                            </button>
+                        @endforeach
+                    </form>
+                </div>
+
+                {{-- Baris 2: Tombol Toggle Mode Seleksi --}}
+                @if($selectableIds->isNotEmpty())
+                <div class="flex items-center gap-3 flex-wrap">
+
+                    {{-- ★ TOMBOL UTAMA: Aktifkan / Nonaktifkan Mode Seleksi ★ --}}
+                    <button
+                        type="button"
+                        @click="toggleSelectionMode()"
+                        class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200"
+                        :style="selectionMode
+                            ? 'background:rgba(239,68,68,0.15);border:1.5px solid rgba(239,68,68,0.4);color:#f87171;box-shadow:0 0 0 3px rgba(239,68,68,0.1);'
+                            : 'background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.12);color:var(--text-muted);'">
+                        <svg x-show="!selectionMode" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
                         </svg>
-                        <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Cari nama atau email..."
-                            class="w-full pl-12 pr-4 py-3 rounded-2xl text-sm outline-none"
-                            style="background:var(--input-bg);border:1.5px solid var(--input-border);color:var(--text-main);">
-                    </div>
-                </form>
-                <form method="GET" action="{{ route('admin.users.index') }}" class="flex gap-2 flex-wrap">
-                    @if(request('search'))<input type="hidden" name="search" value="{{ request('search') }}">@endif
-                    @foreach (['semua' => 'Semua', 'admin' => 'Admin', 'guru' => 'Guru', 'siswa' => 'Siswa', 'kepsek' => 'Kepsek'] as $val => $label)
-                        <button type="submit" name="role" value="{{ $val }}"
-                            class="px-4 py-1.5 rounded-xl text-xs font-medium transition-all"
-                            style="{{ $roleFilter === $val ? 'background: linear-gradient(135deg, #f97316, #eab308); color: white;' : 'background: var(--btn-bg); border: 1px solid var(--btn-border); color: var(--text-muted);' }}">
-                            {{ $label }}
-                        </button>
-                    @endforeach
-                </form>
+                        <svg x-show="selectionMode" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        <span x-text="selectionMode ? 'Nonaktifkan Seleksi' : 'Mode Seleksi Hapus'"></span>
+                    </button>
+
+                    {{-- Hint ketika mode aktif tapi belum ada yang dipilih --}}
+                    <span x-show="selectionMode && selected.length === 0" x-transition
+                        class="text-xs px-3 py-1.5 rounded-xl"
+                        style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);color:#f87171;">
+                        💡 Centang pengguna yang ingin dihapus
+                    </span>
+
+                    {{-- Counter saat ada yang dipilih --}}
+                    <span x-show="selectionMode && selected.length > 0" x-transition
+                        class="text-xs px-3 py-1.5 rounded-xl font-semibold"
+                        style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#f87171;">
+                        <span x-text="selected.length"></span> pengguna dipilih
+                    </span>
+
+                </div>
+                @endif
             </div>
 
-            {{-- Toolbar Bulk Delete --}}
-            {{-- Gunakan :style display binding (bukan x-show) agar 100% reaktif --}}
+            {{-- ── Toolbar Bulk Delete (muncul saat ada yang dicentang) ── --}}
             <div
                 :style="selected.length > 0 ? 'display:flex' : 'display:none'"
                 class="px-6 py-4 items-center justify-between gap-4 flex-wrap"
                 style="display:none;background:rgba(239,68,68,0.08);border-bottom:2px solid rgba(239,68,68,0.25);">
 
-                {{-- Info jumlah dipilih --}}
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-xl flex items-center justify-center"
                         style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);">
@@ -306,21 +309,30 @@
                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
                     </div>
-                    <span class="text-sm font-semibold" style="color:#f87171">
-                        <span x-text="selected.length">0</span> akun dipilih untuk dihapus
-                    </span>
+                    <div>
+                        <span class="text-sm font-semibold" style="color:#f87171">
+                            <span x-text="selected.length">0</span> akun dipilih untuk dihapus
+                        </span>
+                        <p class="text-xs mt-0.5" style="color:rgba(248,113,113,0.6)">Tindakan ini tidak dapat dibatalkan</p>
+                    </div>
                 </div>
 
-                {{-- Tombol aksi --}}
-                <div class="flex items-center gap-3">
-                    {{-- Batalkan seleksi --}}
-                    <button type="button" @click="selected = []"
+                <div class="flex items-center gap-3 flex-wrap">
+                    {{-- Pilih Semua --}}
+                    <button type="button" @click="selectAll()"
+                        class="px-4 py-2 rounded-xl text-sm font-medium transition-all"
+                        style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#f87171;">
+                        Pilih Semua (<span x-text="pageIds.length"></span>)
+                    </button>
+
+                    {{-- Batalkan --}}
+                    <button type="button" @click="clearSelection()"
                         class="px-4 py-2 rounded-xl text-sm font-medium transition-all"
                         style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#9ca3af;">
                         Batalkan
                     </button>
 
-                    {{-- Hapus yang dipilih --}}
+                    {{-- Tombol Hapus --}}
                     <form method="POST" action="{{ route('admin.users.bulk-destroy') }}"
                         @submit.prevent="confirmBulkDelete($el)">
                         @csrf
@@ -338,30 +350,24 @@
                 </div>
             </div>
 
+            {{-- ── Tabel ── --}}
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
                     <thead>
                         <tr class="text-xs"
                             style="color:var(--text-muted);border-bottom:1px solid var(--card-divider);background:var(--card-bg-soft);">
-                            <th class="p-5 font-medium w-10">
-                                {{--
-                                    FIX: Checkbox "Pilih Semua"
-                                    - :checked   → true hanya jika SEMUA ID selectable sudah dipilih
-                                    - x-ref      → digunakan JS untuk set indeterminate state
-                                    - @change    → toggleAll menggunakan selectableIds (tanpa akun sendiri)
-                                    - Dinonaktifkan jika tidak ada row yang bisa dipilih (halaman hanya berisi akun sendiri)
-                                --}}
+                            {{-- Kolom checkbox: lebar animasi muncul/hilang --}}
+                            <th class="font-medium transition-all duration-300"
+                                :class="selectionMode ? 'p-5' : 'p-0'"
+                                :style="selectionMode ? 'width:3.5rem;opacity:1;' : 'width:0;overflow:hidden;opacity:0;'">
                                 @if($selectableIds->isNotEmpty())
                                     <input type="checkbox"
                                         x-ref="checkAll"
+                                        x-show="selectionMode"
                                         class="w-4 h-4 rounded cursor-pointer accent-red-500"
                                         :checked="allSelected()"
                                         @change="toggleAll($event)"
                                         title="Pilih / batalkan semua">
-                                @else
-                                    <div class="w-4 h-4 rounded"
-                                        style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);"
-                                        title="Tidak ada akun yang dapat dipilih"></div>
                                 @endif
                             </th>
                             <th class="p-5 font-medium">Nama Lengkap</th>
@@ -373,35 +379,51 @@
                     </thead>
                     <tbody class="text-sm">
                         @forelse($users as $user)
-                            <tr style="border-bottom:1px solid var(--card-border-soft);"
-                                :style="selected.includes({{ $user->id }}) ? 'background:rgba(239,68,68,0.04);' : ''"
-                                onmouseover="if(!this.style.background.includes('239'))this.style.background='rgba(26,22,19,0.03)'"
-                                onmouseout="if(!this.style.background.includes('239'))this.style.background='transparent'">
+                            <tr style="border-bottom:1px solid var(--card-border-soft);transition:background 0.15s ease;"
+                                :style="selected.includes({{ $user->id }}) ? 'background:rgba(239,68,68,0.06);' : ''"
+                                onmouseover="if(!this.style.background.includes('239'))this.style.background='rgba(255,255,255,0.02)'"
+                                onmouseout="if(!this.style.background.includes('239'))this.style.background=''">
 
-                                <td class="p-5 w-10">
+                                {{-- Sel checkbox --}}
+                                <td class="transition-all duration-300"
+                                    :class="selectionMode ? 'p-5' : 'p-0'"
+                                    :style="selectionMode ? 'width:3.5rem;opacity:1;' : 'width:0;overflow:hidden;opacity:0;'">
                                     @if($user->id !== auth()->id())
                                         <input type="checkbox"
+                                            x-show="selectionMode"
                                             class="w-4 h-4 rounded cursor-pointer accent-red-500 row-checkbox"
                                             :checked="selected.includes({{ $user->id }})"
                                             @change="toggle({{ $user->id }})">
                                     @else
-                                        {{-- Akun sendiri tidak bisa dipilih --}}
-                                        <div class="w-4 h-4 rounded"
-                                            style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);"
-                                            title="Tidak bisa menghapus akun sendiri"></div>
+                                        <div x-show="selectionMode"
+                                            class="w-4 h-4 rounded" title="Tidak bisa menghapus akun sendiri"
+                                            style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);"></div>
                                     @endif
                                 </td>
 
+                                {{-- Nama --}}
                                 <td class="p-5">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm shrink-0"
-                                            style="background:rgba(232,86,10,0.12);color:#E8560A;">
+                                        <div class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 transition-all duration-200"
+                                            :style="selected.includes({{ $user->id }})
+                                                ? 'background:rgba(239,68,68,0.15);color:#f87171;'
+                                                : 'background:rgba(232,86,10,0.12);color:#E8560A;'">
                                             {{ strtoupper(substr($user->name, 0, 1)) }}
                                         </div>
-                                        <span class="font-semibold" style="color:var(--text-main)">{{ $user->name }}</span>
+                                        <div>
+                                            <span class="font-semibold" style="color:var(--text-main)">{{ $user->name }}</span>
+                                            @if($user->id === auth()->id())
+                                                <span class="ml-2 px-1.5 py-0.5 rounded-md text-xs font-medium"
+                                                    style="background:rgba(249,115,22,0.1);color:#fb923c;border:1px solid rgba(249,115,22,0.2);">Anda</span>
+                                            @endif
+                                        </div>
                                     </div>
                                 </td>
+
+                                {{-- Email --}}
                                 <td class="p-5" style="color:var(--text-muted)">{{ $user->email }}</td>
+
+                                {{-- Role --}}
                                 <td class="p-5">
                                     @php
                                         $rs = match ($user->role) {
@@ -417,41 +439,74 @@
                                         {{ $rs['label'] }}
                                     </span>
                                 </td>
+
+                                {{-- Tanggal --}}
                                 <td class="p-5 text-xs" style="color:var(--text-muted)">{{ $user->created_at->format('d M Y') }}</td>
+
+                                {{-- Aksi --}}
                                 <td class="p-5">
                                     <div class="flex items-center justify-end gap-2">
+                                        {{-- Edit (selalu ada) --}}
                                         <button @click="modalOpen = true; editUser = {{ $user->toJson() }}"
                                             class="p-2.5 rounded-xl transition-all"
                                             style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);color:#9ca3af;"
                                             onmouseover="this.style.background='rgba(59,130,246,0.1)';this.style.borderColor='rgba(59,130,246,0.2)';this.style.color='#60a5fa'"
-                                            onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.borderColor='rgba(255,255,255,0.05)';this.style.color='#9ca3af'">
+                                            onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.borderColor='rgba(255,255,255,0.05)';this.style.color='#9ca3af'"
+                                            title="Edit pengguna">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                             </svg>
                                         </button>
+
                                         @if($user->id !== auth()->id())
-                                            <form method="POST" action="{{ route('admin.users.destroy', $user->id) }}"
-                                                class="swal-delete" data-nama="{{ $user->name }}">
-                                                @csrf @method('DELETE')
-                                                <button type="submit" class="p-2.5 rounded-xl transition-all"
-                                                    style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);color:#9ca3af;"
-                                                    onmouseover="this.style.background='rgba(239,68,68,0.1)';this.style.borderColor='rgba(239,68,68,0.2)';this.style.color='#f87171'"
-                                                    onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.borderColor='rgba(255,255,255,0.05)';this.style.color='#9ca3af'">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                    </svg>
-                                                </button>
-                                            </form>
+                                            {{-- Hapus satu (hanya saat mode NONAKTIF) --}}
+                                            <div x-show="!selectionMode" x-transition:leave="transition-opacity duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+                                                <form method="POST" action="{{ route('admin.users.destroy', $user->id) }}"
+                                                    class="swal-delete" data-nama="{{ $user->name }}">
+                                                    @csrf @method('DELETE')
+                                                    <button type="submit" class="p-2.5 rounded-xl transition-all"
+                                                        style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);color:#9ca3af;"
+                                                        onmouseover="this.style.background='rgba(239,68,68,0.1)';this.style.borderColor='rgba(239,68,68,0.2)';this.style.color='#f87171'"
+                                                        onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.borderColor='rgba(255,255,255,0.05)';this.style.color='#9ca3af'"
+                                                        title="Hapus pengguna ini">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                        </svg>
+                                                    </button>
+                                                </form>
+                                            </div>
+
+                                            {{-- Toggle pilih baris (hanya saat mode AKTIF) --}}
+                                            <button
+                                                x-show="selectionMode"
+                                                x-transition:enter="transition-opacity duration-150"
+                                                x-transition:enter-start="opacity-0"
+                                                x-transition:enter-end="opacity-100"
+                                                type="button"
+                                                @click="toggle({{ $user->id }})"
+                                                class="p-2.5 rounded-xl transition-all"
+                                                :style="selected.includes({{ $user->id }})
+                                                    ? 'background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.35);color:#f87171;'
+                                                    : 'background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);color:#6b7280;'"
+                                                :title="selected.includes({{ $user->id }}) ? 'Batalkan pilihan' : 'Tandai untuk dihapus'">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path x-show="!selected.includes({{ $user->id }})"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    <path x-show="selected.includes({{ $user->id }})"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </button>
                                         @endif
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="p-10 text-center text-sm" style="color:var(--text-muted)">Tidak ada
-                                    pengguna ditemukan.</td>
+                                <td colspan="7" class="p-10 text-center text-sm" style="color:var(--text-muted)">Tidak ada pengguna ditemukan.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -470,13 +525,11 @@
                 style="background:#0e0e1a;border:1px solid rgba(255,255,255,0.08);">
                 <div class="p-6 flex justify-between items-center"
                     style="border-bottom:1px solid var(--card-divider);background:var(--card-bg-soft);">
-                    <h3 class="font-bold text-white text-xl" x-text="editUser ? 'Edit Pengguna' : 'Tambah Pengguna Baru'">
-                    </h3>
+                    <h3 class="font-bold text-white text-xl" x-text="editUser ? 'Edit Pengguna' : 'Tambah Pengguna Baru'"></h3>
                     <button @click="modalOpen = false" class="p-2 rounded-xl text-gray-400 hover:text-white"
                         style="background:rgba(255,255,255,0.05);">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
@@ -488,15 +541,13 @@
                                 <input type="text" name="name" required placeholder="Masukkan nama lengkap..."
                                     class="w-full px-4 py-3 rounded-2xl text-white text-sm outline-none placeholder-gray-600"
                                     style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);"
-                                    onfocus="this.style.borderColor='rgba(249,115,22,0.5)'"
-                                    onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
+                                    onfocus="this.style.borderColor='rgba(249,115,22,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
                             </div>
                             <div><label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
                                 <input type="email" name="email" required placeholder="email@stqm.sch.id"
                                     class="w-full px-4 py-3 rounded-2xl text-white text-sm outline-none placeholder-gray-600"
                                     style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);"
-                                    onfocus="this.style.borderColor='rgba(249,115,22,0.5)'"
-                                    onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
+                                    onfocus="this.style.borderColor='rgba(249,115,22,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
                             </div>
                             <div><label class="block text-sm font-medium text-gray-300 mb-2">Role</label>
                                 <select name="role" required class="w-full px-4 py-3 rounded-2xl text-sm outline-none"
@@ -509,14 +560,11 @@
                                 <input type="password" name="password" required placeholder="Minimal 6 karakter"
                                     class="w-full px-4 py-3 rounded-2xl text-white text-sm outline-none placeholder-gray-600"
                                     style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);"
-                                    onfocus="this.style.borderColor='rgba(249,115,22,0.5)'"
-                                    onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
+                                    onfocus="this.style.borderColor='rgba(249,115,22,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
                             </div>
                         </div>
-                        <div class="p-6 flex justify-end gap-4"
-                            style="border-top:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);">
-                            <button type="button" @click="modalOpen=false"
-                                class="px-6 py-3 rounded-2xl text-sm font-medium text-gray-400"
+                        <div class="p-6 flex justify-end gap-4" style="border-top:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);">
+                            <button type="button" @click="modalOpen=false" class="px-6 py-3 rounded-2xl text-sm font-medium text-gray-400"
                                 style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);">Batal</button>
                             <button type="submit" class="px-6 py-3 rounded-2xl text-sm font-semibold text-white"
                                 style="background:linear-gradient(135deg,#f97316,#eab308);">Simpan</button>
@@ -541,8 +589,7 @@
                                 <select name="role" required class="w-full px-4 py-3 rounded-2xl text-sm outline-none"
                                     style="background:var(--input-bg);border:1.5px solid var(--input-border);color:var(--text-main);">
                                     @foreach(['siswa' => 'Siswa', 'guru' => 'Guru', 'kepsek' => 'Kepala Sekolah', 'admin' => 'Administrator'] as $v => $l)
-                                        <option value="{{ $v }}" :selected="editUser?.role==='{{ $v }}'"
-                                    style="background:#0a0a14">{{ $l }}</option>@endforeach
+                                        <option value="{{ $v }}" :selected="editUser?.role==='{{ $v }}'" style="background:#0a0a14">{{ $l }}</option>@endforeach
                                 </select>
                             </div>
                             <div>
@@ -550,35 +597,28 @@
                                     class="w-full flex items-center justify-between px-4 py-3 rounded-2xl text-sm transition-all"
                                     :style="gantiSandi?'background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.3);color:#fb923c;':'background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#9ca3af;'">
                                     <span>Ubah Kata Sandi</span>
-                                    <svg class="w-4 h-4 transition-transform" :class="gantiSandi?'rotate-180':''"
-                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 9l-7 7-7-7" />
+                                    <svg class="w-4 h-4 transition-transform" :class="gantiSandi?'rotate-180':''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </button>
                                 <div x-show="gantiSandi" x-transition class="mt-3 space-y-3 p-4 rounded-2xl"
                                     style="background:rgba(249,115,22,0.04);border:1px solid rgba(249,115,22,0.15);">
                                     <p class="text-xs text-gray-500">Kosongkan jika tidak ingin mengubah.</p>
-                                    <div><label class="block text-xs font-medium text-gray-400 mb-1.5">Kata Sandi
-                                            Baru</label>
-                                        <input :type="lihatSandi?'text':'password'" name="password"
-                                            placeholder="Min. 6 karakter"
+                                    <div><label class="block text-xs font-medium text-gray-400 mb-1.5">Kata Sandi Baru</label>
+                                        <input :type="lihatSandi?'text':'password'" name="password" placeholder="Min. 6 karakter"
                                             class="w-full px-4 py-3 rounded-2xl text-white text-sm outline-none placeholder-gray-600"
                                             style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);">
                                     </div>
                                     <div><label class="block text-xs font-medium text-gray-400 mb-1.5">Konfirmasi</label>
-                                        <input :type="lihatSandi?'text':'password'" name="password_confirmation"
-                                            placeholder="Ulangi kata sandi"
+                                        <input :type="lihatSandi?'text':'password'" name="password_confirmation" placeholder="Ulangi kata sandi"
                                             class="w-full px-4 py-3 rounded-2xl text-white text-sm outline-none placeholder-gray-600"
                                             style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="p-6 flex justify-end gap-4"
-                            style="border-top:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);">
-                            <button type="button" @click="modalOpen=false;gantiSandi=false"
-                                class="px-6 py-3 rounded-2xl text-sm font-medium text-gray-400"
+                        <div class="p-6 flex justify-end gap-4" style="border-top:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);">
+                            <button type="button" @click="modalOpen=false;gantiSandi=false" class="px-6 py-3 rounded-2xl text-sm font-medium text-gray-400"
                                 style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);">Batal</button>
                             <button type="submit" class="px-6 py-3 rounded-2xl text-sm font-semibold text-white"
                                 style="background:linear-gradient(135deg,#f97316,#eab308);">Perbarui</button>
@@ -593,95 +633,81 @@
         /**
          * bulkDelete(selectableIds)
          *
-         * Menerima array ID yang boleh dipilih (sudah exclude akun sendiri)
-         * langsung dari Blade melalui $selectableIds->toJson().
-         *
-         * Perbaikan dari versi lama:
-         * 1. toggleAll / allSelected tidak perlu menerima `ids` sebagai argumen —
-         *    cukup pakai this.pageIds yang sudah pasti benar.
-         * 2. Indeterminate state pada checkbox header diperbarui setiap kali
-         *    `selected` berubah melalui $watch.
-         * 3. Hidden input dibuat secara dinamis saat submit agar tidak ada konflik
-         *    dengan AlpineJS template x-for di dalam form.
+         * Versi dioptimalkan dengan fitur:
+         *  selectionMode         — toggle mode seleksi aktif/nonaktif
+         *  toggleSelectionMode() — nyalakan/matikan; reset pilihan otomatis saat dimatikan
+         *  selectAll()           — pilih semua ID di halaman
+         *  clearSelection()      — batalkan semua pilihan
+         *  toggle(id)            — centang/uncentang satu baris
+         *  toggleAll(event)      — dari checkbox header
+         *  allSelected()         — untuk :checked binding header
+         *  syncCheckAll()        — sinkronisasi state indeterminate
+         *  confirmBulkDelete()   — bangun hidden inputs dinamis lalu submit
          */
         function bulkDelete(pageIds) {
             return {
-                // ID yang dapat dipilih di halaman ini (tanpa akun sendiri)
-                pageIds: pageIds || [],
-
-                // ID yang saat ini dicentang
-                selected: [],
+                pageIds:       pageIds || [],
+                selected:      [],
+                selectionMode: false,
 
                 init() {
-                    // Pantau perubahan selected → perbarui indeterminate checkbox header
-                    this.$watch('selected', () => {
-                        this.syncCheckAll();
+                    this.$watch('selected', () => this.syncCheckAll());
+                    this.$watch('selectionMode', (val) => {
+                        if (!val) this.selected = [];
+                        this.$nextTick(() => this.syncCheckAll());
                     });
+                },
+
+                toggleSelectionMode() {
+                    this.selectionMode = !this.selectionMode;
                 },
 
                 syncCheckAll() {
                     const el = this.$refs.checkAll;
                     if (!el) return;
-
-                    const total     = this.pageIds.length;
-                    const checked   = this.selected.length;
-
-                    if (total === 0) {
-                        el.indeterminate = false;
-                        el.checked       = false;
-                    } else if (checked === 0) {
-                        el.indeterminate = false;
-                        el.checked       = false;
+                    const total   = this.pageIds.length;
+                    const checked = this.selected.length;
+                    if (total === 0 || checked === 0) {
+                        el.indeterminate = false; el.checked = false;
                     } else if (checked === total) {
-                        el.indeterminate = false;
-                        el.checked       = true;
+                        el.indeterminate = false; el.checked = true;
                     } else {
-                        el.indeterminate = true;
-                        el.checked       = false;
+                        el.indeterminate = true; el.checked = false;
                     }
                 },
 
-                /**
-                 * Toggle satu baris.
-                 */
                 toggle(id) {
-                    if (this.selected.includes(id)) {
-                        this.selected = this.selected.filter(i => i !== id);
-                    } else {
-                        this.selected.push(id);
-                    }
+                    this.selected = this.selected.includes(id)
+                        ? this.selected.filter(i => i !== id)
+                        : [...this.selected, id];
                 },
 
-                /**
-                 * Pilih / batalkan semua.
-                 * Hanya menggunakan this.pageIds — sudah exclude akun sendiri.
-                 */
                 toggleAll(event) {
                     this.selected = event.target.checked ? [...this.pageIds] : [];
                 },
 
-                /**
-                 * Cek apakah semua baris yang bisa dipilih sudah dicentang.
-                 * Digunakan oleh :checked pada checkbox header sebagai inisialisasi.
-                 */
+                selectAll() {
+                    this.selected = [...this.pageIds];
+                },
+
+                clearSelection() {
+                    this.selected = [];
+                },
+
                 allSelected() {
                     return this.pageIds.length > 0 &&
                            this.pageIds.every(id => this.selected.includes(id));
                 },
 
-                /**
-                 * Konfirmasi lalu submit form hapus massal.
-                 * Input hidden dibuat secara dinamis agar tidak bergantung
-                 * pada x-for AlpineJS yang kadang tidak di-render sebelum submit.
-                 */
                 confirmBulkDelete(form) {
                     if (this.selected.length === 0) return;
+                    const ok = confirm(
+                        `Hapus ${this.selected.length} akun pengguna?\n\n` +
+                        `Tindakan ini TIDAK DAPAT DIBATALKAN.\n` +
+                        `Semua data terkait akun tersebut akan ikut terhapus.`
+                    );
+                    if (!ok) return;
 
-                    if (!confirm(`Yakin hapus ${this.selected.length} akun?\nTindakan ini tidak bisa dibatalkan.`)) {
-                        return;
-                    }
-
-                    // Bersihkan hidden inputs lama, buat yang baru
                     const container = form.querySelector('#bulk-hidden-inputs');
                     container.innerHTML = '';
                     this.selected.forEach(id => {
@@ -691,7 +717,6 @@
                         input.value = id;
                         container.appendChild(input);
                     });
-
                     form.submit();
                 }
             };
