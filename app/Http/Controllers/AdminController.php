@@ -8,6 +8,9 @@ use App\Models\Guru;
 use App\Models\Siswa;
 use App\Models\Kuesioner;
 use Illuminate\Support\Facades\Cache;
+use App\Imports\SiswaImport;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Response;
 
 class AdminController extends Controller
 {
@@ -82,16 +85,62 @@ class AdminController extends Controller
         return back()->with('success', 'Pengguna dihapus.');
     }
 
+    /**
+     * Import siswa massal dari file Excel.
+     * Route: POST /admin/users/import
+     */
+    public function importSiswa(Request $request)
+    {
+        $request->validate([
+            'file_import' => 'required|file|mimes:xlsx,xls|max:5120',
+        ], [
+            'file_import.required' => 'Pilih file Excel terlebih dahulu.',
+            'file_import.mimes'    => 'File harus berformat .xlsx atau .xls.',
+            'file_import.max'      => 'Ukuran file maksimal 5 MB.',
+        ]);
+
+        $import = new SiswaImport();
+        Excel::import($import, $request->file('file_import'));
+
+        $pesan = "Import selesai: {$import->berhasil} akun berhasil dibuat";
+        if ($import->duplikat > 0) $pesan .= ", {$import->duplikat} duplikat di-skip";
+        if ($import->gagal > 0)    $pesan .= ", {$import->gagal} baris gagal validasi";
+
+        return back()
+            ->with('import_success',  $pesan)
+            ->with('import_berhasil', $import->berhasil)
+            ->with('import_duplikat', $import->duplikat)
+            ->with('import_gagal',    $import->gagal)
+            ->with('import_log',      $import->logGagal);
+    }
+
+    /**
+     * Download template Excel kosong untuk panduan admin.
+     * Route: GET /admin/users/template
+     */
+    public function downloadTemplate()
+    {
+        $headers = [['nama', 'email', 'kelas', 'password']];
+        $contoh  = [
+            ['Nama Lengkap Siswa', 'email@domain.com',  'X-A',  'password123'],
+            ['Contoh Siswa Dua',   'siswa2@domain.com', 'XI-B', 'rahasia123'],
+        ];
+        $data = array_merge($headers, $contoh);
+
+        return Excel::download(
+            new \App\Exports\TemplateSiswaExport($data),
+            'template_import_siswa.xlsx'
+        );
+    }
+
     public function monitoring(Request $request)
     {
-        // Statistik kuesioner
         $kuesionerStats = [
             'dari_siswa' => Kuesioner::where('tipe', 'siswa')->count(),
             'dari_guru'  => Kuesioner::where('tipe', 'guru')->count(),
             'total'      => Kuesioner::count(),
         ];
 
-        // Data clustering AI
         $totalGuru       = Guru::count();
         $sudahDicluster  = \App\Models\HasilClustering::distinct('guru_id')->count();
         $belumDicluster  = max(0, $totalGuru - $sudahDicluster);
@@ -103,14 +152,12 @@ class AdminController extends Controller
             'D' => \App\Models\HasilClustering::where('cluster', 'D')->distinct('guru_id')->count(),
         ];
 
-        // Riwayat clustering terbaru
         $riwayatClustering = \App\Models\HasilClustering::with('guru')
             ->orderByDesc('tanggal')
             ->orderByDesc('updated_at')
             ->limit(10)
             ->get();
 
-        // Rata-rata nilai per kompetensi
         $rataKompetensi = \App\Models\HasilClustering::selectRaw('
             AVG(nilai_pedagogik) as pedagogik,
             AVG(nilai_profesional) as profesional,
@@ -140,7 +187,6 @@ class AdminController extends Controller
             'rfid_aktif'      => Cache::get('stqm_rfid_aktif', false),
             'maks_penilaian'  => Cache::get('stqm_maks_penilaian', 1),
         ];
-
         return view('admin.settings', compact('settings'));
     }
 
@@ -162,5 +208,30 @@ class AdminController extends Controller
         Cache::forever('stqm_maks_penilaian',  $request->maks_penilaian);
 
         return back()->with('success', 'Pengaturan berhasil disimpan.');
+    }
+    /**
+     * Hapus banyak user sekaligus.
+     * Route: POST /admin/users/bulk-destroy
+     */
+    public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'user_ids'   => 'required|array|min:1',
+            'user_ids.*' => 'exists:users,id',
+        ]);
+
+        // Jangan sampai admin menghapus akunnya sendiri
+        $ids = collect($request->user_ids)
+            ->reject(fn($id) => (int)$id === auth()->id())
+            ->values();
+
+        if ($ids->isEmpty()) {
+            return back()->with('error', 'Tidak ada akun yang dihapus (tidak bisa menghapus akun sendiri).');
+        }
+
+        $jumlah = $ids->count();
+        User::whereIn('id', $ids)->delete();
+
+        return back()->with('success', "{$jumlah} akun berhasil dihapus.");
     }
 }
