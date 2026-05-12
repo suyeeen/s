@@ -4,10 +4,6 @@
 
 @push('styles')
     <style>
-        /* ═══════════════════════════════════════════════════
-                   GURU SEJAWAT KUESIONER — Multi-guru, Step-based
-                   Bahasa: Profesional, kolegal sesama pendidik
-                ═══════════════════════════════════════════════════ */
         :root {
             --sk-primary: #4F63FF;
             --sk-primary-dark: #3A4FE8;
@@ -33,7 +29,6 @@
             padding: 0 0 48px;
         }
 
-        /* ── Stepper header ── */
         .sk-stepper {
             display: flex;
             align-items: flex-start;
@@ -109,7 +104,6 @@
             color: var(--sk-green);
         }
 
-        /* ── Page title ── */
         .sk-page-title {
             margin-bottom: 24px;
         }
@@ -128,7 +122,6 @@
             margin-top: 5px;
         }
 
-        /* ── Card base ── */
         .sk-card {
             background: var(--sk-surface);
             border: 1px solid var(--sk-border);
@@ -137,7 +130,6 @@
             overflow: hidden;
         }
 
-        /* ── Step panels ── */
         .sk-panel {
             display: none;
         }
@@ -159,7 +151,6 @@
             }
         }
 
-        /* ═══ STEP 1: Aturan ═══ */
         .sk-rules-header {
             background: linear-gradient(135deg, var(--sk-primary) 0%, #6B7FFF 100%);
             padding: 28px 28px 24px;
@@ -265,7 +256,6 @@
             cursor: pointer;
         }
 
-        /* ═══ STEP 2: Pilih Guru ═══ */
         .sk-guru-header {
             padding: 24px 28px;
             border-bottom: 1px solid var(--sk-border);
@@ -511,7 +501,6 @@
             color: white;
         }
 
-        /* ═══ STEP 3: Kuesioner per guru ═══ */
         .sk-guru-progress {
             padding: 16px 28px;
             border-bottom: 1px solid var(--sk-border);
@@ -780,7 +769,6 @@
             color: rgba(255, 255, 255, 0.8);
         }
 
-        /* Catatan Profesional */
         .sk-kesan-pesan {
             padding: 20px 28px;
             border-top: 1px solid var(--sk-border);
@@ -954,7 +942,6 @@
 @section('content')
     <div class="sk-wrap">
 
-        {{-- Flash messages --}}
         @if (session('success'))
             <div class="sk-flash sk-flash-success">
                 <i class="bi bi-check-circle-fill" style="font-size:18px;"></i>
@@ -968,13 +955,11 @@
             </div>
         @endif
 
-        {{-- Page title — bahasa profesional guru --}}
         <div class="sk-page-title">
             <h1>Penilaian Kinerja Rekan Sejawat 📋</h1>
             <p>Formulir Penilaian Teman Sejawat (Lampiran MP1 PKG) — Mohon isi dengan objektif dan profesional.</p>
         </div>
 
-        {{-- Stepper --}}
         <div class="sk-stepper" id="stepper">
             <div class="sk-step active" id="dot-1">
                 <div class="sk-step-dot">1</div>
@@ -990,9 +975,7 @@
             </div>
         </div>
 
-        {{-- ════════════════════════════════════
-        STEP 1: PETUNJUK — bahasa profesional guru
-        ════════════════════════════════════ --}}
+        {{-- STEP 1: PETUNJUK --}}
         <div class="sk-panel active" id="panel-1">
             <div class="sk-card">
                 <div class="sk-rules-header">
@@ -1062,17 +1045,13 @@
             </div>
         </div>
 
-        {{-- ════════════════════════════════════
-        STEP 2: PILIH GURU
-        ════════════════════════════════════ --}}
+        {{-- STEP 2: PILIH GURU --}}
         <div class="sk-panel" id="panel-2">
             <div class="sk-card">
                 <div class="sk-guru-header">
                     <h2>Pilih Rekan Guru yang Akan Dinilai</h2>
-                    <p>
-                        Bapak/Ibu dapat memilih lebih dari satu rekan sekaligus.
-                        Centang nama rekan guru yang ingin Bapak/Ibu nilai.
-                    </p>
+                    <p>Bapak/Ibu dapat memilih lebih dari satu rekan sekaligus. Centang nama rekan guru yang ingin Bapak/Ibu
+                        nilai.</p>
                 </div>
 
                 <div class="sk-search-wrap">
@@ -1129,16 +1108,14 @@
             </div>
         </div>
 
-        {{-- ════════════════════════════════════
-        STEP 3: KUESIONER (per guru, sequential)
-        ════════════════════════════════════ --}}
+        {{-- STEP 3: KUESIONER --}}
         <div class="sk-panel" id="panel-3">
-            <form method="POST" action="{{ route('siswa.kuesioner.submit') }}" id="formKuesioner">
+            {{-- ✅ PERBAIKAN: route diubah dari siswa.kuesioner.submit → guru.kuesioner.submit --}}
+            <form method="POST" action="{{ route('guru.kuesioner.submit') }}" id="formKuesioner">
                 @csrf
                 <div id="guruIdsContainer"></div>
 
                 <div class="sk-card">
-                    {{-- Guru progress indicator --}}
                     <div class="sk-guru-progress">
                         <div class="sk-guru-progress-top">
                             <div class="sk-guru-progress-title" id="currentGuruLabel">Guru 1 dari 1</div>
@@ -1147,7 +1124,6 @@
                         <div class="sk-guru-dots" id="guruDots"></div>
                     </div>
 
-                    {{-- Question header with progress bar --}}
                     <div class="sk-q-header">
                         <div class="sk-q-header-top">
                             <h2 id="q-guru-name">Penilaian Rekan Guru</h2>
@@ -1161,7 +1137,6 @@
                         </div>
                     </div>
 
-                    {{-- Category tabs --}}
                     @php
                         $labelKategoriGuru = [
                             'perilaku_harian' => 'Perilaku Sehari-hari',
@@ -1169,6 +1144,7 @@
                             'profesional_guru' => 'Perilaku Profesional',
                         ];
                     @endphp
+
                     <div class="sk-tabs" id="tabsBar">
                         @foreach ($pertanyaan as $kategori => $soalList)
                             <button type="button" class="sk-tab" id="tab-{{ $kategori }}" onclick="gantiTab('{{ $kategori }}')">
@@ -1178,7 +1154,6 @@
                         @endforeach
                     </div>
 
-                    {{-- Questions per category --}}
                     @foreach ($pertanyaan as $kategori => $soalList)
                         <div class="sk-q-section" id="section-{{ $kategori }}">
                             <div class="sk-section-label">
@@ -1211,7 +1186,6 @@
                         </div>
                     @endforeach
 
-                    {{-- Catatan Profesional — bahasa guru --}}
                     <div class="sk-kesan-pesan" id="kesanPesanSection" style="display:none;">
                         <div class="sk-kesan-label">
                             <i class="bi bi-chat-square-text-fill"></i>
@@ -1227,7 +1201,6 @@
                         </div>
                     </div>
 
-                    {{-- Footer nav --}}
                     <div class="sk-footer-nav">
                         <button type="button" class="sk-btn sk-btn-ghost" id="btnPrev" onclick="prevTab()" disabled>
                             <i class="bi bi-chevron-left"></i> Sebelumnya
@@ -1258,14 +1231,11 @@
         const totalSoal = {{ $pertanyaan->flatten()->count() }};
         let currentStep = 1;
         let currentTabIdx = 0;
-
         let selectedGurus = [];
         let currentGuruIndex = 0;
-
         const allJawaban = {};
         const allKesanPesan = {};
 
-        // ─── Step navigation ───────────────────────────────────────────────
         function goToStep(step) {
             for (let i = 1; i <= 3; i++) {
                 document.getElementById('panel-' + i).classList.remove('active');
@@ -1292,12 +1262,10 @@
                 !document.getElementById('confirmRead').checked;
         }
 
-        // ─── Step 2: Multi-select guru ──────────────────────────────────────
         function toggleGuruSelect(el) {
             const id = el.dataset.id;
             const nama = el.querySelector('.sk-guru-nama').textContent;
             const mapel = el.querySelector('.sk-guru-mapel').textContent;
-
             const idx = selectedGurus.findIndex(g => g.id === id);
             if (idx >= 0) {
                 selectedGurus.splice(idx, 1);
@@ -1317,8 +1285,8 @@
             wrap.classList.add('show');
             chips.innerHTML = selectedGurus.map(g =>
                 `<span class="sk-chip">${g.nama}
-                            <button type="button" onclick="removeGuruChip('${g.id}')" title="Hapus">×</button>
-                        </span>`
+                        <button type="button" onclick="removeGuruChip('${g.id}')" title="Hapus">×</button>
+                    </span>`
             ).join('');
         }
 
@@ -1341,7 +1309,6 @@
             document.getElementById('emptySearch').style.display = visible === 0 ? 'block' : 'none';
         }
 
-        // ─── Step 3: Kuesioner per guru ─────────────────────────────────────
         function startKuesioner() {
             if (selectedGurus.length === 0) return;
             selectedGurus.forEach(g => { allJawaban[g.id] = {}; allKesanPesan[g.id] = ''; });
@@ -1361,8 +1328,7 @@
             currentGuruIndex = idx;
             currentTabIdx = 0;
 
-            document.getElementById('currentGuruLabel').textContent =
-                `Penilaian ${idx + 1} dari ${selectedGurus.length}`;
+            document.getElementById('currentGuruLabel').textContent = `Penilaian ${idx + 1} dari ${selectedGurus.length}`;
             document.getElementById('currentGuruName').textContent = guru.mapel;
             document.getElementById('q-guru-name').textContent = 'Penilaian: ' + guru.nama;
 
@@ -1385,13 +1351,13 @@
             document.querySelectorAll('.soal-radio').forEach(radio => {
                 const soalId = radio.dataset.soal;
                 radio.name = `jawaban[${guruId}][${soalId}]`;
-                radio.checked = !!(saved[soalId] && parseInt(saved[soalId]) === parseInt(radio.value));
+                radio.checked = !!(saved[soalId] !== undefined && parseInt(saved[soalId]) === parseInt(radio.value));
 
                 const opt = radio.closest('.sk-option');
                 const card = document.getElementById('qcard-' + soalId);
                 if (radio.checked) opt.classList.add('selected'); else opt.classList.remove('selected');
                 if (card) {
-                    if (saved[soalId]) card.classList.add('answered');
+                    if (saved[soalId] !== undefined) card.classList.add('answered');
                     else card.classList.remove('answered');
                 }
             });
@@ -1470,9 +1436,9 @@
 
             kategoriList.forEach(kat => {
                 const section = document.getElementById('section-' + kat);
-                const soalIds = Array.from(section.querySelectorAll('.soal-radio[value="1"]'))
+                const soalIds = Array.from(section.querySelectorAll('.soal-radio[value="0"]'))
                     .map(r => r.dataset.soal);
-                const allDone = soalIds.length > 0 && soalIds.every(id => saved[id]);
+                const allDone = soalIds.length > 0 && soalIds.every(id => saved[id] !== undefined);
                 const tab = document.getElementById('tab-' + kat);
                 if (allDone) tab.classList.add('tab-done'); else tab.classList.remove('tab-done');
             });

@@ -22,15 +22,16 @@ class GuruController extends Controller
         $semester    = \Illuminate\Support\Facades\Cache::get('stqm_semester', 'ganjil');
         $maksimal    = (int) \Illuminate\Support\Facades\Cache::get('stqm_maks_penilaian', 1);
 
-        // Guru yang sudah dinilai oleh penilai pada periode ini
-        // ->toArray() wajib agar view bisa pakai in_array() dengan benar
+        // Guru yang sudah mencapai batas penilaian — kembalikan flat array of guru_id
+        // agar view bisa pakai in_array() dengan benar
         $sudahDinilai = Kuesioner::where('penilai_guru_id', $penilai->id)
             ->where('tahun_ajaran', $tahunAjaran)
             ->where('semester', $semester)
             ->where('tipe', 'guru')
             ->selectRaw('guru_id, COUNT(*) as jumlah')
             ->groupBy('guru_id')
-            ->pluck('jumlah', 'guru_id')
+            ->havingRaw('COUNT(*) >= ?', [$maksimal])
+            ->pluck('guru_id')
             ->toArray();
 
         return view('guru.kuesioner', compact('guru', 'pertanyaan', 'sudahDinilai', 'maksimal'));
@@ -38,11 +39,18 @@ class GuruController extends Controller
 
     public function submitKuesioner(Request $request)
     {
+        // Mendukung multi-guru (guru_ids[]) maupun single guru (guru_id)
+        $guruIds = $request->input('guru_ids', []);
+        if (empty($guruIds) && $request->filled('guru_id')) {
+            $guruIds = [$request->input('guru_id')];
+        }
+
+        $request->merge(['guru_ids_resolved' => $guruIds]);
+
         $request->validate([
-            'guru_id'     => 'required|exists:guru,id',
-            'jawaban'     => 'required|array',
-            'jawaban.*'   => 'required|integer|min:0|max:2',
-            'kesan_pesan' => 'nullable|string|max:1000',
+            'guru_ids_resolved'   => 'required|array|min:1',
+            'guru_ids_resolved.*' => 'required|exists:guru,id',
+            'jawaban'             => 'required|array',
         ]);
 
         // Cek batas waktu kuesioner
@@ -62,43 +70,70 @@ class GuruController extends Controller
         $semester    = \Illuminate\Support\Facades\Cache::get('stqm_semester', 'ganjil');
         $maksimal    = (int) \Illuminate\Support\Facades\Cache::get('stqm_maks_penilaian', 1);
 
-        // Cek apakah sudah mengisi melebihi batas
-        $jumlahIsi = \App\Models\Kuesioner::where('penilai_guru_id', $penilai->id)
-            ->where('guru_id', $request->guru_id)
-            ->where('tahun_ajaran', $tahunAjaran)
-            ->where('semester', $semester)
-            ->count();
+        $berhasil = 0;
+        $errors   = [];
 
-        if ($jumlahIsi >= $maksimal) {
-            return back()->with('error', 'Kamu sudah mengisi penilaian untuk guru ini sebanyak ' . $jumlahIsi . 'x. Batas maksimal ' . $maksimal . 'x per periode.');
-        }
+        foreach ($guruIds as $guruId) {
+            $jumlahIsi = Kuesioner::where('penilai_guru_id', $penilai->id)
+                ->where('guru_id', $guruId)
+                ->where('tahun_ajaran', $tahunAjaran)
+                ->where('semester', $semester)
+                ->where('tipe', 'guru')
+                ->count();
 
-        $kuesioner = \App\Models\Kuesioner::create([
-            'guru_id'         => $request->guru_id,
-            'penilai_guru_id' => $penilai->id,
-            'tipe'            => 'guru',
-            'tanggal'         => now()->toDateString(),
-            'tahun_ajaran'    => $tahunAjaran,
-            'semester'        => $semester,
-            'kesan_pesan'     => $request->filled('kesan_pesan') ? trim($request->kesan_pesan) : null,
-        ]);
+            if ($jumlahIsi >= $maksimal) {
+                $guruModel = Guru::find($guruId);
+                $errors[] = 'Guru ' . ($guruModel->nama ?? $guruId) . ' sudah pernah dinilai (batas ' . $maksimal . 'x per periode).';
+                continue;
+            }
 
-        foreach ($request->jawaban as $pertanyaan_id => $nilai) {
-            \App\Models\Jawaban::create([
-                'kuesioner_id'  => $kuesioner->id,
-                'pertanyaan_id' => $pertanyaan_id,
-                'nilai'         => $nilai,
+            $jawabanGuru = $request->input('jawaban.' . $guruId, []);
+            $kesanPesan  = $request->input('kesan_pesan.' . $guruId, null);
+
+            if (empty($jawabanGuru)) {
+                continue;
+            }
+
+            $kuesioner = Kuesioner::create([
+                'guru_id'         => $guruId,
+                'penilai_guru_id' => $penilai->id,
+                'tipe'            => 'guru',
+                'tanggal'         => now()->toDateString(),
+                'tahun_ajaran'    => $tahunAjaran,
+                'semester'        => $semester,
+                'kesan_pesan'     => $kesanPesan ?: null,
             ]);
+
+            foreach ($jawabanGuru as $pertanyaanId => $nilai) {
+                $nilai = (int) $nilai;
+                if ($nilai >= 0 && $nilai <= 2) {
+                    Jawaban::create([
+                        'kuesioner_id'  => $kuesioner->id,
+                        'pertanyaan_id' => $pertanyaanId,
+                        'nilai'         => $nilai,
+                    ]);
+                }
+            }
+
+            $berhasil++;
         }
 
-        return redirect()->route('guru.kuesioner')->with('success', 'Penilaian berhasil disimpan!');
+        if ($berhasil === 0 && !empty($errors)) {
+            return back()->with('error', implode(' ', $errors));
+        }
+
+        $msg = 'Penilaian berhasil disimpan untuk ' . $berhasil . ' rekan guru!';
+        if (!empty($errors)) {
+            $msg .= ' Catatan: ' . implode(' ', $errors);
+        }
+
+        return redirect()->route('guru.kuesioner')->with('success', $msg);
     }
 
     public function profil()
     {
         $guru = auth()->user()->guru;
 
-        // Ambil semua kuesioner yang menilai guru ini (dari guru lain)
         $kuesioner = \App\Models\Kuesioner::where('guru_id', $guru->id)
             ->where('tipe', 'guru')
             ->with('jawaban.pertanyaan')
@@ -128,7 +163,6 @@ class GuruController extends Controller
             ? round(array_sum($nilaiAda) / count($nilaiAda), 2)
             : 0;
 
-        // Kesan & pesan — gabungan dari guru (tipe=guru) DAN siswa (tipe=siswa)
         $kesanPesan = \App\Models\Kuesioner::where('guru_id', $guru->id)
             ->whereIn('tipe', ['guru', 'siswa'])
             ->whereNotNull('kesan_pesan')

@@ -48,7 +48,16 @@ class PrestasiController extends Controller
 
     public function destroy(PrestasiGuru $prestasi)
     {
-        $this->authorize('delete', $prestasi); // optional policy
+        // Pastikan hanya guru pemilik yang bisa hapus
+        if ($prestasi->guru_id !== auth()->user()->guru->id) {
+            abort(403, 'Anda tidak berhak menghapus prestasi ini.');
+        }
+
+        // Hapus file dari storage jika ada
+        if ($prestasi->file_bukti && \Illuminate\Support\Facades\Storage::disk('public')->exists($prestasi->file_bukti)) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($prestasi->file_bukti);
+        }
+
         $prestasi->delete();
         return back()->with('success', 'Prestasi berhasil dihapus.');
     }
