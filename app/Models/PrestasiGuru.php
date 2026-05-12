@@ -12,6 +12,7 @@ class PrestasiGuru extends Model
         'guru_id',
         'nama_prestasi',
         'tingkat',
+        'poin',
         'kategori',
         'tahun',
         'file_bukti',
@@ -23,6 +24,30 @@ class PrestasiGuru extends Model
     protected $casts = [
         'divalidasi_at' => 'datetime',
     ];
+
+    /**
+     * Bobot poin per tingkat prestasi.
+     */
+    public static function bobotTingkat(): array
+    {
+        return [
+            'sekolah'       => 5,
+            'kecamatan'     => 10,
+            'kota'          => 20,
+            'provinsi'      => 35,
+            'nasional'      => 55,
+            'internasional' => 80,
+        ];
+    }
+
+    /**
+     * Set otomatis poin saat tingkat diisi.
+     */
+    public function setTingkatAttribute(string $value): void
+    {
+        $this->attributes['tingkat'] = $value;
+        $this->attributes['poin']    = self::bobotTingkat()[$value] ?? 0;
+    }
 
     // Relasi ke tabel guru
     public function guru()

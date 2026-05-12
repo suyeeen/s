@@ -7,6 +7,35 @@ use App\Models\PrestasiGuru;
 
 class PrestasiController extends Controller
 {
+    /**
+     * Bobot poin prestasi berdasarkan tingkat akademik.
+     * Semakin tinggi tingkat, semakin besar poin yang diperoleh.
+     */
+    public static function bobotTingkat(): array
+    {
+        return [
+            'sekolah'       => 5,
+            'kecamatan'     => 10,
+            'kota'          => 20,
+            'provinsi'      => 35,
+            'nasional'      => 55,
+            'internasional' => 80,
+        ];
+    }
+
+    /**
+     * Hitung total poin dari koleksi prestasi yang sudah tervalidasi,
+     * dengan bobot berbeda per tingkat.
+     */
+    public static function hitungPoin($prestasi): int
+    {
+        $bobot = self::bobotTingkat();
+
+        return $prestasi
+            ->where('status', 'tervalidasi')
+            ->sum(fn($p) => $bobot[$p->tingkat] ?? 0);
+    }
+
     public function index()
     {
         $guru     = auth()->user()->guru;
@@ -15,10 +44,12 @@ class PrestasiController extends Controller
         $statistik = [
             'tervalidasi' => $prestasi->where('status', 'tervalidasi')->count(),
             'menunggu'    => $prestasi->where('status', 'menunggu')->count(),
-            'poin'        => $prestasi->where('status', 'tervalidasi')->count() * 15,
+            'poin'        => self::hitungPoin($prestasi),
         ];
 
-        return view('guru.prestasi', compact('prestasi', 'statistik'));
+        $bobotTingkat = self::bobotTingkat();
+
+        return view('guru.prestasi', compact('prestasi', 'statistik', 'bobotTingkat'));
     }
 
     public function store(Request $request)
@@ -26,7 +57,7 @@ class PrestasiController extends Controller
         $request->validate([
             'nama_prestasi' => 'required|string|max:255',
             'tingkat'       => 'required|in:sekolah,kecamatan,kota,provinsi,nasional,internasional',
-            'kategori'      => 'required|in:Sertifikasi,Pelatihan,Penghargaan,Publikasi,Lainnya',
+            'kategori'      => 'required|in:Sertifikat Pendidik,Pelatihan & Workshop,Karya Ilmiah,Guru Berprestasi,Inovasi Pembelajaran,Pengabdian Masyarakat,Organisasi Profesi,Lainnya',
             'tahun'         => 'required|digits:4|integer|min:2000|max:' . date('Y'),
             'file_bukti'    => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ]);
@@ -48,12 +79,10 @@ class PrestasiController extends Controller
 
     public function destroy(PrestasiGuru $prestasi)
     {
-        // Pastikan hanya guru pemilik yang bisa hapus
         if ($prestasi->guru_id !== auth()->user()->guru->id) {
             abort(403, 'Anda tidak berhak menghapus prestasi ini.');
         }
 
-        // Hapus file dari storage jika ada
         if ($prestasi->file_bukti && \Illuminate\Support\Facades\Storage::disk('public')->exists($prestasi->file_bukti)) {
             \Illuminate\Support\Facades\Storage::disk('public')->delete($prestasi->file_bukti);
         }

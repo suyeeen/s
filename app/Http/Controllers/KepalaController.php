@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Guru;
 use App\Models\HasilClustering;
-use App\Exports\GuruEvaluasiExport;          // ← tambah ini
+use App\Exports\GuruEvaluasiExport;
+use App\Http\Controllers\PrestasiController;
 use Maatwebsite\Excel\Facades\Excel;
 
 
@@ -82,7 +83,16 @@ class KepalaController extends Controller
             ->orderByDesc('tanggal')
             ->get();
 
-        return view('kepala.detail-guru', compact('guru', 'persenHadir', 'kesanPesan'));
+        $bobotTingkat    = PrestasiController::bobotTingkat();
+        $totalPoinPrestasi = PrestasiController::hitungPoin($guru->prestasi);
+
+        return view('kepala.detail-guru', compact(
+            'guru',
+            'persenHadir',
+            'kesanPesan',
+            'bobotTingkat',
+            'totalPoinPrestasi'
+        ));
     }
 
     public function export()

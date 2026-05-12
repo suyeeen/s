@@ -67,7 +67,37 @@
                     </div>
                 </div>
                 <div class="text-4xl font-bold" style="color:var(--text-main);">{{ $statistik['poin'] }}</div>
-                <p class="text-sm mt-2" style="color:var(--text-muted);">Estimasi poin</p>
+                <p class="text-sm mt-2" style="color:var(--text-muted);">Total poin (berdasarkan tingkat)</p>
+            </div>
+        </div>
+
+        {{-- Tabel Bobot Poin per Tingkat --}}
+        <div class="rounded-3xl overflow-hidden" style="background:var(--card-bg);border:1px solid var(--card-border);">
+            <div class="p-6" style="border-bottom:1px solid var(--card-divider);background:var(--card-bg-soft);">
+                <h3 class="font-semibold text-lg" style="color:var(--text-main);">Bobot Poin Berdasarkan Tingkat Prestasi</h3>
+                <p class="text-sm mt-1" style="color:var(--text-muted);">Setiap prestasi yang tervalidasi memberikan poin sesuai tingkatnya.</p>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                    @php
+                        $bobotLabel = [
+                            'sekolah'       => ['label'=>'Sekolah',       'emoji'=>'🏫', 'color'=>'#6b7280'],
+                            'kecamatan'     => ['label'=>'Kecamatan',     'emoji'=>'🏘️', 'color'=>'#0891b2'],
+                            'kota'          => ['label'=>'Kota',          'emoji'=>'🏙️', 'color'=>'#16a34a'],
+                            'provinsi'      => ['label'=>'Provinsi',      'emoji'=>'🗺️', 'color'=>'#d97706'],
+                            'nasional'      => ['label'=>'Nasional',      'emoji'=>'🇮🇩', 'color'=>'#dc2626'],
+                            'internasional' => ['label'=>'Internasional', 'emoji'=>'🌏', 'color'=>'#7c3aed'],
+                        ];
+                    @endphp
+                    @foreach($bobotTingkat as $tkt => $poin)
+                        <div class="flex flex-col items-center gap-1 p-3 rounded-2xl text-center"
+                            style="background:var(--card-bg-soft);border:1px solid var(--card-border);">
+                            <span class="text-2xl">{{ $bobotLabel[$tkt]['emoji'] }}</span>
+                            <span class="text-xs font-medium mt-0.5" style="color:var(--text-muted);">{{ $bobotLabel[$tkt]['label'] }}</span>
+                            <span class="text-lg font-bold" style="color:{{ $bobotLabel[$tkt]['color'] }};">{{ $poin }} poin</span>
+                        </div>
+                    @endforeach
+                </div>
             </div>
         </div>
 
@@ -100,6 +130,13 @@
                                 <span>{{ ucfirst($item->tingkat) }}</span>
                                 <span>•</span>
                                 <span>{{ $item->tahun }}</span>
+                                @if($item->status === 'tervalidasi')
+                                    <span>•</span>
+                                    <span class="px-2 py-0.5 rounded-md text-xs font-semibold"
+                                        style="background:rgba(139,92,246,0.12);color:#7c3aed;border:1px solid rgba(139,92,246,0.25);">
+                                        +{{ $bobotTingkat[$item->tingkat] ?? 0 }} poin
+                                    </span>
+                                @endif
                             </div>
                             @if ($item->file_bukti)
                                 <a href="{{ Storage::url($item->file_bukti) }}" target="_blank"

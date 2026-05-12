@@ -159,6 +159,9 @@
                             {{ $guru->prestasi->where('status', 'tervalidasi')->count() }}
                         </p>
                         <p class="text-xs text-gray-500 uppercase tracking-wider">Prestasi</p>
+                        <p class="text-sm font-semibold mt-1" style="color:#7c3aed;">
+                            {{ $totalPoinPrestasi }} poin
+                        </p>
                     </div>
                 </div>
             </div>
@@ -232,6 +235,10 @@
                                     <p class="font-semibold text-white">{{ $p->nama_prestasi }}</p>
                                     <p class="text-sm text-gray-400 mt-1">
                                         {{ $p->kategori }} • {{ ucfirst($p->tingkat) }} • {{ $p->tahun }}
+                                        <span class="ml-2 px-1.5 py-0.5 rounded text-xs font-bold"
+                                            style="background:rgba(139,92,246,0.2);color:#c4b5fd;">
+                                            +{{ $bobotTingkat[$p->tingkat] ?? 0 }} poin
+                                        </span>
                                     </p>
                                 </div>
                             </div>
