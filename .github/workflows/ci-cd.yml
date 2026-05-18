@@ -35,11 +35,11 @@ jobs:
       - name: ⚙️ Copy environment file
         run: cp .env.example .env
 
-      - name: 🔑 Generate application key
-        run: php artisan key:generate --ansi
-
       - name: 📦 Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: 🔑 Generate application key
+        run: php artisan key:generate --ansi
 
       - name: 🗄️ Run database migrations
         run: php artisan migrate --force
