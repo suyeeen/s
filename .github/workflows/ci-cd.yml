@@ -34,9 +34,10 @@ jobs:
         with:
           php-version: '8.3'
           extensions: pdo, pdo_mysql, mbstring, zip, gd, bcmath, exif, pcntl
+          coverage: xdebug
 
       - name: 📦 Cache Composer dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: vendor
           key: composer-${{ hashFiles('composer.lock') }}
@@ -69,7 +70,7 @@ jobs:
           DB_DATABASE: stqm_testing
           DB_USERNAME: root
           DB_PASSWORD: secret
-        run: php artisan test --coverage-text
+        run: php artisan test --coverage-text --min=50
 
   build:
     name: 🐳 Build Docker Image
@@ -96,7 +97,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 🚀 Deploy via SSH
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
