@@ -7,7 +7,6 @@ on:
     branches: [ main, dev ]
 
 jobs:
-
   test:
     name: ✅ Run Tests
     runs-on: ubuntu-latest
@@ -33,14 +32,14 @@ jobs:
           mkdir -p database
           touch database/database.sqlite
 
-      - name: 📦 Install Composer dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader
-
       - name: ⚙️ Copy environment file
         run: cp .env.example .env
 
       - name: 🔑 Generate application key
-        run: php artisan key:generate
+        run: php artisan key:generate --ansi
+
+      - name: 📦 Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
       - name: 🗄️ Run database migrations
         run: php artisan migrate --force
