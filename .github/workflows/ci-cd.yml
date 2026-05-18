@@ -10,6 +10,21 @@ jobs:
   test:
     name: ✅ Run Tests
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: secret
+          MYSQL_DATABASE: stqm_testing
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -18,7 +33,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
-          extensions: pdo, pdo_sqlite, mbstring, zip, gd, bcmath, exif, pcntl
+          extensions: pdo, pdo_mysql, mbstring, zip, gd, bcmath, exif, pcntl
 
       - name: 📦 Cache Composer dependencies
         uses: actions/cache@v3
@@ -26,11 +41,6 @@ jobs:
           path: vendor
           key: composer-${{ hashFiles('composer.lock') }}
           restore-keys: composer-
-
-      - name: 🗄️ Create SQLite database
-        run: |
-          mkdir -p database
-          touch database/database.sqlite
 
       - name: ⚙️ Copy environment file
         run: cp .env.example .env
@@ -42,9 +52,23 @@ jobs:
         run: php artisan key:generate --ansi
 
       - name: 🗄️ Run database migrations
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: stqm_testing
+          DB_USERNAME: root
+          DB_PASSWORD: secret
         run: php artisan migrate --force
 
       - name: 🧪 Run PHPUnit tests
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: stqm_testing
+          DB_USERNAME: root
+          DB_PASSWORD: secret
         run: php artisan test --coverage-text
 
   build:
