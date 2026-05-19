@@ -55,7 +55,7 @@ jobs:
       - name: 泊 Generate application key
         run: php artisan key:generate --ansi
 
-      - name: 淀・・Run database migrations
+      - name: 淀 E ERun database migrations
         env:
           DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
@@ -132,7 +132,7 @@ jobs:
           script: |
             cd /var/www/s
 
-            echo "筮・ｸ・Pull kode terbaru..."
+            echo "筮・  EPull kode terbaru..."
             git pull origin main || { echo "笶・Git pull gagal!"; exit 1; }
 
             echo "正 Rebuild container..."
