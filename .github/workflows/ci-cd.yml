@@ -6,11 +6,15 @@ on:
   pull_request:
     branches: [ main, dev ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
+
   test:
     name: ✅ Run Tests
     runs-on: ubuntu-latest
-
     services:
       mysql:
         image: mysql:8.0
@@ -24,7 +28,6 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
-
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -72,10 +75,26 @@ jobs:
           DB_PASSWORD: secret
         run: php artisan test --coverage-text --min=50
 
+  security:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔒 Run Trivy security scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          scan-ref: .
+          severity: CRITICAL,HIGH
+          exit-code: 0
+
   build:
     name: 🐳 Build Docker Image
     runs-on: ubuntu-latest
-    needs: test
+    needs: security
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
     steps:
       - name: 📥 Checkout code
@@ -83,6 +102,13 @@ jobs:
 
       - name: 🐳 Build Docker image
         run: docker build -t stqm-app:latest .
+
+      - name: 🔍 Scan Docker image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: stqm-app:latest
+          severity: CRITICAL
+          exit-code: 0
 
       - name: ✅ Verify image built
         run: docker images stqm-app
@@ -105,15 +131,87 @@ jobs:
           port: 22
           script: |
             cd /var/www/s
-            git pull origin main
+
+            echo "⬇️ Pull kode terbaru..."
+            git pull origin main || { echo "❌ Git pull gagal!"; exit 1; }
+
+            echo "🐳 Rebuild container..."
             docker compose down
-            docker compose up -d --build
+            docker compose up -d --build || {
+              echo "❌ Deploy gagal! Rolling back..."
+              docker compose down
+              git reset --hard HEAD~1
+              docker compose up -d --build
+              exit 1
+            }
+
+            echo "⚙️ Migrate & cache..."
             docker compose exec -T app php artisan migrate --force
             docker compose exec -T app php artisan config:cache
             docker compose exec -T app php artisan route:cache
             docker compose exec -T app php artisan view:cache
             docker compose exec -T app php artisan storage:link
+
             echo "✅ Deploy selesai: $(date)"
 
-      - name: 🎉 Notify success
-        run: echo "✅ Deploy berhasil! App live di http://${{ secrets.VPS_HOST }}:8080"
+  healthcheck:
+    name: 🏥 Health Check
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: ⏳ Wait for app to start
+        run: sleep 15
+
+      - name: 🏥 Check HTTP response
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.VPS_HOST }}:8080)
+          echo "HTTP Status: $STATUS"
+          if [ "$STATUS" != "200" ] && [ "$STATUS" != "302" ]; then
+            echo "❌ Health check gagal! Status: $STATUS"
+            exit 1
+          fi
+          echo "✅ App sehat! Status: $STATUS"
+
+      - name: 🐳 Check container status
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
+          script: |
+            docker compose -f /var/www/s/docker-compose.yml ps
+            echo "✅ Container status checked"
+
+  notify:
+    name: 🔔 Notify
+    runs-on: ubuntu-latest
+    needs: [deploy, healthcheck]
+    if: always() && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: ✅ Notify deploy success
+        if: needs.deploy.result == 'success' && needs.healthcheck.result == 'success'
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ✅ Deploy STQM Berhasil!
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.event.head_commit.message }}
+            By: ${{ github.actor }}
+            URL: http://${{ secrets.VPS_HOST }}:8080
+
+      - name: ❌ Notify deploy failed
+        if: needs.deploy.result == 'failure' || needs.healthcheck.result == 'failure'
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ❌ Deploy STQM GAGAL!
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.event.head_commit.message }}
+            By: ${{ github.actor }}
+            Cek: https://github.com/suyeeen/s_STQM/actions
