@@ -13,7 +13,7 @@ concurrency:
 jobs:
 
   test:
-    name: ✅ Run Tests
+    name: ✁ERun Tests
     runs-on: ubuntu-latest
     services:
       mysql:
@@ -46,7 +46,7 @@ jobs:
           key: composer-${{ hashFiles('composer.lock') }}
           restore-keys: composer-
 
-      - name: ⚙️ Copy environment file
+      - name: ⚙︁ECopy environment file
         run: cp .env.example .env
 
       - name: 📦 Install Composer dependencies
@@ -55,7 +55,7 @@ jobs:
       - name: 🔑 Generate application key
         run: php artisan key:generate --ansi
 
-      - name: 🗄️ Run database migrations
+      - name: 🗄�E�ERun database migrations
         env:
           DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
@@ -110,7 +110,7 @@ jobs:
           severity: CRITICAL
           exit-code: 0
 
-      - name: ✅ Verify image built
+      - name: ✁EVerify image built
         run: docker images stqm-app
 
   deploy:
@@ -132,27 +132,27 @@ jobs:
           script: |
             cd /var/www/s
 
-            echo "⬇️ Pull kode terbaru..."
-            git pull origin main || { echo "❌ Git pull gagal!"; exit 1; }
+            echo "⬁E��EPull kode terbaru..."
+            git pull origin main || { echo "❁EGit pull gagal!"; exit 1; }
 
             echo "🐳 Rebuild container..."
-            docker compose down
-            docker compose up -d --build || {
-              echo "❌ Deploy gagal! Rolling back..."
-              docker compose down
+            docker-compose down
+            docker-compose up -d --build || {
+              echo "❁EDeploy gagal! Rolling back..."
+              docker-compose down
               git reset --hard HEAD~1
-              docker compose up -d --build
+              docker-compose up -d --build
               exit 1
             }
 
-            echo "⚙️ Migrate & cache..."
-            docker compose exec -T app php artisan migrate --force
-            docker compose exec -T app php artisan config:cache
-            docker compose exec -T app php artisan route:cache
-            docker compose exec -T app php artisan view:cache
-            docker compose exec -T app php artisan storage:link
+            echo "⚙︁EMigrate & cache..."
+            docker-compose exec -T app php artisan migrate --force
+            docker-compose exec -T app php artisan config:cache
+            docker-compose exec -T app php artisan route:cache
+            docker-compose exec -T app php artisan view:cache
+            docker-compose exec -T app php artisan storage:link
 
-            echo "✅ Deploy selesai: $(date)"
+            echo "✁EDeploy selesai: $(date)"
 
   healthcheck:
     name: 🏥 Health Check
@@ -168,10 +168,10 @@ jobs:
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.VPS_HOST }}:8080)
           echo "HTTP Status: $STATUS"
           if [ "$STATUS" != "200" ] && [ "$STATUS" != "302" ]; then
-            echo "❌ Health check gagal! Status: $STATUS"
+            echo "❁EHealth check gagal! Status: $STATUS"
             exit 1
           fi
-          echo "✅ App sehat! Status: $STATUS"
+          echo "✁EApp sehat! Status: $STATUS"
 
       - name: 🐳 Check container status
         uses: appleboy/ssh-action@v1.0.3
@@ -181,8 +181,8 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
           script: |
-            docker compose -f /var/www/s/docker-compose.yml ps
-            echo "✅ Container status checked"
+            docker-compose -f /var/www/s/docker-compose.yml ps
+            echo "✁EContainer status checked"
 
   notify:
     name: 🔔 Notify
@@ -190,27 +190,27 @@ jobs:
     needs: [deploy, healthcheck]
     if: always() && github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
-      - name: ✅ Notify deploy success
+      - name: ✁ENotify deploy success
         if: needs.deploy.result == 'success' && needs.healthcheck.result == 'success'
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
-            ✅ Deploy STQM Berhasil!
+            ✁EDeploy STQM Berhasil!
             Branch: ${{ github.ref_name }}
             Commit: ${{ github.event.head_commit.message }}
             By: ${{ github.actor }}
             URL: http://${{ secrets.VPS_HOST }}:8080
 
-      - name: ❌ Notify deploy failed
+      - name: ❁ENotify deploy failed
         if: needs.deploy.result == 'failure' || needs.healthcheck.result == 'failure'
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
-            ❌ Deploy STQM GAGAL!
+            ❁EDeploy STQM GAGAL!
             Branch: ${{ github.ref_name }}
             Commit: ${{ github.event.head_commit.message }}
             By: ${{ github.actor }}
