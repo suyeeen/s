@@ -35,3 +35,24 @@ services:
     container_name: stqm-nginx
     restart: unless-stopped
     ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - stqm-network
+    depends_on:
+      - app
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: stqm-prometheus
+    restart: unless-stopped
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheusdata:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.retention.time=15d'
+    networks:
+      - stqm
