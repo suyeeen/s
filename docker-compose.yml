@@ -14,7 +14,19 @@ services:
       - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - stqm-network
-
+  db:
+    image: mysql:8.0
+    container_name: stqm-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-stqm_db}
+      MYSQL_USER: ${DB_USERNAME:-stqm_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-StqmPass123!}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-StqmPass123!}
+    volumes:
+      - mysqldata:/var/lib/mysql
+    networks:
+      - stqm-network
   nginx:
     image: nginx:alpine
     container_name: stqm-nginx
