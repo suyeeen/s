@@ -13,8 +13,9 @@ concurrency:
 jobs:
 
   test:
-    name: ✁ERun Tests
+    name: Run Tests
     runs-on: ubuntu-latest
+    # Menyiapkan database MySQL sementara khusus untuk testing
     services:
       mysql:
         image: mysql:8.0
@@ -29,33 +30,40 @@ jobs:
           --health-timeout=5s
           --health-retries=3
     steps:
-      - name: 📥 Checkout code
+      # Mengunduh kode dari GitHub ke mesin GitHub Actions
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 🐘 Setup PHP 8.3
+      # Menginstall PHP versi 8.3 beserta extension yang dibutuhkan Laravel
+      - name: Setup PHP 8.3
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
           extensions: pdo, pdo_mysql, mbstring, zip, gd, bcmath, exif, pcntl
           coverage: xdebug
 
-      - name: 📦 Cache Composer dependencies
+      # Menyimpan cache vendor supaya tidak download ulang setiap pipeline jalan
+      - name: Cache Composer dependencies
         uses: actions/cache@v4
         with:
           path: vendor
           key: composer-${{ hashFiles('composer.lock') }}
           restore-keys: composer-
 
-      - name: ⚙︁ECopy environment file
+      # Menyalin file konfigurasi contoh menjadi file konfigurasi aktif
+      - name: Copy environment file
         run: cp .env.example .env
 
-      - name: 📦 Install Composer dependencies
+      # Menginstall semua library PHP yang dibutuhkan aplikasi
+      - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
-      - name: 🔑 Generate application key
+      # Membuat APP_KEY unik untuk enkripsi session dan data sensitif
+      - name: Generate application key
         run: php artisan key:generate --ansi
 
-      - name: 🗄 E ERun database migrations
+      # Membuat semua tabel database di MySQL testing
+      - name: Run database migrations
         env:
           DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
@@ -65,7 +73,8 @@ jobs:
           DB_PASSWORD: secret
         run: php artisan migrate --force
 
-      - name: 🧪 Run PHPUnit tests
+      # Menjalankan semua unit test dan feature test, minimal coverage 50%
+      - name: Run PHPUnit tests
         env:
           DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
@@ -76,14 +85,17 @@ jobs:
         run: php artisan test --coverage-text --min=50
 
   security:
-    name: 🔒 Security Scan
+    name: Security Scan
     runs-on: ubuntu-latest
+    # Hanya jalan setelah test berhasil
     needs: test
     steps:
-      - name: 📥 Checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 🔒 Run Trivy security scan
+      # Memindai seluruh kode sumber mencari celah keamanan CRITICAL dan HIGH
+      # exit-code 0 artinya pipeline tidak berhenti meskipun ada temuan
+      - name: Run Trivy security scan
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: fs
@@ -92,37 +104,44 @@ jobs:
           exit-code: 0
 
   build:
-    name: 🐳 Build Docker Image
+    name: Build Docker Image
     runs-on: ubuntu-latest
     needs: security
+    # Hanya build jika push ke branch main atau dev
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
     steps:
-      - name: 📥 Checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 🐳 Build Docker image
+      # Membangun Docker image dari Dockerfile untuk memastikan image bisa dibuild
+      - name: Build Docker image
         run: docker build -t stqm-app:latest .
 
-      - name: 🔍 Scan Docker image with Trivy
+      # Memindai Docker image yang sudah dibuild mencari celah keamanan CRITICAL
+      - name: Scan Docker image with Trivy
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: stqm-app:latest
           severity: CRITICAL
           exit-code: 0
 
-      - name: ✁EVerify image built
+      # Memverifikasi image berhasil dibuat dengan menampilkan daftar image
+      - name: Verify image built
         run: docker images stqm-app
 
   deploy:
-    name: 🚀 Deploy to VPS
+    name: Deploy to VPS
     runs-on: ubuntu-latest
     needs: [test, build]
+    # Hanya deploy jika push langsung ke branch main, bukan pull request
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
-      - name: 📥 Checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 🚀 Deploy via SSH
+      # Masuk ke server via SSH menggunakan private key yang tersimpan di secrets
+      # lalu menjalankan serangkaian perintah untuk update dan restart aplikasi
+      - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -132,48 +151,60 @@ jobs:
           script: |
             cd /var/www/s
 
-            echo "⬁E  EPull kode terbaru..."
-            git pull origin main || { echo "❁EGit pull gagal!"; exit 1; }
+            # Mengambil kode terbaru dari GitHub ke server
+            echo "Pull kode terbaru..."
+            git pull origin main || { echo "Git pull gagal!"; exit 1; }
 
-            echo "🐳 Rebuild container..."
+            # Mematikan container lama dan menjalankan yang baru dengan kode terbaru
+            # Jika gagal, otomatis rollback ke versi sebelumnya
+            echo "Rebuild container..."
             docker-compose down
             docker-compose up -d --build || {
-              echo "❁EDeploy gagal! Rolling back..."
+              echo "Deploy gagal! Rolling back..."
               docker-compose down
               git reset --hard HEAD~1
               docker-compose up -d --build
               exit 1
             }
 
-            echo "⚙︁EMigrate & cache..."
+            # Menjalankan migrasi database terbaru
+            # Menyimpan konfigurasi ke cache supaya lebih cepat
+            # Menyimpan routes ke cache supaya lebih cepat
+            # Menyimpan compiled views ke cache supaya lebih cepat
+            # Membuat symlink storage supaya file bisa diakses publik
+            echo "Migrate dan cache..."
             docker-compose exec -T app php artisan migrate --force
             docker-compose exec -T app php artisan config:cache
             docker-compose exec -T app php artisan route:cache
             docker-compose exec -T app php artisan view:cache
             docker-compose exec -T app php artisan storage:link
 
-            echo "✁EDeploy selesai: $(date)"
+            echo "Deploy selesai: $(date)"
 
   healthcheck:
-    name: 🏥 Health Check
+    name: Health Check
     runs-on: ubuntu-latest
     needs: deploy
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
-      - name: ⏳ Wait for app to start
+      # Menunggu 15 detik supaya aplikasi sempat start setelah container restart
+      - name: Wait for app to start
         run: sleep 15
 
-      - name: 🏥 Check HTTP response
+      # Mengecek apakah aplikasi merespons dengan HTTP 200 atau 302
+      # Jika tidak, pipeline dianggap gagal
+      - name: Check HTTP response
         run: |
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.VPS_HOST }}:8080)
           echo "HTTP Status: $STATUS"
           if [ "$STATUS" != "200" ] && [ "$STATUS" != "302" ]; then
-            echo "❁EHealth check gagal! Status: $STATUS"
+            echo "Health check gagal! Status: $STATUS"
             exit 1
           fi
-          echo "✁EApp sehat! Status: $STATUS"
+          echo "App sehat! Status: $STATUS"
 
-      - name: 🐳 Check container status
+      # Memverifikasi semua container berjalan normal di server
+      - name: Check container status
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -182,35 +213,38 @@ jobs:
           port: 22
           script: |
             docker-compose -f /var/www/s/docker-compose.yml ps
-            echo "✁EContainer status checked"
+            echo "Container status checked"
 
   notify:
-    name: 🔔 Notify
+    name: Notify
     runs-on: ubuntu-latest
     needs: [deploy, healthcheck]
+    # Selalu jalan meskipun deploy gagal, supaya notifikasi tetap terkirim
     if: always() && github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
-      - name: ✁ENotify deploy success
+      # Kirim notifikasi Telegram jika deploy dan health check berhasil
+      - name: Notify deploy success
         if: needs.deploy.result == 'success' && needs.healthcheck.result == 'success'
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
-            ✁EDeploy STQM Berhasil!
+            Deploy STQM Berhasil!
             Branch: ${{ github.ref_name }}
             Commit: ${{ github.event.head_commit.message }}
             By: ${{ github.actor }}
             URL: http://${{ secrets.VPS_HOST }}:8080
 
-      - name: ❁ENotify deploy failed
+      # Kirim notifikasi Telegram jika deploy atau health check gagal
+      - name: Notify deploy failed
         if: needs.deploy.result == 'failure' || needs.healthcheck.result == 'failure'
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
-            ❁EDeploy STQM GAGAL!
+            Deploy STQM GAGAL!
             Branch: ${{ github.ref_name }}
             Commit: ${{ github.event.head_commit.message }}
             By: ${{ github.actor }}
