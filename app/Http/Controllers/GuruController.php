@@ -8,6 +8,7 @@ use App\Models\Pertanyaan;
 use App\Models\Kuesioner;
 use App\Models\Jawaban;
 use App\Models\Absensi;
+use App\Models\PrestasiGuru;
 
 class GuruController extends Controller
 {
@@ -22,8 +23,6 @@ class GuruController extends Controller
         $semester    = \Illuminate\Support\Facades\Cache::get('stqm_semester', 'ganjil');
         $maksimal    = (int) \Illuminate\Support\Facades\Cache::get('stqm_maks_penilaian', 1);
 
-        // Guru yang sudah mencapai batas penilaian — kembalikan flat array of guru_id
-        // agar view bisa pakai in_array() dengan benar
         $sudahDinilai = Kuesioner::where('penilai_guru_id', $penilai->id)
             ->where('tahun_ajaran', $tahunAjaran)
             ->where('semester', $semester)
@@ -39,21 +38,18 @@ class GuruController extends Controller
 
     public function submitKuesioner(Request $request)
     {
-        // Mendukung multi-guru (guru_ids[]) maupun single guru (guru_id)
         $guruIds = $request->input('guru_ids', []);
         if (empty($guruIds) && $request->filled('guru_id')) {
             $guruIds = [$request->input('guru_id')];
         }
 
         $request->merge(['guru_ids_resolved' => $guruIds]);
-
         $request->validate([
             'guru_ids_resolved'   => 'required|array|min:1',
             'guru_ids_resolved.*' => 'required|exists:guru,id',
             'jawaban'             => 'required|array',
         ]);
 
-        // Cek batas waktu kuesioner
         $buka  = \Illuminate\Support\Facades\Cache::get('stqm_buka_kuesioner', '');
         $tutup = \Illuminate\Support\Facades\Cache::get('stqm_tutup_kuesioner', '');
         $now   = now()->toDateString();
@@ -83,16 +79,14 @@ class GuruController extends Controller
 
             if ($jumlahIsi >= $maksimal) {
                 $guruModel = Guru::find($guruId);
-                $errors[] = 'Guru ' . ($guruModel->nama ?? $guruId) . ' sudah pernah dinilai (batas ' . $maksimal . 'x per periode).';
+                $errors[]  = 'Guru ' . ($guruModel->nama ?? $guruId) . ' sudah pernah dinilai (batas ' . $maksimal . 'x per periode).';
                 continue;
             }
 
             $jawabanGuru = $request->input('jawaban.' . $guruId, []);
             $kesanPesan  = $request->input('kesan_pesan.' . $guruId, null);
 
-            if (empty($jawabanGuru)) {
-                continue;
-            }
+            if (empty($jawabanGuru)) continue;
 
             $kuesioner = Kuesioner::create([
                 'guru_id'         => $guruId,
@@ -130,11 +124,15 @@ class GuruController extends Controller
         return redirect()->route('guru.kuesioner')->with('success', $msg);
     }
 
+    /**
+     * Profil guru — ditambahkan data absensi (persentase) dan poin prestasi
+     */
     public function profil()
     {
         $guru = auth()->user()->guru;
 
-        $kuesioner = \App\Models\Kuesioner::where('guru_id', $guru->id)
+        // ── Kuesioner & kompetensi ──────────────────────────────────────
+        $kuesioner = Kuesioner::where('guru_id', $guru->id)
             ->where('tipe', 'guru')
             ->with('jawaban.pertanyaan')
             ->get();
@@ -163,7 +161,30 @@ class GuruController extends Controller
             ? round(array_sum($nilaiAda) / count($nilaiAda), 2)
             : 0;
 
-        $kesanPesan = \App\Models\Kuesioner::where('guru_id', $guru->id)
+        // ── Absensi — rekap dari admin ─────────────────────────────────
+        $rekapAbsensi   = Absensi::where('guru_id', $guru->id)
+            ->where('diinput_admin', true)
+            ->orderByDesc('tahun')
+            ->orderByDesc('bulan')
+            ->get();
+
+        $persenAbsensi = Absensi::rataPersenHadir($guru->id);
+
+        // Statistik absensi: akumulasi semua rekap
+        $totalHadir     = $rekapAbsensi->sum('jumlah_hadir');
+        $totalIzin      = $rekapAbsensi->sum('jumlah_izin');
+        $totalSakit     = $rekapAbsensi->sum('jumlah_sakit');
+        $totalAlpha     = $rekapAbsensi->sum('jumlah_alpha');
+        $totalTerlambat = $rekapAbsensi->sum('jumlah_terlambat');
+        $totalHariKerja = $rekapAbsensi->sum('total_hari_kerja');
+
+        // ── Prestasi ───────────────────────────────────────────────────
+        $bobotTingkat = PrestasiController::bobotTingkat();
+        $prestasiGuru = $guru->prestasi ?? collect();
+        $poinPrestasi = PrestasiController::hitungPoin($prestasiGuru);
+
+        // ── Kesan & Pesan ──────────────────────────────────────────────
+        $kesanPesan = Kuesioner::where('guru_id', $guru->id)
             ->whereIn('tipe', ['guru', 'siswa'])
             ->whereNotNull('kesan_pesan')
             ->where('kesan_pesan', '!=', '')
@@ -171,40 +192,98 @@ class GuruController extends Controller
             ->orderByDesc('tanggal')
             ->get();
 
-        return view('guru.profil', compact('guru', 'skorKategori', 'skorRata', 'totalPenilai', 'kesanPesan'));
+        return view('guru.profil', compact(
+            'guru',
+            'skorKategori',
+            'skorRata',
+            'totalPenilai',
+            'kesanPesan',
+            'rekapAbsensi',
+            'persenAbsensi',
+            'totalHadir',
+            'totalIzin',
+            'totalSakit',
+            'totalAlpha',
+            'totalTerlambat',
+            'totalHariKerja',
+            'poinPrestasi',
+            'bobotTingkat'
+        ));
     }
 
     public function absensi()
     {
         $guru       = auth()->user()->guru;
-        $riwayat    = Absensi::where('guru_id', $guru->id)->orderByDesc('tanggal')->paginate(20);
-        $sudahAbsen = Absensi::where('guru_id', $guru->id)->whereDate('tanggal', today())->exists();
+
+        // Riwayat RFID lama (jika masih ada)
+        $riwayatRfid = Absensi::where('guru_id', $guru->id)
+            ->where('diinput_admin', false)
+            ->orderByDesc('tanggal')
+            ->paginate(20);
+
+        // Rekap bulanan dari admin
+        $rekapAdmin = Absensi::where('guru_id', $guru->id)
+            ->where('diinput_admin', true)
+            ->orderByDesc('tahun')
+            ->orderByDesc('bulan')
+            ->get();
+
+        $sudahAbsen = Absensi::where('guru_id', $guru->id)
+            ->where('diinput_admin', false)
+            ->whereDate('tanggal', today())
+            ->exists();
 
         $statistik = [
-            'hadir' => Absensi::where('guru_id', $guru->id)->bulanIni()->where('status', 'hadir')->count(),
-            'izin'  => Absensi::where('guru_id', $guru->id)->bulanIni()->where('status', 'izin')->count(),
-            'sakit' => Absensi::where('guru_id', $guru->id)->bulanIni()->where('status', 'sakit')->count(),
-            'alpha' => Absensi::where('guru_id', $guru->id)->bulanIni()->where('status', 'alpha')->count(),
+            'hadir'     => Absensi::where('guru_id', $guru->id)->bulanIni()->where('status', 'hadir')->count(),
+            'izin'      => Absensi::where('guru_id', $guru->id)->bulanIni()->where('status', 'izin')->count(),
+            'sakit'     => Absensi::where('guru_id', $guru->id)->bulanIni()->where('status', 'sakit')->count(),
+            'alpha'     => Absensi::where('guru_id', $guru->id)->bulanIni()->where('status', 'alpha')->count(),
+            'persen'    => Absensi::rataPersenHadir($guru->id),
         ];
 
-        return view('guru.absensi', compact('riwayat', 'sudahAbsen', 'statistik'));
+        $namaBulan = [
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember',
+        ];
+
+        return view('guru.absensi', compact(
+            'riwayatRfid',
+            'rekapAdmin',
+            'sudahAbsen',
+            'statistik',
+            'namaBulan'
+        ));
     }
 
     public function scanRfid(Request $request)
     {
         $guru  = auth()->user()->guru;
-        $sudah = Absensi::where('guru_id', $guru->id)->whereDate('tanggal', today())->exists();
+        $sudah = Absensi::where('guru_id', $guru->id)
+            ->where('diinput_admin', false)
+            ->whereDate('tanggal', today())
+            ->exists();
 
         if ($sudah) {
             return back()->with('error', 'Sudah melakukan absensi hari ini.');
         }
 
         Absensi::create([
-            'guru_id'   => $guru->id,
-            'tanggal'   => today(),
-            'jam_masuk' => now()->format('H:i:s'),
-            'status'    => now()->format('H:i') > '07:00' ? 'terlambat' : 'hadir',
-            'rfid_uid'  => $guru->rfid_uid,
+            'guru_id'        => $guru->id,
+            'tanggal'        => today(),
+            'jam_masuk'      => now()->format('H:i:s'),
+            'status'         => now()->format('H:i') > '07:00' ? 'terlambat' : 'hadir',
+            'rfid_uid'       => $guru->rfid_uid,
+            'diinput_admin'  => false,
         ]);
 
         return back()->with('success', 'Absensi berhasil dicatat pukul ' . now()->format('H:i'));

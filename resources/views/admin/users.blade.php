@@ -224,15 +224,37 @@
 
                 {{-- Baris 1: Search + Filter Role --}}
                 <div class="flex flex-col sm:flex-row sm:items-center gap-4">
-                    <form method="GET" action="{{ route('admin.users.index') }}" class="flex-1">
+                    <form method="GET" action="{{ route('admin.users.index') }}" class="flex-1" id="formSearch">
                         <input type="hidden" name="role" value="{{ $roleFilter }}">
-                        <div class="relative w-full max-w-sm">
-                            <svg class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2" style="color:var(--text-muted)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama atau email..."
-                                class="w-full pl-12 pr-4 py-3 rounded-2xl text-sm outline-none"
-                                style="background:var(--input-bg);border:1.5px solid var(--input-border);color:var(--text-main);">
+                        <div class="relative w-full max-w-sm flex gap-2">
+                            <div class="relative flex-1">
+                                <svg class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2" style="color:var(--text-muted)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                                <input type="text" name="search" id="inputSearch"
+                                    value="{{ request('search') }}"
+                                    placeholder="Cari nama, email, username..."
+                                    autocomplete="off"
+                                    class="w-full pl-12 pr-4 py-3 rounded-2xl text-sm outline-none"
+                                    style="background:var(--input-bg);border:1.5px solid var(--input-border);color:var(--text-main);">
+                                @if(request('search'))
+                                    <button type="button" onclick="clearSearch()"
+                                        class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full transition"
+                                        style="color:var(--text-muted);background:var(--btn-bg);" title="Hapus pencarian">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/>
+                                        </svg>
+                                    </button>
+                                @endif
+                            </div>
+                            <button type="submit"
+                                class="px-4 py-3 rounded-2xl text-sm font-semibold text-white flex items-center gap-2 transition-all shrink-0"
+                                style="background:linear-gradient(135deg,#f97316,#eab308);box-shadow:0 4px 12px rgba(249,115,22,0.3);">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                                Cari
+                            </button>
                         </div>
                     </form>
                     <form method="GET" action="{{ route('admin.users.index') }}" class="flex gap-2 flex-wrap">
@@ -339,6 +361,25 @@
                     </form>
                 </div>
             </div>
+
+            {{-- Info hasil pencarian --}}
+            @if(request('search'))
+            <div class="px-6 py-3 flex items-center gap-3 text-sm"
+                style="background:rgba(249,115,22,0.06);border-bottom:1px solid var(--card-divider);">
+                <svg class="w-4 h-4 shrink-0" style="color:#f97316" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <span style="color:var(--text-muted);">
+                    Hasil pencarian: <strong style="color:var(--text-main);">"{{ request('search') }}"</strong>
+                    &mdash; <strong style="color:#f97316;">{{ $users->total() }} pengguna</strong> ditemukan
+                </span>
+                <a href="{{ route('admin.users.index', ['role' => $roleFilter]) }}"
+                    class="ml-auto text-xs font-medium px-3 py-1.5 rounded-xl transition"
+                    style="color:#f87171;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);">
+                    ✕ Hapus filter
+                </a>
+            </div>
+            @endif
 
             {{-- ── Tabel ── --}}
             <div class="overflow-x-auto">
@@ -722,4 +763,12 @@
         </script>
         @endpush
     </div>
+
+<script>
+    function clearSearch() {
+        document.getElementById('inputSearch').value = '';
+        document.getElementById('formSearch').submit();
+    }
+</script>
+
 @endsection

@@ -17,11 +17,23 @@ class AdminController extends Controller
     public function index(Request $request)
     {
         $roleFilter = $request->get('role', 'semua');
+        $search     = trim($request->get('search', ''));
 
         $query = User::latest();
+
+        // Filter role
         if ($roleFilter !== 'semua') {
             $query->where('role', $roleFilter);
         }
+
+        // Filter search — cari di name dan email
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('name',  'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
         $users = $query->paginate(15)->withQueryString();
 
         // Hitung selectableIds dari items halaman ini, exclude akun sendiri

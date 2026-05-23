@@ -5,6 +5,29 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * PertanyaanSeeder
+ * ══════════════════════════════════════════════════════════════════════════════
+ * Versi ringkas untuk kuesioner SISWA — dari 25 soal menjadi 12 soal.
+ * Alasan: mengurangi respondent fatigue (kelelahan responden) terutama
+ * bagi siswa yang harus menilai banyak guru sekaligus.
+ *
+ * SISWA  : 12 soal — diadaptasi dari Permendiknas No.16 Tahun 2007, Tabel 3
+ *          (Standar Kompetensi Guru Mata Pelajaran SD/MI, SMP/MTs, SMA/MA)
+ *          Dipilih 1 soal representatif per indikator utama, proporsional
+ *          dari 4 kompetensi: Pedagogik (4), Kepribadian (3), Sosial (2),
+ *          Profesional (3).
+ *
+ * GURU   : 30 soal — TIDAK BERUBAH, verbatim dari Lampiran MP1 PKG Kemendikbud.
+ *          Komponen: Perilaku Harian (11), Hubungan Sejawat (10),
+ *          Profesional Guru (9).
+ *
+ * CATATAN: Seeder ini menghapus data lama (jawaban & pertanyaan) lalu
+ *          mengisi ulang. Pastikan backup sudah dilakukan sebelumnya.
+ *          Jalankan dengan perintah:
+ *              php artisan db:seed --class=PertanyaanSeeder
+ * ══════════════════════════════════════════════════════════════════════════════
+ */
 class PertanyaanSeeder extends Seeder
 {
     public function run(): void
@@ -12,209 +35,116 @@ class PertanyaanSeeder extends Seeder
         $pertanyaan = [
 
             // ══════════════════════════════════════════════════════════════════
-            // PERTANYAAN UNTUK SISWA
-            // Sumber: Permendiknas No.16 Tahun 2007 — Standar Kualifikasi
-            //         Akademik dan Kompetensi Guru (Tabel 3: Kompetensi Inti
-            //         Guru Mata Pelajaran SD/MI, SMP/MTs, SMA/MA, SMK/MAK)
-            // Perspektif: Siswa mengamati guru di dalam dan luar kelas
-            // Bahasa: Santai & akrab (kamu/aku), cocok untuk siswa SMP/SMA
-            // Skala: 1–5 (Sangat Tidak Setuju → Sangat Setuju)
+            // PERTANYAAN UNTUK SISWA — VERSI RINGKAS (12 soal)
+            // Sumber  : Permendiknas No.16 Tahun 2007, Tabel 3
+            // Adaptasi: Dipilih 1 butir paling representatif per indikator
+            //           utama. Bahasa disesuaikan agar santai dan mudah
+            //           dipahami siswa SMP/SMA tanpa menggeser konstruk.
+            // Skala   : 1–5 Likert (Sangat Tidak Setuju → Sangat Setuju)
             // ══════════════════════════════════════════════════════════════════
 
-            // ── Kompetensi Pedagogik ───────────────────────────────────────
-            // KI 1: Menguasai karakteristik peserta didik
+            // ── Kompetensi Pedagogik (4 soal) ─────────────────────────────
+            // Mewakili KI 1 & 2: karakteristik peserta didik + metode belajar
             [
                 'kategori'        => 'pedagogik',
                 'untuk_penilai'   => 'siswa',
                 'urutan'          => 1,
-                'teks_pertanyaan' => 'Guru memahami kemampuan dan kesulitan belajar tiap siswa, sehingga cara mengajarnya terasa pas buat aku.',
+                'teks_pertanyaan' => 'Guru menggunakan berbagai cara mengajar (diskusi, kelompok, demonstrasi, dll) sehingga pelajaran tidak terasa membosankan.',
             ],
-            // KI 2: Menguasai teori belajar & prinsip pembelajaran
+            // Mewakili KI 3 & 4: kurikulum + penyelenggaraan pembelajaran
             [
                 'kategori'        => 'pedagogik',
                 'untuk_penilai'   => 'siswa',
                 'urutan'          => 2,
-                'teks_pertanyaan' => 'Guru menggunakan berbagai cara mengajar (diskusi, demonstrasi, kerja kelompok, dll) — tidak hanya ceramah terus.',
+                'teks_pertanyaan' => 'Guru menyampaikan tujuan belajar di awal pelajaran dan menggunakan alat bantu (gambar, video, alat peraga) saat mengajar.',
             ],
-            // KI 3: Mengembangkan kurikulum
+            // Mewakili KI 7: komunikasi efektif, empatik, santun
             [
                 'kategori'        => 'pedagogik',
                 'untuk_penilai'   => 'siswa',
                 'urutan'          => 3,
-                'teks_pertanyaan' => 'Guru menyampaikan tujuan pembelajaran dengan jelas di awal pelajaran, jadi aku tahu apa yang akan dipelajari.',
+                'teks_pertanyaan' => 'Guru berkomunikasi dengan cara yang ramah dan mudah dimengerti, sehingga aku tidak takut untuk bertanya.',
             ],
-            // KI 4: Menyelenggarakan pembelajaran yang mendidik
+            // Mewakili KI 8 & 9: penilaian, evaluasi, dan tindak lanjutnya
             [
                 'kategori'        => 'pedagogik',
                 'untuk_penilai'   => 'siswa',
                 'urutan'          => 4,
-                'teks_pertanyaan' => 'Guru menggunakan media atau alat bantu belajar (gambar, video, alat peraga, dll) saat mengajar di kelas.',
-            ],
-            // KI 5: Memanfaatkan TIK untuk kepentingan pembelajaran
-            [
-                'kategori'        => 'pedagogik',
-                'untuk_penilai'   => 'siswa',
-                'urutan'          => 5,
-                'teks_pertanyaan' => 'Guru memanfaatkan teknologi (laptop, proyektor, internet, atau aplikasi belajar) untuk mendukung kegiatan belajar di kelas.',
-            ],
-            // KI 6: Memfasilitasi pengembangan potensi peserta didik
-            [
-                'kategori'        => 'pedagogik',
-                'untuk_penilai'   => 'siswa',
-                'urutan'          => 6,
-                'teks_pertanyaan' => 'Guru memberi kesempatan kepada aku untuk berpendapat, berkreasi, dan mengembangkan potensi diri dalam belajar.',
-            ],
-            // KI 7: Berkomunikasi secara efektif, empatik, dan santun
-            [
-                'kategori'        => 'pedagogik',
-                'untuk_penilai'   => 'siswa',
-                'urutan'          => 7,
-                'teks_pertanyaan' => 'Guru berkomunikasi dengan cara yang ramah, mudah aku mengerti, dan tidak membuat aku takut untuk bertanya.',
-            ],
-            // KI 8: Menyelenggarakan penilaian & evaluasi
-            [
-                'kategori'        => 'pedagogik',
-                'untuk_penilai'   => 'siswa',
-                'urutan'          => 8,
-                'teks_pertanyaan' => 'Penilaian atau ulangan yang diberikan guru terasa adil dan sesuai dengan materi yang sudah diajarkan.',
-            ],
-            // KI 9: Memanfaatkan hasil penilaian untuk pembelajaran
-            [
-                'kategori'        => 'pedagogik',
-                'untuk_penilai'   => 'siswa',
-                'urutan'          => 9,
-                'teks_pertanyaan' => 'Guru memberikan umpan balik atas hasil ulangan atau tugas aku, dan menyediakan remedial atau pengayaan bagi yang membutuhkan.',
-            ],
-            // KI 10: Melakukan tindakan reflektif
-            [
-                'kategori'        => 'pedagogik',
-                'untuk_penilai'   => 'siswa',
-                'urutan'          => 10,
-                'teks_pertanyaan' => 'Guru mau memperbaiki cara mengajarnya jika ada yang belum aku dan teman-teman pahami — tidak buru-buru lanjut ke materi berikutnya.',
+                'teks_pertanyaan' => 'Ulangan atau tugas yang diberikan guru terasa adil, dan guru memberikan penjelasan setelah hasil penilaian dibagikan.',
             ],
 
-            // ── Kompetensi Kepribadian ─────────────────────────────────────
-            // KI 11: Bertindak sesuai norma agama, hukum, sosial, budaya
+            // ── Kompetensi Kepribadian (3 soal) ───────────────────────────
+            // Mewakili KI 11: norma agama, hukum, sosial, budaya
             [
                 'kategori'        => 'kepribadian',
                 'untuk_penilai'   => 'siswa',
                 'urutan'          => 1,
                 'teks_pertanyaan' => 'Guru menghargai semua siswa tanpa membeda-bedakan suku, agama, jenis kelamin, atau latar belakang keluarga.',
             ],
-            // KI 12: Menampilkan diri sebagai pribadi jujur & berakhlak mulia
+            // Mewakili KI 12 & 13: jujur, berakhlak mulia, mantap, berwibawa
             [
                 'kategori'        => 'kepribadian',
                 'untuk_penilai'   => 'siswa',
                 'urutan'          => 2,
-                'teks_pertanyaan' => 'Guru jujur dan konsisten — apa yang beliau perintahkan kepada kami juga beliau lakukan sendiri.',
+                'teks_pertanyaan' => 'Guru bisa menjadi teladan — jujur, sabar, dan tidak mudah marah meskipun suasana kelas sedang ramai.',
             ],
+            // Mewakili KI 14 & 15: etos kerja, tanggung jawab, kode etik
             [
                 'kategori'        => 'kepribadian',
                 'untuk_penilai'   => 'siswa',
                 'urutan'          => 3,
-                'teks_pertanyaan' => 'Guru bisa menjadi teladan bagi aku dan teman-teman dalam berperilaku baik di sekolah maupun di luar sekolah.',
-            ],
-            // KI 13: Menampilkan diri sebagai pribadi yang mantap & berwibawa
-            [
-                'kategori'        => 'kepribadian',
-                'untuk_penilai'   => 'siswa',
-                'urutan'          => 4,
-                'teks_pertanyaan' => 'Guru tampil tenang, sabar, dan berwibawa — tidak mudah marah atau emosi meskipun suasana kelas sedang ramai.',
-            ],
-            // KI 14: Etos kerja, tanggung jawab, rasa bangga menjadi guru
-            [
-                'kategori'        => 'kepribadian',
-                'untuk_penilai'   => 'siswa',
-                'urutan'          => 5,
-                'teks_pertanyaan' => 'Guru datang ke kelas tepat waktu dan sungguh-sungguh dalam mengajar — terlihat bahwa beliau bangga dengan profesinya.',
-            ],
-            // KI 15: Menjunjung tinggi kode etik profesi guru
-            [
-                'kategori'        => 'kepribadian',
-                'untuk_penilai'   => 'siswa',
-                'urutan'          => 6,
-                'teks_pertanyaan' => 'Guru berperilaku sesuai etika profesi: tidak mempermalukan siswa di depan umum, tidak pilih kasih, dan menjaga martabat sebagai pendidik.',
+                'teks_pertanyaan' => 'Guru selalu hadir tepat waktu, sungguh-sungguh mengajar, dan tidak pernah mempermalukan siswa di depan kelas.',
             ],
 
-            // ── Kompetensi Sosial ──────────────────────────────────────────
-            // KI 16: Bersikap inklusif, objektif, tidak diskriminatif
+            // ── Kompetensi Sosial (2 soal) ────────────────────────────────
+            // Mewakili KI 16 & 17: inklusif, tidak diskriminatif, komunikasi
             [
                 'kategori'        => 'sosial',
                 'untuk_penilai'   => 'siswa',
                 'urutan'          => 1,
-                'teks_pertanyaan' => 'Guru bersikap terbuka dan tidak diskriminatif kepada semua siswa — baik yang pintar maupun yang kurang, semua diperlakukan adil.',
+                'teks_pertanyaan' => 'Guru bersikap adil kepada semua siswa dan mau berkomunikasi dengan orang tua tentang perkembangan belajar kami.',
             ],
-            // KI 17: Berkomunikasi efektif dengan orang tua & masyarakat
+            // Mewakili KI 18 & 19: adaptasi lingkungan + bantu kesulitan siswa
             [
                 'kategori'        => 'sosial',
                 'untuk_penilai'   => 'siswa',
                 'urutan'          => 2,
-                'teks_pertanyaan' => 'Guru melibatkan orang tua atau wali dalam proses belajarku — misalnya memberi kabar tentang perkembangan atau kesulitan belajarku.',
-            ],
-            // KI 18: Beradaptasi di tempat bertugas
-            [
-                'kategori'        => 'sosial',
-                'untuk_penilai'   => 'siswa',
-                'urutan'          => 3,
-                'teks_pertanyaan' => 'Guru mampu menyesuaikan diri dengan kondisi dan budaya di lingkungan sekolah kami, sehingga suasana belajar terasa nyaman.',
-            ],
-            // KI 19: Berkomunikasi dengan komunitas profesi
-            [
-                'kategori'        => 'sosial',
-                'untuk_penilai'   => 'siswa',
-                'urutan'          => 4,
-                'teks_pertanyaan' => 'Guru bersedia membantu aku dan teman-teman saat mengalami kesulitan — tidak membiarkan kami bingung sendirian tanpa bimbingan.',
+                'teks_pertanyaan' => 'Guru bersedia membantu saat aku atau teman-teman kesulitan, dan suasana belajar terasa nyaman di kelas beliau.',
             ],
 
-            // ── Kompetensi Profesional ─────────────────────────────────────
-            // KI 20: Menguasai materi, struktur, konsep, pola pikir keilmuan
+            // ── Kompetensi Profesional (3 soal) ───────────────────────────
+            // Mewakili KI 20: penguasaan materi dan contoh nyata
             [
                 'kategori'        => 'profesional',
                 'untuk_penilai'   => 'siswa',
                 'urutan'          => 1,
-                'teks_pertanyaan' => 'Guru benar-benar menguasai materi pelajarannya — kalau aku tanya di luar buku pun, beliau bisa menjelaskan dengan baik.',
+                'teks_pertanyaan' => 'Guru benar-benar menguasai materi pelajarannya dan sering mengaitkan dengan contoh nyata di kehidupan sehari-hari.',
             ],
+            // Mewakili KI 21 & 22: standar kompetensi + materi kreatif
             [
                 'kategori'        => 'profesional',
                 'untuk_penilai'   => 'siswa',
                 'urutan'          => 2,
-                'teks_pertanyaan' => 'Guru sering mengaitkan materi pelajaran dengan contoh nyata atau kejadian sehari-hari, sehingga lebih mudah aku pahami.',
+                'teks_pertanyaan' => 'Materi yang diajarkan guru sesuai kurikulum dan disajikan secara kreatif sehingga pelajaran terasa menyenangkan.',
             ],
-            // KI 21: Menguasai standar kompetensi & kompetensi dasar
+            // Mewakili KI 23 & 24: pengembangan diri dan pemanfaatan TIK
             [
                 'kategori'        => 'profesional',
                 'untuk_penilai'   => 'siswa',
                 'urutan'          => 3,
-                'teks_pertanyaan' => 'Materi yang disampaikan guru sesuai dengan pelajaran yang ada di kurikulum — tidak keluar jalur atau tidak relevan.',
-            ],
-            // KI 22: Mengembangkan materi pembelajaran secara kreatif
-            [
-                'kategori'        => 'profesional',
-                'untuk_penilai'   => 'siswa',
-                'urutan'          => 4,
-                'teks_pertanyaan' => 'Guru menyajikan materi secara kreatif dan menarik — pelajaran terasa menyenangkan dan tidak membosankan.',
-            ],
-            // KI 23–24: Pengembangan keprofesian berkelanjutan & TIK
-            [
-                'kategori'        => 'profesional',
-                'untuk_penilai'   => 'siswa',
-                'urutan'          => 5,
-                'teks_pertanyaan' => 'Guru tampak selalu belajar dan mengikuti perkembangan — cara mengajar dan materi yang disampaikan terasa selalu up to date.',
+                'teks_pertanyaan' => 'Guru tampak terus berkembang — cara mengajar dan materi yang disampaikan selalu terasa segar dan mengikuti perkembangan zaman.',
             ],
 
 
             // ══════════════════════════════════════════════════════════════════
-            // PERTANYAAN UNTUK GURU TEMAN SEJAWAT (PEER ASSESSMENT)
+            // PERTANYAAN UNTUK GURU TEMAN SEJAWAT — TIDAK BERUBAH (30 soal)
             // Sumber: Lampiran MP1 — Instrumen Penilaian Kinerja Guru
             //         oleh Teman Sejawat (Buku 2 PKG Kemendikbud)
-            // 3 Komponen: 1) Perilaku Guru Sehari-hari  (11 item)
-            //             2) Hubungan dengan Teman Sejawat (10 item)
-            //             3) Perilaku Profesional Guru  ( 9 item)
-            // Skala: TP=0 (Tidak Pernah), KD=1 (Kadang-kadang), SR=2 (Sering)
-            // Teks: VERBATIM dari instrumen resmi MP1
+            // Teks  : VERBATIM dari instrumen resmi MP1
+            // Skala : TP=0 (Tidak Pernah) | KD=1 (Kadang-kadang) | SR=2 (Sering)
             // ══════════════════════════════════════════════════════════════════
 
-            // ── Komponen 1: Perilaku Guru Sehari-hari (MP1 No.1–11) ────────
+            // ── Komponen 1: Perilaku Guru Sehari-hari (11 butir) ──────────
             [
                 'kategori'        => 'perilaku_harian',
                 'untuk_penilai'   => 'guru',
@@ -282,7 +212,7 @@ class PertanyaanSeeder extends Seeder
                 'teks_pertanyaan' => 'Guru berpartisipasi aktif dalam kegiatan peningkatan prestasi sekolah.',
             ],
 
-            // ── Komponen 2: Hubungan Guru dengan Teman Sejawat (MP1 No.1–10)
+            // ── Komponen 2: Hubungan Guru dengan Teman Sejawat (10 butir) ─
             [
                 'kategori'        => 'hubungan_sejawat',
                 'untuk_penilai'   => 'guru',
@@ -344,7 +274,7 @@ class PertanyaanSeeder extends Seeder
                 'teks_pertanyaan' => 'Guru menghargai kemampuan saya dan guru lainnya.',
             ],
 
-            // ── Komponen 3: Perilaku Profesional Guru (MP1 No.1–9) ─────────
+            // ── Komponen 3: Perilaku Profesional Guru (9 butir) ───────────
             [
                 'kategori'        => 'profesional_guru',
                 'untuk_penilai'   => 'guru',
@@ -401,13 +331,12 @@ class PertanyaanSeeder extends Seeder
             ],
         ];
 
-        // ── Hapus data lama ───────────────────────────────────────────────────
+        // ── Hapus data lama lalu insert baru ─────────────────────────────────
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('jawaban')->delete();
         DB::table('pertanyaan')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        // ── Insert data baru ──────────────────────────────────────────────────
         foreach ($pertanyaan as $p) {
             DB::table('pertanyaan')->insert([
                 'teks_pertanyaan' => $p['teks_pertanyaan'],
@@ -420,25 +349,30 @@ class PertanyaanSeeder extends Seeder
             ]);
         }
 
+        // ── Ringkasan output di terminal ──────────────────────────────────────
         $siswaCount = collect($pertanyaan)->where('untuk_penilai', 'siswa')->count();
         $guruCount  = collect($pertanyaan)->where('untuk_penilai', 'guru')->count();
 
-        $this->command->info('✅ ' . count($pertanyaan) . ' pertanyaan berhasil di-seed.');
+        $this->command->info('');
+        $this->command->info('✅ PertanyaanSeeder — ' . count($pertanyaan) . ' pertanyaan berhasil di-seed.');
+        $this->command->info('');
         $this->command->table(
             ['Penilai', 'Kategori / Komponen', 'Jumlah', 'Sumber'],
             [
-                ['Siswa', 'pedagogik (KI 1–10)',              '10 soal', 'Permendiknas 16/2007 Tabel 3'],
-                ['Siswa', 'kepribadian (KI 11–15)',           ' 6 soal', 'Permendiknas 16/2007 Tabel 3'],
-                ['Siswa', 'sosial (KI 16–19)',                ' 4 soal', 'Permendiknas 16/2007 Tabel 3'],
-                ['Siswa', 'profesional (KI 20–24)',           ' 5 soal', 'Permendiknas 16/2007 Tabel 3'],
-                ['---',   '---',                              '---',     '---'],
-                ['Guru',  'perilaku_harian (Komp.1 MP1)',     '11 soal', 'Instrumen MP1 PKG — verbatim'],
-                ['Guru',  'hubungan_sejawat (Komp.2 MP1)',    '10 soal', 'Instrumen MP1 PKG — verbatim'],
-                ['Guru',  'profesional_guru (Komp.3 MP1)',    ' 9 soal', 'Instrumen MP1 PKG — verbatim'],
+                ['Siswa', 'pedagogik    (KI 1–10)',          '4 soal',  'Permendiknas 16/2007 — adaptasi'],
+                ['Siswa', 'kepribadian  (KI 11–15)',         '3 soal',  'Permendiknas 16/2007 — adaptasi'],
+                ['Siswa', 'sosial       (KI 16–19)',         '2 soal',  'Permendiknas 16/2007 — adaptasi'],
+                ['Siswa', 'profesional  (KI 20–24)',         '3 soal',  'Permendiknas 16/2007 — adaptasi'],
+                ['---',   '---',                             '---',     '---'],
+                ['Guru',  'perilaku_harian   (Komp.1 MP1)', '11 soal', 'MP1 PKG — verbatim'],
+                ['Guru',  'hubungan_sejawat  (Komp.2 MP1)', '10 soal', 'MP1 PKG — verbatim'],
+                ['Guru',  'profesional_guru  (Komp.3 MP1)', ' 9 soal', 'MP1 PKG — verbatim'],
             ]
         );
-        $this->command->info("Total siswa: {$siswaCount} soal | Total guru sejawat: {$guruCount} soal");
-        $this->command->warn('⚠  Kategori guru: perilaku_harian | hubungan_sejawat | profesional_guru');
-        $this->command->warn('   Pastikan kolom kategori di tabel pertanyaan mendukung string (bukan enum terbatas).');
+        $this->command->info("Total siswa  : {$siswaCount} soal");
+        $this->command->info("Total guru   : {$guruCount} soal");
+        $this->command->info('');
+        $this->command->warn('⚠  Seeder ini menghapus tabel jawaban dan pertanyaan lama.');
+        $this->command->warn('   Pastikan backup sudah dilakukan sebelum menjalankan perintah ini.');
     }
 }

@@ -1,183 +1,173 @@
 @extends('layouts.app')
 
-@section('title', 'Data Kehadiran')
+@section('title', 'Data Kehadiran Saya')
 
 @section('content')
-    <div class="max-w-5xl mx-auto space-y-8">
+<div class="max-w-5xl mx-auto space-y-6">
 
-        {{-- Header --}}
-        <div>
-            <h1 class="text-3xl font-bold" style="color:var(--text-main)" tracking-tight">Sistem Absensi RFID</h1>
-            <p class="text-sm mt-2" style="color:var(--text-muted)">Monitoring kehadiran dan kedisiplinan harian.</p>
-        </div>
+    {{-- Header --}}
+    <div>
+        <h1 class="text-2xl font-black" style="color:var(--text-main); font-family:'Outfit',sans-serif;">
+            Data Kehadiran Saya
+        </h1>
+        <p class="text-sm mt-1" style="color:var(--text-muted);">
+            Rekap kehadiran bulanan yang telah diinput oleh admin
+        </p>
+    </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    {{-- Statistik ringkasan --}}
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        @php
+            $statCards = [
+                ['label' => 'Total Hadir',    'val' => $statistik['hadir'] ?? 0,  'color' => '#10b981', 'bg' => 'rgba(16,185,129,0.1)'],
+                ['label' => 'Total Izin',     'val' => $statistik['izin'] ?? 0,   'color' => '#f59e0b', 'bg' => 'rgba(245,158,11,0.1)'],
+                ['label' => 'Total Sakit',    'val' => $statistik['sakit'] ?? 0,  'color' => '#3b82f6', 'bg' => 'rgba(59,130,246,0.1)'],
+                ['label' => 'Total Alpha',    'val' => $statistik['alpha'] ?? 0,  'color' => '#ef4444', 'bg' => 'rgba(239,68,68,0.1)'],
+            ];
+        @endphp
+        @foreach($statCards as $sc)
+            <div class="rounded-2xl p-4 text-center" style="background:{{ $sc['bg'] }}; border:1px solid {{ $sc['color'] }}33;">
+                <p class="text-2xl font-black mb-1" style="color:{{ $sc['color'] }}; font-family:'Outfit',sans-serif;">
+                    {{ $sc['val'] }}
+                </p>
+                <p class="text-xs font-semibold" style="color:var(--text-muted);">{{ $sc['label'] }}</p>
+            </div>
+        @endforeach
+    </div>
 
-            {{-- ── Kartu Scanner ── --}}
-            <div class="lg:col-span-1">
-                <div class="rounded-3xl p-10 text-center relative overflow-hidden h-full flex flex-col items-center justify-center"
-                    style="background:var(--card-bg);border:1px solid var(--card-border);">
+    {{-- Persentase kehadiran total --}}
+    @php
+        $pct      = $statistik['persen'] ?? 0;
+        $pctColor = $pct >= 90 ? '#10b981' : ($pct >= 75 ? '#f59e0b' : '#ef4444');
+        $pctLabel = $pct >= 90 ? 'Sangat Baik' : ($pct >= 75 ? 'Cukup Baik' : 'Perlu Perhatian');
+    @endphp
 
-                    {{-- Garis atas --}}
-                    <div class="absolute top-0 left-0 w-full h-1.5 rounded-t-3xl"
-                        style="background: linear-gradient(90deg, #f97316, #eab308);"></div>
+    <div class="rounded-2xl p-6" style="background:var(--card-bg); border:1px solid var(--card-border);">
+        <div class="flex flex-col md:flex-row items-center gap-6">
 
-                    <h2 class="text-xl font-semibold text-white mb-2">Scan Kartu RFID</h2>
-                    <p class="text-gray-400 text-sm mb-10">
-                        {{ now()->translatedFormat('l, d F Y') }}
-                    </p>
-
-                    {{-- Icon status --}}
-                    <div class="w-48 h-48 rounded-full flex items-center justify-center mb-10"
-                        style="{{ $sudahAbsen
-                            ? 'background: rgba(16,185,129,0.1); border: 2px solid rgba(16,185,129,0.3);'
-                            : 'background: rgba(255,255,255,0.02); border: 4px solid rgba(255,255,255,0.05);' }}">
-                        @if ($sudahAbsen)
-                            <svg class="w-24 h-24 text-emerald-400" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        @else
-                            <svg class="w-20 h-20 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-                            </svg>
-                        @endif
-                    </div>
-
-                    @if ($sudahAbsen)
-                        <p class="text-emerald-400 font-medium mb-6">Absensi sudah tercatat hari ini</p>
+            {{-- Donut --}}
+            <div class="relative w-28 h-28 flex-shrink-0">
+                <svg viewBox="0 0 36 36" class="w-28 h-28 -rotate-90">
+                    <circle cx="18" cy="18" r="14" fill="none" stroke="var(--card-bg-soft)" stroke-width="3"/>
+                    @if($pct > 0)
+                        <circle cx="18" cy="18" r="14" fill="none"
+                            stroke="{{ $pctColor }}"
+                            stroke-width="3"
+                            stroke-dasharray="{{ number_format($pct * 0.879645943, 4) }} 87.9645943"
+                            stroke-linecap="round"/>
                     @endif
-
-                    {{-- Tombol scan --}}
-                    <form method="POST" action="{{ route('guru.absensi.scan') }}" class="w-full">
-                        @csrf
-                        <button type="submit" {{ $sudahAbsen ? 'disabled' : '' }}
-                            class="w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-semibold text-white transition-all"
-                            style="{{ $sudahAbsen
-                                ? 'background: rgba(255,255,255,0.05); color: #6b7280; cursor: not-allowed;'
-                                : 'background: linear-gradient(135deg, #f97316, #eab308); box-shadow: 0 8px 32px rgba(249,115,22,0.3);' }}">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-                            </svg>
-                            {{ $sudahAbsen ? 'Sudah Absen Hari Ini' : 'Simulasi Tap Kartu' }}
-                        </button>
-                    </form>
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <p class="text-xl font-black leading-tight" style="color:{{ $pctColor }}; font-family:'Outfit',sans-serif;">
+                        {{ $pct > 0 ? number_format($pct, 1).'%' : '—' }}
+                    </p>
                 </div>
             </div>
 
-            {{-- ── Stats + Riwayat ── --}}
-            <div class="lg:col-span-2 space-y-8">
-
-                {{-- Statistik bulan ini --}}
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
-                    @foreach ([['label' => 'Hadir', 'value' => $statistik['hadir'], 'color' => '#34d399', 'bg' => 'rgba(16,185,129,0.1)', 'border' => 'rgba(16,185,129,0.2)'], ['label' => 'Izin', 'value' => $statistik['izin'], 'color' => '#60a5fa', 'bg' => 'rgba(59,130,246,0.1)', 'border' => 'rgba(59,130,246,0.2)'], ['label' => 'Sakit', 'value' => $statistik['sakit'], 'color' => '#fbbf24', 'bg' => 'rgba(245,158,11,0.1)', 'border' => 'rgba(245,158,11,0.2)'], ['label' => 'Alpha', 'value' => $statistik['alpha'], 'color' => '#f87171', 'bg' => 'rgba(239,68,68,0.1)', 'border' => 'rgba(239,68,68,0.2)']] as $stat)
-                        <div class="rounded-3xl p-6 flex flex-col items-center justify-center text-center"
-                            style="background:var(--card-bg);border:1px solid var(--card-border);">
-                            <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
-                                style="background: {{ $stat['bg'] }}; border: 1px solid {{ $stat['border'] }};">
-                                <span class="text-2xl font-bold" style="color: {{ $stat['color'] }};">
-                                    {{ $stat['value'] }}
-                                </span>
-                            </div>
-                            <span class="text-sm font-medium text-gray-400">{{ $stat['label'] }}</span>
-                        </div>
-                    @endforeach
-                </div>
-
-                {{-- Tabel riwayat --}}
-                <div class="rounded-3xl overflow-hidden"
-                    style="background:var(--card-bg);border:1px solid var(--card-border);">
-
-                    <div class="p-6 flex justify-between items-center"
-                        style="border-bottom:1px solid var(--card-divider);background:var(--card-bg-soft);">
-                        <h3 class="font-semibold text-white flex items-center gap-3">
-                            <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            Riwayat Kehadiran
-                        </h3>
+            <div>
+                <p class="text-2xl font-black mb-1" style="color:{{ $pctColor }}; font-family:'Outfit',sans-serif;">
+                    {{ $pct > 0 ? $pctLabel : 'Belum ada data' }}
+                </p>
+                <p class="text-sm" style="color:var(--text-muted);">
+                    Persentase kehadiran rata-rata dari seluruh rekap bulanan
+                </p>
+                @if($pct > 0)
+                    <div class="mt-3 flex flex-wrap gap-2">
+                        @php $rekapCount = $rekapAdmin->count(); @endphp
+                        <span class="px-3 py-1 rounded-lg text-xs font-semibold"
+                              style="background:rgba(59,130,246,0.12); color:#3b82f6;">
+                            {{ $rekapCount }} rekap bulanan
+                        </span>
+                        <span class="px-3 py-1 rounded-lg text-xs font-semibold"
+                              style="background:{{ $pctColor }}18; color:{{ $pctColor }};">
+                            Hadir + Terlambat dihitung sebagai kehadiran
+                        </span>
                     </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left">
-                            <thead>
-                                <tr class="text-xs" style="color:var(--text-muted);border-bottom:1px solid var(--card-divider);background:var(--card-bg-soft);">
-                                    <th class="p-5 font-medium">Tanggal</th>
-                                    <th class="p-5 font-medium">Status</th>
-                                    <th class="p-5 font-medium">Jam Masuk</th>
-                                    <th class="p-5 font-medium">Jam Keluar</th>
-                                    <th class="p-5 font-medium">Keterangan</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-sm">
-                                @forelse($riwayat as $absen)
-                                    <tr style="border-bottom:1px solid var(--card-border-soft);"
-                                        onmouseover="this.style.background='rgba(26,22,19,0.03)'" onmouseout="this.style.background='transparent'" >
-                                        <td class="p-5 font-medium text-gray-200">
-                                            {{ \Carbon\Carbon::parse($absen->tanggal)->translatedFormat('d M Y') }}
-                                        </td>
-                                        <td class="p-5">
-                                            @php
-                                                $statusStyle = match ($absen->status) {
-                                                    'hadir' => [
-                                                        'bg' => 'rgba(16,185,129,0.1)',
-                                                        'color' => '#34d399',
-                                                        'border' => 'rgba(16,185,129,0.2)',
-                                                    ],
-                                                    'terlambat' => [
-                                                        'bg' => 'rgba(245,158,11,0.1)',
-                                                        'color' => '#fbbf24',
-                                                        'border' => 'rgba(245,158,11,0.2)',
-                                                    ],
-                                                    'izin' => [
-                                                        'bg' => 'rgba(59,130,246,0.1)',
-                                                        'color' => '#60a5fa',
-                                                        'border' => 'rgba(59,130,246,0.2)',
-                                                    ],
-                                                    'sakit' => [
-                                                        'bg' => 'rgba(139,92,246,0.1)',
-                                                        'color' => '#a78bfa',
-                                                        'border' => 'rgba(139,92,246,0.2)',
-                                                    ],
-                                                    default => [
-                                                        'bg' => 'rgba(239,68,68,0.1)',
-                                                        'color' => '#f87171',
-                                                        'border' => 'rgba(239,68,68,0.2)',
-                                                    ],
-                                                };
-                                            @endphp
-                                            <span class="px-3 py-1.5 rounded-xl text-xs font-bold capitalize"
-                                                style="background: {{ $statusStyle['bg'] }}; color: {{ $statusStyle['color'] }}; border: 1px solid {{ $statusStyle['border'] }};">
-                                                {{ $absen->status }}
-                                            </span>
-                                        </td>
-                                        <td class="p-5 text-gray-400">{{ $absen->jam_masuk ?? '-' }}</td>
-                                        <td class="p-5 text-gray-400">{{ $absen->jam_keluar ?? '-' }}</td>
-                                        <td class="p-5 text-gray-500">{{ $absen->keterangan ?? '-' }}</td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="5" class="p-10 text-center text-gray-500">
-                                            Belum ada data kehadiran.
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {{-- Pagination --}}
-                    @if ($riwayat->hasPages())
-                        <div class="p-5" style="border-top: 1px solid rgba(255,255,255,0.06);">
-                            {{ $riwayat->links() }}
-                        </div>
-                    @endif
-                </div>
+                @endif
             </div>
         </div>
     </div>
+
+    {{-- Tabel rekap per bulan --}}
+    <div class="rounded-2xl overflow-hidden" style="background:var(--card-bg); border:1px solid var(--card-border);">
+        <div class="px-5 py-4 border-b" style="border-color:var(--card-border-soft);">
+            <h2 class="font-black text-base" style="color:var(--text-main); font-family:'Outfit',sans-serif;">
+                Rekap Per Bulan
+            </h2>
+        </div>
+
+        @if($rekapAdmin->count() > 0)
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr style="border-bottom:1px solid var(--card-border-soft);">
+                            <th class="text-left px-5 py-3 text-xs font-bold uppercase tracking-wider" style="color:var(--text-muted);">Periode</th>
+                            <th class="text-center px-4 py-3 text-xs font-bold uppercase tracking-wider" style="color:#10b981;">Hadir</th>
+                            <th class="text-center px-4 py-3 text-xs font-bold uppercase tracking-wider" style="color:#a855f7;">Terlambat</th>
+                            <th class="text-center px-4 py-3 text-xs font-bold uppercase tracking-wider" style="color:#f59e0b;">Izin</th>
+                            <th class="text-center px-4 py-3 text-xs font-bold uppercase tracking-wider" style="color:#3b82f6;">Sakit</th>
+                            <th class="text-center px-4 py-3 text-xs font-bold uppercase tracking-wider" style="color:#ef4444;">Alpha</th>
+                            <th class="text-center px-4 py-3 text-xs font-bold uppercase tracking-wider" style="color:var(--text-muted);">Hari Kerja</th>
+                            <th class="text-center px-4 py-3 text-xs font-bold uppercase tracking-wider" style="color:var(--text-muted);">% Hadir</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($rekapAdmin as $rekap)
+                            @php
+                                $rPct   = $rekap->persen_hadir;
+                                $rColor = $rPct >= 90 ? '#10b981' : ($rPct >= 75 ? '#f59e0b' : '#ef4444');
+                            @endphp
+                            <tr style="border-bottom:1px solid var(--card-border-soft);">
+                                <td class="px-5 py-3 font-semibold" style="color:var(--text-main);">
+                                    {{ $namaBulan[$rekap->bulan] ?? $rekap->bulan }} {{ $rekap->tahun }}
+                                </td>
+                                <td class="px-4 py-3 text-center font-bold" style="color:#10b981;">{{ $rekap->jumlah_hadir }}</td>
+                                <td class="px-4 py-3 text-center font-bold" style="color:#a855f7;">{{ $rekap->jumlah_terlambat }}</td>
+                                <td class="px-4 py-3 text-center font-bold" style="color:#f59e0b;">{{ $rekap->jumlah_izin }}</td>
+                                <td class="px-4 py-3 text-center font-bold" style="color:#3b82f6;">{{ $rekap->jumlah_sakit }}</td>
+                                <td class="px-4 py-3 text-center font-bold" style="color:#ef4444;">{{ $rekap->jumlah_alpha }}</td>
+                                <td class="px-4 py-3 text-center" style="color:var(--text-muted);">{{ $rekap->total_hari_kerja }}</td>
+                                <td class="px-4 py-3 text-center">
+                                    <span class="px-2 py-1 rounded-lg text-xs font-black"
+                                          style="background:{{ $rColor }}18; color:{{ $rColor }};">
+                                        {{ $rekap->total_hari_kerja > 0 ? number_format($rPct, 1).'%' : '—' }}
+                                    </span>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @else
+            <div class="py-16 text-center">
+                <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                     style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.2);">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                         stroke-width="1.5" stroke="#10b981" class="w-7 h-7">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"/>
+                    </svg>
+                </div>
+                <p class="font-bold text-sm" style="color:var(--text-main);">Belum ada rekap kehadiran</p>
+                <p class="text-xs mt-1" style="color:var(--text-muted);">Data akan muncul setelah admin menginput rekap bulanan.</p>
+            </div>
+        @endif
+    </div>
+
+    {{-- Info box --}}
+    <div class="rounded-2xl px-5 py-4 flex items-start gap-3"
+         style="background:rgba(59,130,246,0.08); border:1px solid rgba(59,130,246,0.2);">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+             stroke-width="1.8" stroke="#3b82f6" class="w-5 h-5 flex-shrink-0 mt-0.5">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"/>
+        </svg>
+        <p class="text-xs leading-relaxed" style="color:#3b82f6;">
+            Data kehadiran ini dikelola oleh admin. Jika ada kesalahan data, hubungi administrator sekolah.
+            Persentase kehadiran dihitung dari: <strong>(Hadir + Terlambat) ÷ Total Hari Kerja × 100%</strong>.
+            Data ini juga digunakan sebagai salah satu faktor dalam penilaian kualitas guru (K-Means clustering).
+        </p>
+    </div>
+
+</div>
 @endsection

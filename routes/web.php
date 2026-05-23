@@ -6,6 +6,7 @@ use App\Http\Controllers\GuruController;
 use App\Http\Controllers\KepalaController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PrestasiController;
+use App\Http\Controllers\AdminAbsensiController;
 use App\Http\Controllers\KmeansController;
 use App\Http\Controllers\AdminPrestasiController;
 
@@ -63,4 +64,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/settings',       [AdminController::class, 'saveSettings'])->name('settings.save');
     Route::post('/run-clustering', [KmeansController::class, 'run'])->name('clustering.run');
     Route::get('/preview-nilai',   [KmeansController::class, 'preview'])->name('clustering.preview');
+    // Rekap absensi — route tambahan HARUS sebelum resource
+    Route::get('/absensi/template',        [AdminAbsensiController::class, 'downloadTemplate'])->name('absensi.template');
+    Route::post('/absensi/import/preview', [AdminAbsensiController::class, 'importPreview'])->name('absensi.import.preview');
+    Route::post('/absensi/import/confirm', [AdminAbsensiController::class, 'importConfirm'])->name('absensi.import.confirm');
+    Route::resource('/absensi', AdminAbsensiController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 });

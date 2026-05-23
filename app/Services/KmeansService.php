@@ -7,6 +7,8 @@ use App\Models\Jawaban;
 use App\Models\Kuesioner;
 use App\Models\HasilClustering;
 use App\Models\Pertanyaan;
+use App\Models\Absensi;
+use App\Models\PrestasiGuru;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +23,6 @@ class KmeansService
 
     public function __construct()
     {
-        // Sesuaikan path python di server kamu
         $this->pythonPath  = PHP_OS_FAMILY === 'Windows' ? 'python' : 'python3';
         $this->scriptPath  = base_path('python/kmeans.py');
         $this->tahunAjaran = config('app.tahun_ajaran', '2024/2025');
@@ -33,7 +34,6 @@ class KmeansService
      */
     public function runClustering(): array
     {
-        // ── Step 1: Ambil semua guru yang punya jawaban kuesioner ─────────────
         $guruData = $this->hitungNilaiGuru();
 
         if (empty($guruData)) {
@@ -42,28 +42,33 @@ class KmeansService
 
         Log::info('[KMEANS] Data guru yang akan dicluster:', ['jumlah' => count($guruData)]);
 
-        // ── Step 2: Kirim ke Python untuk clustering ──────────────────────────
         $hasilClustering = $this->jalankanPython('clustering', $guruData);
 
         Log::info('[KMEANS] Hasil clustering diterima:', ['jumlah' => count($hasilClustering)]);
 
-        // ── Step 3: Simpan hasil ke database ─────────────────────────────────
-        $this->simpanHasil($hasilClustering);
+        $this->simpanHasil($hasilClustering, $guruData);
 
         return [
-            'total'    => count($hasilClustering),
-            'detail'   => $hasilClustering,
+            'total'       => count($hasilClustering),
+            'detail'      => $hasilClustering,
             'per_cluster' => $this->ringkasanCluster($hasilClustering),
         ];
     }
 
     /**
-     * Hitung rata-rata nilai per kompetensi untuk setiap guru
-     * dari tabel jawaban + kuesioner + pertanyaan
+     * Hitung nilai per kompetensi + absensi + poin prestasi untuk setiap guru.
+     * Menggabungkan 6 dimensi:
+     *   1. pedagogik     (0-5, dari kuesioner)
+     *   2. profesional   (0-5, dari kuesioner)
+     *   3. sosial        (0-5, dari kuesioner)
+     *   4. kepribadian   (0-5, dari kuesioner)
+     *   5. persen_absensi (0-100, dari rekap admin → dinormalisasi ke 0-5)
+     *   6. poin_prestasi  (0-∞, dari tabel prestasi_guru → dinormalisasi ke 0-5)
      */
     protected function hitungNilaiGuru(): array
     {
-        $hasil = DB::select("
+        // 1. Ambil nilai kuesioner
+        $rows = DB::select("
             SELECT
                 g.id AS guru_id,
                 g.nama,
@@ -83,16 +88,50 @@ class KmeansService
                 kepribadian IS NOT NULL
         ");
 
-        return array_map(function ($row) {
+        // 2. Hitung poin prestasi max (untuk normalisasi)
+        $bobotTingkat = [
+            'sekolah'       => 5,
+            'kecamatan'     => 10,
+            'kota'          => 20,
+            'provinsi'      => 35,
+            'nasional'      => 55,
+            'internasional' => 80,
+        ];
+        $maxPoin = 80; // internasional = 80 → jadikan skala referensi
+
+        return array_map(function ($row) use ($bobotTingkat, $maxPoin) {
+            // Ambil persentase absensi
+            $persenAbsensi = Absensi::rataPersenHadir($row->guru_id);
+
+            // Ambil poin prestasi tervalidasi
+            $prestasi = PrestasiGuru::where('guru_id', $row->guru_id)
+                ->where('status', 'tervalidasi')
+                ->get();
+            $poinPrestasi = $prestasi->sum(fn($p) => $bobotTingkat[$p->tingkat] ?? 0);
+
+            // Normalisasi absensi ke skala 0-5
+            // 100% hadir → 5.0, 80% → 4.0, dst.
+            $absensiNorm = round($persenAbsensi / 100 * 5, 4);
+
+            // Normalisasi poin prestasi ke 0-5
+            // Misalkan poin > 80 di-cap di 80 dulu lalu di-scale
+            $poinCapped  = min($poinPrestasi, $maxPoin);
+            $prestasiNorm = round($poinCapped / $maxPoin * 5, 4);
+
             return [
-                'guru_id'    => $row->guru_id,
-                'nama'       => $row->nama,
-                'pedagogik'  => round((float) $row->pedagogik,  2),
-                'profesional' => round((float) $row->profesional, 2),
-                'sosial'     => round((float) $row->sosial,      2),
-                'kepribadian' => round((float) $row->kepribadian, 2),
+                'guru_id'          => $row->guru_id,
+                'nama'             => $row->nama,
+                'pedagogik'        => round((float) $row->pedagogik,  4),
+                'profesional'      => round((float) $row->profesional, 4),
+                'sosial'           => round((float) $row->sosial,      4),
+                'kepribadian'      => round((float) $row->kepribadian, 4),
+                'absensi_norm'     => $absensiNorm,
+                'prestasi_norm'    => $prestasiNorm,
+                // raw untuk disimpan ke DB
+                'persen_absensi'   => $persenAbsensi,
+                'poin_prestasi'    => $poinPrestasi,
             ];
-        }, $hasil);
+        }, $rows);
     }
 
     /**
@@ -100,14 +139,26 @@ class KmeansService
      */
     protected function jalankanPython(string $mode, array $data): array
     {
+        // Kirim hanya kolom yang dibutuhkan Python (6 fitur numerik)
+        $dataUntukPython = array_map(fn($d) => [
+            'guru_id'       => $d['guru_id'],
+            'nama'          => $d['nama'],
+            'pedagogik'     => $d['pedagogik'],
+            'profesional'   => $d['profesional'],
+            'sosial'        => $d['sosial'],
+            'kepribadian'   => $d['kepribadian'],
+            'absensi_norm'  => $d['absensi_norm'],
+            'prestasi_norm' => $d['prestasi_norm'],
+        ], $data);
+
         $input = json_encode([
             'mode' => $mode,
-            'data' => $data,
+            'data' => $dataUntukPython,
         ]);
 
         $process = new Process([$this->pythonPath, $this->scriptPath]);
         $process->setInput($input);
-        $process->setTimeout(120); // 2 menit timeout
+        $process->setTimeout(120);
         $process->run();
 
         if (!$process->isSuccessful()) {
@@ -129,10 +180,16 @@ class KmeansService
 
     /**
      * Simpan hasil clustering ke tabel hasil_clustering
+     * Merge data raw (persen_absensi, poin_prestasi) dari guruData ke hasil Python
      */
-    protected function simpanHasil(array $hasilClustering): void
+    protected function simpanHasil(array $hasilClustering, array $guruData): void
     {
+        // Buat map guru_id → raw data
+        $rawMap = collect($guruData)->keyBy('guru_id');
+
         foreach ($hasilClustering as $hasil) {
+            $raw = $rawMap[$hasil['guru_id']] ?? null;
+
             HasilClustering::updateOrCreate(
                 [
                     'guru_id'      => $hasil['guru_id'],
@@ -145,6 +202,9 @@ class KmeansService
                     'nilai_sosial'      => $hasil['nilai_sosial'],
                     'nilai_kepribadian' => $hasil['nilai_kepribadian'],
                     'nilai_rata_rata'   => $hasil['nilai_rata_rata'],
+                    'persen_absensi'    => $raw ? $raw['persen_absensi'] : 0,
+                    'poin_prestasi'     => $raw ? $raw['poin_prestasi'] : 0,
+                    'nilai_akhir'       => $hasil['nilai_akhir'],
                     'cluster'           => $hasil['cluster'],
                     'label_cluster'     => $hasil['label_cluster'],
                     'tanggal'           => now()->toDateString(),

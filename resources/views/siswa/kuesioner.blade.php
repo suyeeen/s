@@ -1350,6 +1350,81 @@
             </div>
         @endif
 
+        {{-- ── NOTIFIKASI BATAS WAKTU KUESIONER ── --}}
+        @php
+            $bukaKues  = \Illuminate\Support\Facades\Cache::get('stqm_buka_kuesioner', '');
+            $tutupKues = \Illuminate\Support\Facades\Cache::get('stqm_tutup_kuesioner', '');
+            $nowStr    = now()->toDateString();
+            $nowC      = now();
+        @endphp
+
+        @if($bukaKues && $nowStr < $bukaKues)
+            {{-- Belum dibuka --}}
+            <div style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.4);border-radius:16px;padding:16px 20px;margin-bottom:4px;position:relative;z-index:1;">
+                <div style="display:flex;align-items:flex-start;gap:12px;">
+                    <i class="bi bi-clock-history" style="font-size:22px;color:#fbbf24;flex-shrink:0;margin-top:1px;"></i>
+                    <div>
+                        <p style="font-family:'Outfit',sans-serif;font-size:14px;font-weight:800;color:#fbbf24;margin-bottom:3px;">
+                            Kuesioner Belum Dibuka
+                        </p>
+                        <p style="font-size:13px;color:rgba(255,255,255,0.75);">
+                            Pengisian kuesioner dibuka mulai
+                            <strong style="color:#fbbf24;">{{ \Carbon\Carbon::parse($bukaKues)->isoFormat('D MMMM Y') }}</strong>.
+                            Kamu bisa mengisi setelah tanggal tersebut.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @elseif($tutupKues && $nowStr > $tutupKues)
+            {{-- Sudah tutup --}}
+            <div style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);border-radius:16px;padding:16px 20px;margin-bottom:4px;position:relative;z-index:1;">
+                <div style="display:flex;align-items:flex-start;gap:12px;">
+                    <i class="bi bi-x-circle-fill" style="font-size:22px;color:#f87171;flex-shrink:0;margin-top:1px;"></i>
+                    <div>
+                        <p style="font-family:'Outfit',sans-serif;font-size:14px;font-weight:800;color:#f87171;margin-bottom:3px;">
+                            Batas Pengisian Sudah Berakhir
+                        </p>
+                        <p style="font-size:13px;color:rgba(255,255,255,0.75);">
+                            Kuesioner ditutup pada
+                            <strong style="color:#f87171;">{{ \Carbon\Carbon::parse($tutupKues)->isoFormat('D MMMM Y') }}</strong>.
+                            Hubungi admin jika ada kendala.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @elseif($tutupKues)
+            {{-- Sedang buka — tampilkan sisa hari --}}
+            @php
+                $sisaHari = $nowC->diffInDays(\Carbon\Carbon::parse($tutupKues));
+                $urgent   = $sisaHari <= 3;
+            @endphp
+            <div style="background:{{ $urgent ? 'rgba(239,68,68,0.12)' : 'rgba(16,185,129,0.12)' }};border:1px solid {{ $urgent ? 'rgba(239,68,68,0.35)' : 'rgba(16,185,129,0.35)' }};border-radius:16px;padding:16px 20px;margin-bottom:4px;position:relative;z-index:1;">
+                <div style="display:flex;align-items:flex-start;gap:12px;">
+                    <i class="bi bi-{{ $urgent ? 'exclamation-triangle-fill' : 'calendar-check' }}"
+                       style="font-size:22px;color:{{ $urgent ? '#f87171' : '#34d399' }};flex-shrink:0;margin-top:1px;"></i>
+                    <div style="flex:1;">
+                        <p style="font-family:'Outfit',sans-serif;font-size:14px;font-weight:800;color:{{ $urgent ? '#f87171' : '#34d399' }};margin-bottom:3px;">
+                            {{ $urgent ? '⚠️ Segera Isi! Hampir Tutup' : '✅ Kuesioner Sedang Terbuka' }}
+                        </p>
+                        <p style="font-size:13px;color:rgba(255,255,255,0.8);">
+                            @if($urgent)
+                                Hanya tersisa <strong style="color:#f87171;">{{ $sisaHari }} hari</strong> lagi.
+                                Kuesioner ditutup pada <strong style="color:#f87171;">{{ \Carbon\Carbon::parse($tutupKues)->isoFormat('D MMMM Y') }}</strong>.
+                            @else
+                                Batas pengisian: <strong style="color:#34d399;">{{ \Carbon\Carbon::parse($tutupKues)->isoFormat('D MMMM Y') }}</strong>
+                                — sisa <strong style="color:#34d399;">{{ $sisaHari }} hari</strong>.
+                            @endif
+                        </p>
+                    </div>
+                    @if($urgent)
+                        <div style="flex-shrink:0;padding:4px 10px;border-radius:99px;background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.35);font-size:11px;font-weight:800;color:#f87171;font-family:'Outfit',sans-serif;white-space:nowrap;">
+                            {{ $sisaHari }}h lagi
+                        </div>
+                    @endif
+                </div>
+            </div>
+        @endif
+
         {{-- Page title — bahasa siswa --}}
         <div class="sk-page-title">
             <div class="sk-top-badge">

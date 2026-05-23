@@ -94,6 +94,13 @@
                         'bg' => 'bg-amber-500/15',
                     ],
                     [
+                        'route' => 'admin.absensi.index',
+                        'label' => 'Rekap Absensi',
+                        'icon' => 'calendar',
+                        'color' => 'text-emerald-400',
+                        'bg' => 'bg-emerald-500/15',
+                    ],
+                    [
                         'route' => 'admin.monitoring',
                         'label' => 'Monitoring',
                         'icon' => 'monitor',

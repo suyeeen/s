@@ -55,12 +55,19 @@ class PrestasiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_prestasi' => 'required|string|max:255',
-            'tingkat'       => 'required|in:sekolah,kecamatan,kota,provinsi,nasional,internasional',
-            'kategori'      => 'required|in:Sertifikat Pendidik,Pelatihan & Workshop,Karya Ilmiah,Guru Berprestasi,Inovasi Pembelajaran,Pengabdian Masyarakat,Organisasi Profesi,Lainnya',
-            'tahun'         => 'required|digits:4|integer|min:2000|max:' . date('Y'),
-            'file_bukti'    => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'nama_prestasi'   => 'required|string|max:255',
+            'tingkat'         => 'required|in:sekolah,kecamatan,kota,provinsi,nasional,internasional',
+            'kategori'        => 'required|in:Sertifikat Pendidik,Pelatihan & Workshop,Karya Ilmiah,Guru Berprestasi,Inovasi Pembelajaran,Pengabdian Masyarakat,Organisasi Profesi,Lainnya',
+            'kategori_lainnya' => 'required_if:kategori,Lainnya|nullable|string|max:100',
+            'tahun'           => 'required|digits:4|integer|min:2000|max:' . date('Y'),
+            'file_bukti'      => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ]);
+
+        // Jika pilih "Lainnya", gunakan teks custom sebagai nilai kategori
+        $kategori = $request->kategori;
+        if ($kategori === 'Lainnya' && $request->filled('kategori_lainnya')) {
+            $kategori = trim($request->kategori_lainnya);
+        }
 
         $path = $request->file('file_bukti')->store('prestasi', 'public');
 
@@ -68,7 +75,7 @@ class PrestasiController extends Controller
             'guru_id'       => auth()->user()->guru->id,
             'nama_prestasi' => $request->nama_prestasi,
             'tingkat'       => $request->tingkat,
-            'kategori'      => $request->kategori,
+            'kategori'      => $kategori,
             'tahun'         => $request->tahun,
             'file_bukti'    => $path,
             'status'        => 'menunggu',
