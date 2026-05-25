@@ -178,7 +178,8 @@ jobs:
             docker-compose exec -T app php artisan route:cache
             docker-compose exec -T app php artisan view:cache
             docker-compose exec -T app php artisan storage:link
-
+	# Memperbaiki permission storage supaya PHP bisa menulis file
+            docker-compose exec -T -u root app chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
             echo "Deploy selesai: $(date)"
 
   healthcheck:
