@@ -139,7 +139,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Masuk ke server via SSH menggunakan private key yang tersimpan di secrets
+# Masuk ke server via SSH menggunakan private key yang tersimpan di secrets
       # lalu menjalankan serangkaian perintah untuk update dan restart aplikasi
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -148,6 +148,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
+          command_timeout: 40m
           script: |
             cd /var/www/s
 
@@ -155,18 +156,17 @@ jobs:
             echo "Pull kode terbaru..."
             git pull origin main || { echo "Git pull gagal!"; exit 1; }
 
-            # Mematikan container lama dan menjalankan yang baru dengan kode terbaru
-            # Jika gagal, otomatis rollback ke versi sebelumnya
-            echo "Rebuild container..."
+            # Restart container tanpa rebuild image
+            # Build hanya kalau ada perubahan di Dockerfile
+            echo "Restart container..."
             docker-compose down
-            docker-compose up -d --build || {
+            docker-compose up -d || {
               echo "Deploy gagal! Rolling back..."
               docker-compose down
               git reset --hard HEAD~1
-              docker-compose up -d --build
+              docker-compose up -d
               exit 1
             }
-
             # Menjalankan migrasi database terbaru
             # Menyimpan konfigurasi ke cache supaya lebih cepat
             # Menyimpan routes ke cache supaya lebih cepat
