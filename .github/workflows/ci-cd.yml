@@ -151,6 +151,11 @@ jobs:
           script: |
             cd /var/www/s
 
+            # SOLUSI PERMANEN: Membersihkan sisa file lokal/kotor di VPS sebelum pull
+            echo "Cleaning local changes in VPS..."
+            git reset --hard HEAD
+            git clean -fd
+
             # Mengambil kode terbaru dari GitHub ke server
             echo "Pull kode terbaru..."
             git pull origin main || { echo "Git pull gagal!"; exit 1; }
@@ -166,6 +171,7 @@ jobs:
               docker-compose up -d
               exit 1
             }
+            
             # Menjalankan migrasi database terbaru
             # Menyimpan konfigurasi ke cache supaya lebih cepat
             # Menyimpan routes ke cache supaya lebih cepat
