@@ -15,8 +15,11 @@ WORKDIR /var/www
 
 COPY . .
 
-RUN python3 -m venv /var/www/python/venv && \
-    /var/www/python/venv/bin/pip install --no-cache-dir numpy scikit-learn pandas
+# Install Python dependencies dulu sebelum COPY project
+# Biar ter-cache dan tidak download ulang setiap build
+RUN python3 -m venv /var/www/python/venv
+RUN /var/www/python/venv/bin/pip install --upgrade pip && \
+  /var/www/python/venv/bin/pip install --no-cache-dir numpy scikit-learn pandas
 
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
@@ -25,6 +28,7 @@ RUN mkdir -p database && touch database/database.sqlite
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /var/www/database
 RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 RUN chmod 664 /var/www/database/database.sqlite
+USER www-data
 
 EXPOSE 9000
 CMD ["php-fpm"]
