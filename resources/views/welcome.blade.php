@@ -1,7 +1,3 @@
-<?php
-ini_pasti_error_karena_tidak_ada_fungsinya();
-?>
-
 <!DOCTYPE html>
 <html lang="id">
 
