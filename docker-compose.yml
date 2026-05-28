@@ -1,9 +1,7 @@
 version: '3.8'
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: adityafajm/stqm-app:latest
     container_name: stqm-app
     restart: unless-stopped
     working_dir: /var/www
