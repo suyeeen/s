@@ -191,16 +191,34 @@ jobs:
         run: sleep 15
 
       # Mengecek apakah aplikasi merespons dengan HTTP 200 atau 302
-      # Jika tidak, pipeline dianggap gagal
-      - name: Check HTTP response
+      # Jika gagal, jalankan perintah rollback langsung di dalam VPS
+      - name: Check HTTP response & Rollback if Fail
         run: |
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.VPS_HOST }}:8080)
           echo "HTTP Status: $STATUS"
           if [ "$STATUS" != "200" ] && [ "$STATUS" != "302" ]; then
-            echo "Health check gagal! Status: $STATUS"
+            echo "Health check gagal dengan Status: $STATUS! Memicu Rollback otomatis..."
             exit 1
           fi
           echo "App sehat! Status: $STATUS"
+
+      # SEKAT PENYELAMAT: Jika langkah di atas gagal (exit code 1), langkah di bawah ini akan otomatis mengeksekusi rollback di VPS
+      - name: Execute Rollback on VPS if Health Check Failed
+        if: failure()
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
+          script: |
+            cd /var/www/s
+            echo "Menjalankan Hard Rollback ke versi stabil sebelumnya..."
+            docker-compose down
+            git clean -fd
+            git reset --hard HEAD~1
+            docker-compose up -d
+            echo "Rollback selesai. Sistem kembali aman!"
 
       # Memverifikasi semua container berjalan normal di server
       - name: Check container status
