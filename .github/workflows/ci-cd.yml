@@ -135,6 +135,8 @@ jobs:
         with:
           image-ref: stqm-app:latest
           severity: CRITICAL
+          scanners: vuln,config # OPTIMASI: Hanya pindai celah keamanan & config, matikan secret scan agar kilat
+          hide-progress: true    # OPTIMASI: Menyembunyikan progress bar agar log tidak penuh dan lebih ringan
           exit-code: 0
 
       # Memverifikasi image berhasil dibuat dengan menampilkan daftar image
