@@ -15,6 +15,7 @@ jobs:
   test:
     name: Run Tests
     runs-on: ubuntu-latest
+    # Menyiapkan database MySQL sementara khusus untuk testing
     services:
       mysql:
         image: mysql:8.0
@@ -29,9 +30,11 @@ jobs:
           --health-timeout=5s
           --health-retries=3
     steps:
+      # Menggunakan versi mayor v4 standar yang didukung penuh oleh GitHub
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Menginstall PHP versi 8.3 beserta extension yang dibutuhkan Laravel
       - name: Setup PHP 8.3
         uses: shivammathur/setup-php@v2
         with:
@@ -39,6 +42,7 @@ jobs:
           extensions: pdo, pdo_mysql, mbstring, zip, gd, bcmath, exif, pcntl
           coverage: xdebug
 
+      # Menggunakan versi mayor v4 murni untuk menghindari pemblokiran sistem cache
       - name: Cache Composer dependencies
         uses: actions/cache@v4
         with:
@@ -46,15 +50,19 @@ jobs:
           key: composer-${{ hashFiles('composer.lock') }}
           restore-keys: composer-
 
+      # Menyalin file konfigurasi contoh menjadi file konfigurasi aktif
       - name: Copy environment file
         run: cp .env.example .env
 
+      # Menginstall semua library PHP yang dibutuhkan aplikasi
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
+      # Membuat APP_KEY unik untuk enkripsi session dan data sensitif
       - name: Generate application key
         run: php artisan key:generate --ansi
 
+      # Membuat semua tabel database di MySQL testing
       - name: Run database migrations
         env:
           DB_CONNECTION: mysql
@@ -65,6 +73,7 @@ jobs:
           DB_PASSWORD: secret
         run: php artisan migrate --force
 
+      # Menjalankan semua unit test dan feature test, minimal coverage 50%
       - name: Run PHPUnit tests
         env:
           DB_CONNECTION: mysql
@@ -78,11 +87,14 @@ jobs:
   security:
     name: Security Scan
     runs-on: ubuntu-latest
+    # Hanya jalan setelah test berhasil
     needs: test
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Memindai seluruh kode sumber mencari celah keamanan CRITICAL dan HIGH
+      # exit-code 0 artinya pipeline tidak berhenti meskipun ada temuan
       - name: Run Trivy security scan
         uses: aquasecurity/trivy-action@master
         with:
@@ -92,57 +104,56 @@ jobs:
           exit-code: 0
 
   build:
-    name: Build and Push Docker Image
+    name: Build Docker Image
     runs-on: ubuntu-latest
     needs: security
+    # Hanya build jika push ke branch main 
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Mengaktifkan mesin build Docker modern (Buildx) agar bisa membaca cache GHA
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Login ke Docker Hub pakai secrets
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      # Build image dan push ke Docker Hub dengan 2 tag:
-      # latest = selalu update ke versi terbaru
-      # SHA = tag unik per commit untuk rollback
-      - name: Build and push image to Docker Hub
+      # Membangun Docker image dengan optimasi CACHE otomatis
+      - name: Build Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
-          push: true
-          tags: |
-            adityafajm/stqm-app:latest
-            adityafajm/stqm-app:${{ github.sha }}
+          push: false
+          load: true # Penting: meload image ke lokal runner agar bisa discan Trivy
+          tags: stqm-app:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      # Memindai Docker image yang sudah dibuild mencari celah keamanan CRITICAL
       - name: Scan Docker image with Trivy
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: adityafajm/stqm-app:latest
+          image-ref: stqm-app:latest
           severity: CRITICAL
-          scanners: vuln,config
-          hide-progress: true
+          scanners: vuln,config # OPTIMASI: Hanya pindai celah keamanan & config, matikan secret scan agar kilat
+          hide-progress: true    # OPTIMASI: Menyembunyikan progress bar agar log tidak penuh dan lebih ringan
           exit-code: 0
 
-      - name: Verify image pushed
-        run: echo "Image adityafajm/stqm-app:${{ github.sha }} berhasil di-push ke Docker Hub"
+      # Memverifikasi image berhasil dibuat dengan menampilkan daftar image
+      - name: Verify image built
+        run: docker images stqm-app
 
   deploy:
     name: Deploy to VPS
     runs-on: ubuntu-latest
     needs: [test, build]
+    # Hanya deploy jika push langsung ke branch main, bukan pull request
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Masuk ke server via SSH menggunakan versi v1.2.0 yang stabil dan aman
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -150,25 +161,36 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
-          command_timeout: 20m
+          command_timeout: 40m
           script: |
             cd /var/www/s
 
-            echo "Pull image terbaru dari Docker Hub..."
-            docker pull adityafajm/stqm-app:${{ github.sha }}
+            # SOLUSI PERMANEN: Membersihkan sisa file lokal/kotor di VPS sebelum pull
+            echo "Cleaning local changes in VPS..."
+            git reset --hard HEAD
+            git clean -fd
 
-            echo "Tag image sebagai latest di server..."
-            docker tag adityafajm/stqm-app:${{ github.sha }} stqm-app:latest
+            # Mengambil kode terbaru dari GitHub ke server
+            echo "Pull kode terbaru..."
+            git pull origin main || { echo "Git pull gagal!"; exit 1; }
 
-            echo "Restart container dengan image baru..."
+            # Restart container tanpa rebuild image
+            # Build hanya kalau ada perubahan di Dockerfile
+            echo "Restart container..."
             docker-compose down
             docker-compose up -d || {
               echo "Deploy gagal! Rolling back..."
               docker-compose down
+              git reset --hard HEAD~1
               docker-compose up -d
               exit 1
             }
-
+            
+            # Menjalankan migrasi database terbaru
+            # Menyimpan konfigurasi ke cache supaya lebih cepat
+            # Menyimpan routes ke cache supaya lebih cepat
+            # Menyimpan compiled views ke cache supaya lebih cepat
+            # Membuat symlink storage supaya file bisa diakses publik
             echo "Migrate dan cache..."
             docker-compose exec -T app php artisan migrate --force
             docker-compose exec -T app php artisan config:cache
@@ -176,7 +198,6 @@ jobs:
             docker-compose exec -T app php artisan view:cache
             docker-compose exec -T app php artisan storage:link
             docker-compose exec -T -u root app chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
-
             echo "Deploy selesai: $(date)"
 
   healthcheck:
@@ -185,19 +206,23 @@ jobs:
     needs: deploy
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
+      # Menunggu 15 detik supaya aplikasi sempat start setelah container restart
       - name: Wait for app to start
         run: sleep 15
 
-      - name: Check HTTP response
+      # Mengecek apakah aplikasi merespons dengan HTTP 200 atau 302
+      # Jika gagal, jalankan perintah rollback langsung di dalam VPS
+      - name: Check HTTP response & Rollback if Fail
         run: |
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.VPS_HOST }}:8080)
           echo "HTTP Status: $STATUS"
           if [ "$STATUS" != "200" ] && [ "$STATUS" != "302" ]; then
-            echo "Health check gagal! Status: $STATUS"
+            echo "Health check gagal dengan Status: $STATUS! Memicu Rollback otomatis..."
             exit 1
           fi
           echo "App sehat! Status: $STATUS"
 
+      # SEKAT PENYELAMAT: Jika langkah di atas gagal (exit code 1), langkah di bawah ini akan otomatis mengeksekusi rollback di VPS
       - name: Execute Rollback on VPS if Health Check Failed
         if: failure()
         uses: appleboy/ssh-action@v1.2.0
@@ -208,11 +233,14 @@ jobs:
           port: 22
           script: |
             cd /var/www/s
-            echo "Rollback ke versi sebelumnya..."
+            echo "Menjalankan Hard Rollback ke versi stabil sebelumnya..."
             docker-compose down
+            git clean -fd
+            git reset --hard HEAD~1
             docker-compose up -d
-            echo "Rollback selesai!"
+            echo "Rollback selesai. Sistem kembali aman!"
 
+      # Memverifikasi semua container berjalan normal di server
       - name: Check container status
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -223,36 +251,3 @@ jobs:
           script: |
             docker-compose -f /var/www/s/docker-compose.yml ps
             echo "Container status checked"
-
-  notify:
-    name: Notify
-    runs-on: ubuntu-latest
-    needs: [deploy, healthcheck]
-    if: always() && github.ref == 'refs/heads/main' && github.event_name == 'push'
-    steps:
-      - name: Notify deploy success
-        if: needs.deploy.result == 'success' && needs.healthcheck.result == 'success'
-        uses: appleboy/telegram-action@master
-        with:
-          to: ${{ secrets.TELEGRAM_CHAT_ID }}
-          token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: |
-            Deploy STQM Berhasil!
-            Branch: ${{ github.ref_name }}
-            Commit: ${{ github.event.head_commit.message }}
-            Image: adityafajm/stqm-app:${{ github.sha }}
-            By: ${{ github.actor }}
-            URL: http://${{ secrets.VPS_HOST }}:8080
-
-      - name: Notify deploy failed
-        if: needs.deploy.result == 'failure' || needs.healthcheck.result == 'failure'
-        uses: appleboy/telegram-action@master
-        with:
-          to: ${{ secrets.TELEGRAM_CHAT_ID }}
-          token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: |
-            Deploy STQM GAGAL!
-            Branch: ${{ github.ref_name }}
-            Commit: ${{ github.event.head_commit.message }}
-            By: ${{ github.actor }}
-            Cek: https://github.com/suyeeen/s_STQM/actions
