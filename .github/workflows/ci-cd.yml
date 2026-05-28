@@ -30,9 +30,9 @@ jobs:
           --health-timeout=5s
           --health-retries=3
     steps:
-      # Mengunduh kode dari GitHub ke mesin GitHub Actions
+      # Mengunduh kode dari GitHub menggunakan versi patch terbaru
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.7
 
       # Menginstall PHP versi 8.3 beserta extension yang dibutuhkan Laravel
       - name: Setup PHP 8.3
@@ -42,9 +42,9 @@ jobs:
           extensions: pdo, pdo_mysql, mbstring, zip, gd, bcmath, exif, pcntl
           coverage: xdebug
 
-      # Menyimpan cache vendor supaya tidak download ulang setiap pipeline jalan
+      # Menyimpan cache vendor menggunakan rilis patch terbaru
       - name: Cache Composer dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v4.0.2
         with:
           path: vendor
           key: composer-${{ hashFiles('composer.lock') }}
@@ -91,7 +91,7 @@ jobs:
     needs: test
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.7
 
       # Memindai seluruh kode sumber mencari celah keamanan CRITICAL dan HIGH
       # exit-code 0 artinya pipeline tidak berhenti meskipun ada temuan
@@ -111,7 +111,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.7
 
       # Membangun Docker image dari Dockerfile untuk memastikan image bisa dibuild
       - name: Build Docker image
@@ -137,12 +137,11 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.7
 
-# Masuk ke server via SSH menggunakan private key yang tersimpan di secrets
-      # lalu menjalankan serangkaian perintah untuk update dan restart aplikasi
+      # Masuk ke server via SSH menggunakan versi v1.2.0 (Menghilangkan runtime warning)
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
@@ -203,9 +202,9 @@ jobs:
           fi
           echo "App sehat! Status: $STATUS"
 
-      # Memverifikasi semua container berjalan normal di server
+      # Memverifikasi semua container berjalan normal di server menggunakan v1.2.0
       - name: Check container status
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
