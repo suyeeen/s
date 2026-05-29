@@ -97,7 +97,7 @@
         </div>
 
         @if($rekapAdmin->count() > 0)
-            <div class="overflow-x-auto">
+            <div class="table-responsive">
                 <table class="w-full text-sm">
                     <thead>
                         <tr style="border-bottom:1px solid var(--card-border-soft);">

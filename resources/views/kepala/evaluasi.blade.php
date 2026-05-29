@@ -22,8 +22,7 @@
             </a>
         </div>
 
-        <div class="rounded-3xl overflow-hidden"
-            style="background:var(--card-bg);border:1px solid var(--card-border);">
+        <div class="rounded-3xl overflow-hidden" style="background:var(--card-bg);border:1px solid var(--card-border);">
 
             {{-- Filter --}}
             <div class="p-6 flex flex-col sm:flex-row gap-5"
@@ -37,7 +36,8 @@
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                         <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama atau NIP..."
-                            class="w-full pl-12 pr-4 py-3 rounded-2xl text-sm outline-none" style="background:var(--input-bg);border:1.5px solid var(--input-border);color:var(--text-main);">
+                            class="w-full pl-12 pr-4 py-3 rounded-2xl text-sm outline-none"
+                            style="background:var(--input-bg);border:1.5px solid var(--input-border);color:var(--text-main);">
                     </div>
 
                     <select name="cluster" onchange="this.form.submit()"
@@ -46,8 +46,7 @@
                         <option value="ALL" {{ $cluster === 'ALL' ? 'selected' : '' }} style="background:#0a0a14">Semua
                             Cluster</option>
                         @foreach (['A' => 'Cluster A (Sangat Baik)', 'B' => 'Cluster B (Baik)', 'C' => 'Cluster C (Cukup)', 'D' => 'Cluster D (Perlu Pembinaan)'] as $val => $label)
-                            <option value="{{ $val }}" {{ $cluster === $val ? 'selected' : '' }}
-                                style="background:#0a0a14">
+                            <option value="{{ $val }}" {{ $cluster === $val ? 'selected' : '' }} style="background:#0a0a14">
                                 {{ $label }}
                             </option>
                         @endforeach
@@ -61,10 +60,11 @@
             </div>
 
             {{-- Tabel --}}
-            <div class="overflow-x-auto">
-                <table class="w-full text-left">
+            <div class="table-responsive">
+                <table class="w-full text-left" style="min-width:640px;">
                     <thead>
-                        <tr class="text-xs" style="color:var(--text-muted);border-bottom:1px solid var(--card-divider);background:var(--card-bg-soft);">
+                        <tr class="text-xs"
+                            style="color:var(--text-muted);border-bottom:1px solid var(--card-divider);background:var(--card-bg-soft);">
                             <th class="p-5 font-medium">
                                 <a href="{{ request()->fullUrlWithQuery(['sort' => 'nama', 'dir' => $sort === 'nama' && $dir === 'asc' ? 'desc' : 'asc']) }}"
                                     class="flex items-center gap-2 hover:text-white transition-colors">
@@ -97,7 +97,8 @@
                             <tr onclick="window.location='{{ route('kepala.guru.detail', $g->id) }}'"
                                 class="cursor-pointer transition-colors"
                                 style="border-bottom:1px solid var(--card-border-soft);"
-                                onmouseover="this.style.background='rgba(26,22,19,0.03)'" onmouseout="this.style.background='transparent'" >
+                                onmouseover="this.style.background='rgba(26,22,19,0.03)'"
+                                onmouseout="this.style.background='transparent'">
 
                                 <td class="p-5">
                                     <p class="font-semibold text-white">{{ $g->nama }}</p>
@@ -106,8 +107,7 @@
                                 <td class="p-5 text-gray-400">{{ $g->mata_pelajaran }}</td>
                                 <td class="p-5">
                                     @if ($g->clusterTerakhir)
-                                        <span
-                                            class="font-bold text-white">{{ $g->clusterTerakhir->nilai_rata_rata }}</span>
+                                        <span class="font-bold text-white">{{ $g->clusterTerakhir->nilai_rata_rata }}</span>
                                         <span class="text-xs text-gray-500 ml-1">/ 5.0</span>
                                     @else
                                         <span class="text-gray-600">—</span>
@@ -118,13 +118,13 @@
                                         @php
                                             $cs = match ($g->clusterTerakhir->cluster) {
                                                 'A'
-                                                    => 'background: rgba(16,185,129,0.1); color: #34d399; border: 1px solid rgba(16,185,129,0.2);',
+                                                => 'background: rgba(16,185,129,0.1); color: #34d399; border: 1px solid rgba(16,185,129,0.2);',
                                                 'B'
-                                                    => 'background: rgba(59,130,246,0.1); color: #60a5fa; border: 1px solid rgba(59,130,246,0.2);',
+                                                => 'background: rgba(59,130,246,0.1); color: #60a5fa; border: 1px solid rgba(59,130,246,0.2);',
                                                 'C'
-                                                    => 'background: rgba(245,158,11,0.1); color: #fbbf24; border: 1px solid rgba(245,158,11,0.2);',
+                                                => 'background: rgba(245,158,11,0.1); color: #fbbf24; border: 1px solid rgba(245,158,11,0.2);',
                                                 default
-                                                    => 'background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.2);',
+                                                => 'background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.2);',
                                             };
                                         @endphp
                                         <span class="px-3 py-1.5 rounded-xl text-xs font-bold" style="{{ $cs }}">

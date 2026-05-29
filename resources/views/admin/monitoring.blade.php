@@ -85,7 +85,7 @@
         </div>
 
         {{-- Riwayat Clustering AI + Jalankan Clustering --}}
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
             {{-- Jalankan Clustering --}}
             <div class="rounded-3xl p-6 flex flex-col justify-between"
@@ -154,7 +154,7 @@
                         Riwayat Hasil Clustering AI (10 Terbaru)
                     </h3>
                 </div>
-                <div class="overflow-x-auto">
+                <div class="table-responsive">
                     <table class="w-full text-left text-sm">
                         <thead>
                             <tr style="border-bottom: 1px solid var(--card-divider); color: var(--text-muted);">

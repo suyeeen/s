@@ -8,7 +8,6 @@
 
     <script>
         (function () {
-            /* Default: light — profesional, konsisten dengan landing & login */
             const saved = localStorage.getItem('stqm-theme') || 'light';
             document.documentElement.setAttribute('data-theme', saved);
         })();
@@ -27,76 +26,51 @@
 
     <style>
         /* ═══════════════════════════════════════════════════
-           STQM DESIGN TOKENS — Selaras dengan landing & login
-           Palet: Warm Neutral + Accent #E8560A (muted)
+           STQM DESIGN TOKENS
         ═══════════════════════════════════════════════════ */
 
-        /* ── LIGHT — modern clean ── */
         [data-theme="light"] {
-            /* Surfaces */
             --bg-page: #F0F2F5;
             --bg-sidebar: #FFFFFF;
-
-            /* Border */
             --border-color: #E2E8F0;
-
-            /* Text */
             --text-main: #0F172A;
             --text-muted: #64748B;
-
-            /* Mobile header */
-            --header-bg: rgba(255, 255, 255, 0.92);
-
-            /* Theme toggle */
+            --header-bg: rgba(255, 255, 255, 0.95);
             --toggle-bg: rgba(15, 23, 42, 0.06);
             --toggle-border: rgba(15, 23, 42, 0.1);
             --toggle-color: #475569;
-
-            /* Nav */
             --nav-active-bg: rgba(232, 86, 10, 0.08);
             --nav-hover-bg: rgba(15, 23, 42, 0.04);
-
-            /* Icon circles */
             --icon-bg: rgba(15, 23, 42, 0.05);
-
-            /* User info box */
             --user-bg: #F8FAFC;
-
-            /* SweetAlert */
             --swal-bg: #FFFFFF;
             --swal-color: #0F172A;
-
-            /* Cards */
             --card-bg: #FFFFFF;
             --card-border: #E2E8F0;
             --card-bg-soft: #F8FAFC;
             --card-border-soft: #E2E8F0;
             --card-footer-bg: #F8FAFC;
             --card-divider: #E2E8F0;
-
-            /* Inputs */
             --input-bg: #FFFFFF;
             --input-border: #CBD5E1;
-
-            /* Buttons */
             --btn-bg: rgba(15, 23, 42, 0.05);
             --btn-border: #CBD5E1;
-
-            /* Accent */
             --accent: #E8560A;
             --accent-hover: #C44608;
             --accent-soft: rgba(232, 86, 10, 0.08);
             --accent-ring: rgba(232, 86, 10, 0.18);
+            --modal-bg: #FFFFFF;
+            --modal-border: #E2E8F0;
+            --overlay-bg: rgba(0, 0, 0, 0.45);
         }
 
-        /* ── DARK — tetap dipertahankan ── */
         [data-theme="dark"] {
             --bg-page: #0a0a14;
             --bg-sidebar: #0e0e1a;
             --border-color: rgba(255, 255, 255, 0.05);
             --text-main: #ffffff;
             --text-muted: #9ca3af;
-            --header-bg: rgba(10, 10, 20, 0.8);
+            --header-bg: rgba(10, 10, 20, 0.92);
             --toggle-bg: rgba(255, 255, 255, 0.06);
             --toggle-border: rgba(255, 255, 255, 0.1);
             --toggle-color: #f59e0b;
@@ -120,12 +94,23 @@
             --accent-hover: #ea6a0a;
             --accent-soft: rgba(249, 115, 22, 0.1);
             --accent-ring: rgba(249, 115, 22, 0.2);
+            --modal-bg: #0e0e1a;
+            --modal-border: rgba(255, 255, 255, 0.08);
+            --overlay-bg: rgba(0, 0, 0, 0.6);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
         }
 
         body {
             background: var(--bg-page);
             color: var(--text-main);
             transition: background .25s, color .25s;
+            margin: 0;
+            -webkit-text-size-adjust: 100%;
         }
 
         aside {
@@ -151,8 +136,6 @@
             transform: rotate(18deg);
         }
 
-        /* ── LIGHT: Inline-style dark glass card fix ──── */
-        /* Form sections yang masih pakai rgba(255,255,255,0.04) */
         [data-theme="light"] .lm-card {
             background: var(--card-bg) !important;
             border: 1px solid var(--card-border) !important;
@@ -169,7 +152,6 @@
             border: 1px solid var(--card-border-soft) !important;
         }
 
-        /* ── LIGHT: Accent button consistent ─────────── */
         [data-theme="light"] .lm-btn-primary {
             background: var(--accent) !important;
             box-shadow: 0 4px 14px rgba(232, 86, 10, 0.2) !important;
@@ -179,12 +161,32 @@
             background: var(--accent-hover) !important;
         }
 
+        /* ── Modal adaptive ── */
+        .stqm-modal {
+            background: var(--modal-bg) !important;
+            border: 1px solid var(--modal-border) !important;
+        }
+
+        .stqm-modal-text {
+            color: var(--text-main) !important;
+        }
+
+        .stqm-modal-muted {
+            color: var(--text-muted) !important;
+        }
+
+        .stqm-modal-input {
+            background: var(--input-bg) !important;
+            border: 1.5px solid var(--input-border) !important;
+            color: var(--text-main) !important;
+        }
+
         /* SweetAlert */
         .swal2-popup {
             border-radius: 1.25rem !important;
         }
 
-        /* ── Layout scroll ── */
+        /* Scrollbars */
         .app-sidebar::-webkit-scrollbar {
             width: 4px;
         }
@@ -214,32 +216,82 @@
         .app-main::-webkit-scrollbar-thumb:hover {
             background: var(--text-muted);
         }
+
+        /* ── Mobile sidebar drawer ── */
+        .sidebar-drawer {
+            position: fixed;
+            inset-block: 0;
+            left: 0;
+            width: 256px;
+            z-index: 40;
+            transform: translateX(-100%);
+            transition: transform .3s cubic-bezier(.4, 0, .2, 1);
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar-drawer.open {
+            transform: translateX(0);
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--overlay-bg);
+            z-index: 39;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .3s;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .sidebar-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* ── Responsive tables ── */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* ── Mobile content padding ── */
+        @media (max-width: 767px) {
+            .app-content {
+                padding: 1rem !important;
+            }
+        }
     </style>
 </head>
 
-<body x-data="{ sidebarOpen: false }">
+<body>
     <div class="app-shell" style="display:flex; height:100vh; height:100dvh;">
 
+        {{-- Desktop sidebar --}}
         <aside class="app-sidebar hidden md:flex flex-col border-r"
             style="width:256px; flex-shrink:0; height:100vh; height:100dvh; overflow-y:auto; overflow-x:hidden; position:sticky; top:0;">
             @include('layouts.sidebar')
         </aside>
 
-        <div x-show="sidebarOpen" x-transition.opacity class="fixed inset-0 bg-black/50 z-30 md:hidden"
-            @click="sidebarOpen = false"></div>
+        {{-- Mobile overlay --}}
+        <div id="sidebarOverlay" class="sidebar-overlay md:hidden" onclick="closeSidebar()"></div>
 
-        <aside x-show="sidebarOpen" x-transition:enter="transition ease-out duration-300"
-            x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0"
-            class="fixed inset-y-0 left-0 w-64 z-40 md:hidden border-r">
+        {{-- Mobile sidebar drawer --}}
+        <aside id="sidebarDrawer" class="sidebar-drawer md:hidden border-r" style="background:var(--bg-sidebar);">
             @include('layouts.sidebar')
         </aside>
 
         <main class="app-main" style="flex:1; min-width:0; overflow-y:auto; overflow-x:hidden;">
-            <header class="md:hidden flex items-center justify-between p-4 border-b backdrop-blur flex-shrink-0">
+
+            {{-- Mobile header --}}
+            <header
+                class="md:hidden flex items-center justify-between px-4 py-3 border-b backdrop-blur-sm sticky top-0 z-20 flex-shrink-0">
                 <span class="font-bold text-lg" style="color:var(--text-main)">STQM</span>
                 <div class="flex items-center gap-2">
                     <button onclick="toggleTheme()"
-                        class="theme-toggle w-9 h-9 rounded-xl flex items-center justify-center">
+                        class="theme-toggle w-9 h-9 rounded-xl flex items-center justify-center shrink-0">
                         <svg id="app-icon-sun" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                             stroke-width="1.8" stroke="currentColor" class="w-4 h-4">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -251,7 +303,7 @@
                                 d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
                         </svg>
                     </button>
-                    <button @click="sidebarOpen = true" style="color:var(--text-muted)" class="p-2">
+                    <button onclick="openSidebar()" style="color:var(--text-muted)" class="p-2 -mr-2">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 6h16M4 12h16M4 18h16" />
@@ -267,6 +319,25 @@
     </div>
 
     <script>
+        /* ── Sidebar mobile ── */
+        function openSidebar() {
+            document.getElementById('sidebarDrawer').classList.add('open');
+            document.getElementById('sidebarOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebarDrawer').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        /* Close on Escape */
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeSidebar();
+        });
+
+        /* ── Theme ── */
         function getSwalTheme() {
             const theme = localStorage.getItem('stqm-theme') || 'light';
             return {
@@ -356,6 +427,7 @@
             html.setAttribute('data-theme', next);
             localStorage.setItem('stqm-theme', next);
             syncAppIcon(next);
+            if (typeof syncSidebarIcon === 'function') syncSidebarIcon(next);
         }
 
         function syncAppIcon(theme) {

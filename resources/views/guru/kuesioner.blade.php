@@ -1285,8 +1285,8 @@
             wrap.classList.add('show');
             chips.innerHTML = selectedGurus.map(g =>
                 `<span class="sk-chip">${g.nama}
-                        <button type="button" onclick="removeGuruChip('${g.id}')" title="Hapus">×</button>
-                    </span>`
+                            <button type="button" onclick="removeGuruChip('${g.id}')" title="Hapus">×</button>
+                        </span>`
             ).join('');
         }
 

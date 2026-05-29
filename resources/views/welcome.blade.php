@@ -1816,7 +1816,7 @@
                     <rect x="10" y="10" width="6" height="6" rx="1.5" fill="white" opacity="0.8" />
                 </svg>
             </div>
-            S-STQM
+            STQM
         </a>
         <div class="nav-links">
             <a href="#features">Fitur</a>
@@ -1826,6 +1826,7 @@
             <a href="/login" class="btn-nav">Masuk</a>
         </div>
     </nav>
+
     <!-- HERO -->
     <section id="hero">
         <div class="hero-accent-circle hac-1"></div>
@@ -2414,7 +2415,8 @@
         <div class="section-inner">
             <div class="eyebrow-sm roles-eyebrow r">Pengguna Sistem</div>
             <h2 class="sh2 roles-h2 r" style="transition-delay:.05s">Dirancang untuk<br>semua peran di
-                <span>sekolah</span></h2>
+                <span>sekolah</span>
+            </h2>
             <p class="sdesc roles-desc r" style="transition-delay:.1s;margin-bottom:0">Setiap pengguna mendapat
                 antarmuka dan akses yang sesuai dengan tanggung jawabnya.</p>
             <div class="roles-grid">

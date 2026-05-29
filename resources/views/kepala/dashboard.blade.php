@@ -38,11 +38,10 @@
             @endforeach
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
             {{-- Distribusi Cluster --}}
-            <div class="rounded-3xl p-6"
-                style="background:var(--card-bg);border:1px solid var(--card-border);">
+            <div class="rounded-3xl p-6" style="background:var(--card-bg);border:1px solid var(--card-border);">
                 <h3 class="font-semibold text-white mb-6 text-lg">Distribusi Cluster Guru</h3>
 
                 <canvas id="chartCluster" height="220"></canvas>
@@ -85,56 +84,57 @@
                 </div>
 
                 @forelse($topGuru as $index => $guru)
-                    <a href="{{ route('kepala.guru.detail', $guru->id) }}"
-                        class="flex items-center justify-between p-5 transition-colors block"
-                        style="border-bottom:1px solid var(--card-border-soft);"
-                        onmouseover="this.style.background='rgba(26,22,19,0.03)'" onmouseout="this.style.background='transparent'" >
+                        <a href="{{ route('kepala.guru.detail', $guru->id) }}"
+                            class="flex items-center justify-between p-5 transition-colors block"
+                            style="border-bottom:1px solid var(--card-border-soft);"
+                            onmouseover="this.style.background='rgba(26,22,19,0.03)'"
+                            onmouseout="this.style.background='transparent'">
 
-                        <div class="flex items-center gap-5">
-                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-lg shrink-0"
-                                style="{{ $index === 0
-                                    ? 'background: rgba(234,179,8,0.1); color: #fbbf24; border: 1px solid rgba(234,179,8,0.2);'
-                                    : ($index === 1
-                                        ? 'background: rgba(148,163,184,0.1); color: #cbd5e1; border: 1px solid rgba(148,163,184,0.2);'
-                                        : 'background: rgba(255,255,255,0.05); color: #6b7280; border: 1px solid rgba(255,255,255,0.1);') }}">
-                                {{ $index + 1 }}
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-white">{{ $guru->nama }}</h4>
-                                <p class="text-sm text-gray-400 mt-1">
-                                    {{ $guru->mata_pelajaran }}
-                                    <span class="mx-2 text-gray-600">•</span>
-                                    NIP: {{ $guru->nip }}
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center gap-6">
-                            @if ($guru->clusterTerakhir)
-                                <div class="text-right hidden sm:block">
-                                    <p class="text-xs text-gray-500 mb-1">Skor</p>
-                                    <p class="font-bold text-white">{{ $guru->clusterTerakhir->nilai_rata_rata }}</p>
+                            <div class="flex items-center gap-5">
+                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-lg shrink-0"
+                                    style="{{ $index === 0
+                    ? 'background: rgba(234,179,8,0.1); color: #fbbf24; border: 1px solid rgba(234,179,8,0.2);'
+                    : ($index === 1
+                        ? 'background: rgba(148,163,184,0.1); color: #cbd5e1; border: 1px solid rgba(148,163,184,0.2);'
+                        : 'background: rgba(255,255,255,0.05); color: #6b7280; border: 1px solid rgba(255,255,255,0.1);') }}">
+                                    {{ $index + 1 }}
                                 </div>
-                                @php
-                                    $clusterStyle = match ($guru->clusterTerakhir->cluster) {
-                                        'A'
+                                <div>
+                                    <h4 class="font-semibold text-white">{{ $guru->nama }}</h4>
+                                    <p class="text-sm text-gray-400 mt-1">
+                                        {{ $guru->mata_pelajaran }}
+                                        <span class="mx-2 text-gray-600">•</span>
+                                        NIP: {{ $guru->nip }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-6">
+                                @if ($guru->clusterTerakhir)
+                                    <div class="text-right hidden sm:block">
+                                        <p class="text-xs text-gray-500 mb-1">Skor</p>
+                                        <p class="font-bold text-white">{{ $guru->clusterTerakhir->nilai_rata_rata }}</p>
+                                    </div>
+                                    @php
+                                        $clusterStyle = match ($guru->clusterTerakhir->cluster) {
+                                            'A'
                                             => 'background: rgba(16,185,129,0.1); color: #34d399; border: 1px solid rgba(16,185,129,0.2);',
-                                        'B'
+                                            'B'
                                             => 'background: rgba(59,130,246,0.1); color: #60a5fa; border: 1px solid rgba(59,130,246,0.2);',
-                                        'C'
+                                            'C'
                                             => 'background: rgba(245,158,11,0.1); color: #fbbf24; border: 1px solid rgba(245,158,11,0.2);',
-                                        default
+                                            default
                                             => 'background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.2);',
-                                    };
-                                @endphp
-                                <span class="px-4 py-1.5 rounded-xl text-xs font-bold" style="{{ $clusterStyle }}">
-                                    Cluster {{ $guru->clusterTerakhir->cluster }}
-                                </span>
-                            @else
-                                <span class="text-xs text-gray-500">Belum dipetakan</span>
-                            @endif
-                        </div>
-                    </a>
+                                        };
+                                    @endphp
+                                    <span class="px-4 py-1.5 rounded-xl text-xs font-bold" style="{{ $clusterStyle }}">
+                                        Cluster {{ $guru->clusterTerakhir->cluster }}
+                                    </span>
+                                @else
+                                    <span class="text-xs text-gray-500">Belum dipetakan</span>
+                                @endif
+                            </div>
+                        </a>
                 @empty
                     <div class="p-10 text-center text-gray-500">
                         Belum ada data clustering. Jalankan K-Means terlebih dahulu.
@@ -166,10 +166,10 @@
                 labels: ['Sangat Baik (A)', 'Baik (B)', 'Cukup (C)', 'Perlu Pembinaan (D)'],
                 datasets: [{
                     data: [
-                        {{ $distribusiCluster['A'] ?? 0 }},
-                        {{ $distribusiCluster['B'] ?? 0 }},
-                        {{ $distribusiCluster['C'] ?? 0 }},
-                        {{ $distribusiCluster['D'] ?? 0 }},
+                            {{ $distribusiCluster['A'] ?? 0 }},
+                            {{ $distribusiCluster['B'] ?? 0 }},
+                            {{ $distribusiCluster['C'] ?? 0 }},
+                            {{ $distribusiCluster['D'] ?? 0 }},
                     ],
                     backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'],
                     borderWidth: 0,
@@ -199,10 +199,10 @@
                 datasets: [{
                     label: 'Rata-rata',
                     data: [
-                        {{ number_format($rataKompetensi->pedagogik ?? 0, 2) }},
-                        {{ number_format($rataKompetensi->kepribadian ?? 0, 2) }},
-                        {{ number_format($rataKompetensi->sosial ?? 0, 2) }},
-                        {{ number_format($rataKompetensi->profesional ?? 0, 2) }},
+                            {{ number_format($rataKompetensi->pedagogik ?? 0, 2) }},
+                            {{ number_format($rataKompetensi->kepribadian ?? 0, 2) }},
+                            {{ number_format($rataKompetensi->sosial ?? 0, 2) }},
+                            {{ number_format($rataKompetensi->profesional ?? 0, 2) }},
                     ],
                     backgroundColor: '#f59e0b',
                     borderRadius: 8,

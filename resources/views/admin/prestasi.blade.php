@@ -24,7 +24,7 @@
         </div>
 
         {{-- Tab Navigation --}}
-        <div class="flex gap-2 p-1 rounded-2xl w-fit"
+        <div class="flex gap-2 p-1 rounded-2xl overflow-x-auto"
             style="background:var(--card-bg);border:1px solid var(--card-border);">
             @foreach ([
             'menunggu' => ['label' => 'Menunggu', 'count' => $prestasi_menunggu->total(), 'color' => 'rgba(249,115,22,0.15)', 'border' => 'rgba(249,115,22,0.3)', 'text' => '#fb923c'],
@@ -54,7 +54,7 @@
             x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
             <div class="rounded-3xl overflow-hidden"
                 style="background:var(--card-bg);border:1px solid var(--card-border);">
-                <div class="overflow-x-auto">
+                <div class="table-responsive">
                     <table class="w-full text-left">
                         <thead>
                             <tr class="text-xs text-gray-500 uppercase tracking-wide"
@@ -290,7 +290,7 @@
             x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
             <div class="rounded-3xl overflow-hidden"
                 style="background:var(--card-bg);border:1px solid var(--card-border);">
-                <div class="overflow-x-auto">
+                <div class="table-responsive">
                     <table class="w-full text-left">
                         <thead>
                             <tr class="text-xs text-gray-500 uppercase tracking-wide"
@@ -367,7 +367,7 @@
             x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
             <div class="rounded-3xl overflow-hidden"
                 style="background:var(--card-bg);border:1px solid var(--card-border);">
-                <div class="overflow-x-auto">
+                <div class="table-responsive">
                     <table class="w-full text-left">
                         <thead>
                             <tr class="text-xs text-gray-500 uppercase tracking-wide"
