@@ -80,7 +80,7 @@ jobs:
           exit-code: 0
 
   build:
-    name: Phase 2 - Docker Image Building
+    name: Docker Image Building
     runs-on: ubuntu-latest
     needs: [test, security]
     if: github.ref == 'refs/heads/main'
@@ -114,7 +114,7 @@ jobs:
           cache-to: type=gha,mode=max
 
   deploy:
-    name: Phase 3 - Deployment to VPS
+    name: Deployment to VPS
     runs-on: ubuntu-latest
     needs: build
     if: github.ref == 'refs/heads/main'
@@ -146,8 +146,18 @@ jobs:
             echo "Pull image terbaru dari GHCR..."
             docker-compose pull app
 
-            echo "Restart container..."
-            docker-compose up -d app
+            echo "Fix ContainerConfig bug — rm container lama dulu..."
+            docker-compose rm -f app
+
+            echo "Jalankan container baru..."
+            docker-compose up -d app || {
+              echo "Deploy gagal! Rolling back..."
+              OLD_TAG=$(grep "^OLD_IMAGE_TAG=" .env 2>/dev/null | cut -d '=' -f2 || echo "latest")
+              sed -i "s|^IMAGE_TAG=.*|IMAGE_TAG=${OLD_TAG}|" .env
+              docker-compose rm -f app
+              docker-compose up -d app
+              exit 1
+            }
 
             echo "Migrate dan cache..."
             docker-compose exec -T app php artisan migrate --force
@@ -163,7 +173,7 @@ jobs:
           GH_PAT: ${{ secrets.GH_PAT }}
 
   healthcheck:
-    name: Phase 4 - Post-Deployment Health Check
+    name: Post-Deployment Health Check
     runs-on: ubuntu-latest
     needs: deploy
     steps:
@@ -181,6 +191,7 @@ jobs:
               echo "Health check failed! Initiating rollback..."
               OLD_TAG=$(grep "^OLD_IMAGE_TAG=" .env 2>/dev/null | cut -d '=' -f2 || echo "latest")
               sed -i "s|^IMAGE_TAG=.*|IMAGE_TAG=${OLD_TAG}|" .env
+              docker-compose rm -f app
               docker-compose pull app && docker-compose up -d app
               exit 1
             fi
@@ -205,34 +216,38 @@ jobs:
           script: docker-compose -f /var/www/s/docker-compose.yml ps
 
   notify:
-    name: Phase 5 - Deployment Notification
+    name: Deployment Notification
     runs-on: ubuntu-latest
     needs: [deploy, healthcheck]
     if: always() && github.ref == 'refs/heads/main'
     steps:
-      - name: Notify deploy success
+      - name: Notify deploy success to Discord
         if: needs.deploy.result == 'success' && needs.healthcheck.result == 'success'
-        uses: appleboy/telegram-action@master
+        uses: sarisia/actions-status-discord@v1
         with:
-          to: ${{ secrets.TELEGRAM_CHAT_ID }}
-          token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: |
-            Deploy STQM Berhasil!
-            Branch: ${{ github.ref_name }}
-            Commit: ${{ github.event.head_commit.message }}
-            Image: ghcr.io/suyeeen/stqm-app:${{ github.sha }}
-            By: ${{ github.actor }}
-            URL: http://${{ secrets.VPS_HOST }}:8080
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: success
+          title: "Deploy STQM Berhasil!"
+          description: |
+            **Branch:** ${{ github.ref_name }}
+            **Commit:** ${{ github.event.head_commit.message }}
+            **Image:** ghcr.io/suyeeen/stqm-app:${{ github.sha }}
+            **By:** ${{ github.actor }}
+            **URL:** http://${{ secrets.VPS_HOST }}:8080
+          color: 0x00ff00
+          username: STQM Deploy Bot
 
-      - name: Notify deploy failed
+      - name: Notify deploy failed to Discord
         if: needs.deploy.result == 'failure' || needs.healthcheck.result == 'failure'
-        uses: appleboy/telegram-action@master
+        uses: sarisia/actions-status-discord@v1
         with:
-          to: ${{ secrets.TELEGRAM_CHAT_ID }}
-          token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: |
-            Deploy STQM GAGAL!
-            Branch: ${{ github.ref_name }}
-            Commit: ${{ github.event.head_commit.message }}
-            By: ${{ github.actor }}
-            Cek: https://github.com/suyeeen/s_STQM/actions
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: failure
+          title: "Deploy STQM GAGAL!"
+          description: |
+            **Branch:** ${{ github.ref_name }}
+            **Commit:** ${{ github.event.head_commit.message }}
+            **By:** ${{ github.actor }}
+            **Cek:** https://github.com/suyeeen/s_STQM/actions
+          color: 0xff0000
+          username: STQM Deploy Bot
