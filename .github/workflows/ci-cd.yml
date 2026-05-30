@@ -65,7 +65,7 @@ jobs:
           php artisan test --coverage-text --min=50
 
   security:
-    name: Phase 1B - Security Vulnerability Scanning
+    name: Security Vulnerability Scanning
     runs-on: ubuntu-latest
     steps:
       - name: The machine retrieves the unverified source code simultaneously.
