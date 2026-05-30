@@ -146,16 +146,12 @@ jobs:
             echo "Pull image terbaru dari GHCR..."
             docker-compose pull app
 
-            echo "Fix ContainerConfig bug — rm container lama dulu..."
-            docker-compose rm -f app
-
-            echo "Jalankan container baru..."
-            docker-compose up -d app || {
+            echo "Jalankan container baru dengan force-recreate..."
+            docker-compose up -d --force-recreate app || {
               echo "Deploy gagal! Rolling back..."
               OLD_TAG=$(grep "^OLD_IMAGE_TAG=" .env 2>/dev/null | cut -d '=' -f2 || echo "latest")
               sed -i "s|^IMAGE_TAG=.*|IMAGE_TAG=${OLD_TAG}|" .env
-              docker-compose rm -f app
-              docker-compose up -d app
+              docker-compose up -d --force-recreate app
               exit 1
             }
 
@@ -191,8 +187,8 @@ jobs:
               echo "Health check failed! Initiating rollback..."
               OLD_TAG=$(grep "^OLD_IMAGE_TAG=" .env 2>/dev/null | cut -d '=' -f2 || echo "latest")
               sed -i "s|^IMAGE_TAG=.*|IMAGE_TAG=${OLD_TAG}|" .env
-              docker-compose rm -f app
-              docker-compose pull app && docker-compose up -d app
+              docker-compose pull app
+              docker-compose up -d --force-recreate app
               exit 1
             fi
             echo "Health check passed!"
