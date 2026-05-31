@@ -23,6 +23,8 @@ RUN /var/www/python/venv/bin/pip install --upgrade pip && \
 
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
+RUN npm install && npm run build
+
 RUN mkdir -p database && touch database/database.sqlite
 
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /var/www/database
