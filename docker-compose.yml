@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   app:
     image: ghcr.io/suyeeen/stqm-app:${IMAGE_TAG:-latest}
@@ -6,7 +8,7 @@ services:
     working_dir: /var/www
     volumes:
       - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
-      - ./docker/php/zzz-status.conf:/usr/local/etc/php-fpm.d/zzz-status.conf  # <-- INI YANG TADI KELUPAAN
+      - ./docker/php/zzz-status.conf:/usr/local/etc/php-fpm.d/zzz-status.conf
       - ./.env:/var/www/.env
       - ./storage:/var/www/storage
     networks:
@@ -59,10 +61,8 @@ services:
     container_name: stqm-mysqld-exporter
     restart: unless-stopped
     environment:
-      - MYSQLD_EXPORTER_PASSWORD=${DB_PASSWORD:-StqmPass123!}
-    command:
-      - "--mysqld.username=${DB_USERNAME:-stqm_user}"
-      - "--mysqld.address=db:3306"
+      # Menggunakan root dan mengambil password yang sama dengan container db
+      - DATA_SOURCE_NAME=root:${DB_PASSWORD:-StqmPass123!}@(db:3306)/
     networks:
       - stqm-network
     depends_on:
