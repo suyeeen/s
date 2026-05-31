@@ -133,10 +133,6 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
 
-            echo "Build frontend assets..."
-            npm ci --prefer-offline
-            npm run build
-
             echo "Login ke GHCR..."
             echo "${GH_PAT}" | docker login ghcr.io -u "suyeeen" --password-stdin
 
@@ -171,6 +167,10 @@ jobs:
 
               exit 1
             }
+
+            echo "Ekstrak folder build Vite ke host VPS agar dibaca NGINX..."
+            docker cp stqm-app:/var/www/public/build ./public/
+            chmod -R 755 ./public/build
 
             echo "Reload DNS Cache Nginx agar mendeteksi IP Laravel yang baru..."
             docker compose exec -T nginx nginx -s reload

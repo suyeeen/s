@@ -6,6 +6,12 @@ services:
     container_name: stqm-app
     restart: unless-stopped
     working_dir: /var/www
+    # [MODIFIKASI] Auto-rotate log agar hardisk VPS tidak penuh (ENOSPC)
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     volumes:
       - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
       - ./docker/php/zzz-status.conf:/usr/local/etc/php-fpm.d/zzz-status.conf
@@ -20,6 +26,12 @@ services:
     image: mysql:8.0
     container_name: stqm-db
     restart: unless-stopped
+    # [MODIFIKASI] Batasi ukuran log database
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     environment:
       MYSQL_DATABASE: ${DB_DATABASE:-stqm_db}
       MYSQL_USER: ${DB_USERNAME:-stqm_user}
@@ -35,11 +47,21 @@ services:
     image: nginx:alpine
     container_name: stqm-nginx
     restart: unless-stopped
+    # [MODIFIKASI] Batasi ukuran log web server
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     ports:
       - "8080:80"
     volumes:
       - ./docker/nginx/conf.d:/etc/nginx/conf.d
       - ./storage:/var/www/storage:ro
+      # [CATATAN PENTING - JEBAKAN BATMAN]
+      # Volume ini yang memaksa NGINX membaca dari hardisk VPS (bukan dari dalam image Laravel).
+      # Konfigurasi ini dibiarkan seperti ini karena di file CI/CD kita sudah menambahkan
+      # perintah `docker cp stqm-app:/var/www/public/build ./public/` untuk menyuntikkan file CSS/JS.
       - ./public:/var/www/public:ro
     networks:
       - stqm-network

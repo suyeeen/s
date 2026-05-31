@@ -1,23 +1,23 @@
 # ============================================================
 # Stage 1: Node — Build Vite assets
-# Dipisah agar Node tidak ikut masuk ke final PHP image
 # ============================================================
 FROM node:20-alpine AS node-builder
 
 WORKDIR /app
 
-# Copy package files dulu — layer cache tidak bust kalau source code berubah
-COPY package.json package-lock.json* ./
-RUN npm ci
+# 1. MODIFIKASI: Blokir unduhan Cypress agar memori VPS tidak penuh (ENOSPC)
+ENV CYPRESS_INSTALL_BINARY=0
 
-# Baru copy semua source (termasuk resources/css, resources/js, vite.config.js)
+COPY package.json package-lock.json* ./
+
+# 2. MODIFIKASI: Gunakan npm ci dengan flag --no-audit agar lebih cepat
+RUN npm ci --no-audit --no-fund
+
 COPY . .
 RUN npm run build
-# Hasilnya ada di /app/public/build/
 
 # ============================================================
 # Stage 2: Python deps — Pre-build venv
-# Dipisah agar pip install tidak ulang setiap source code berubah
 # ============================================================
 FROM python:3.11-slim AS python-builder
 
@@ -56,8 +56,6 @@ COPY --from=python-builder /venv /var/www/python/venv
 
 WORKDIR /var/www
 
-# Copy composer files DULU sebelum source code
-# Supaya layer ini ter-cache dan tidak re-install setiap ada perubahan .blade.php
 COPY composer.json composer.lock ./
 RUN composer install \
     --no-interaction \
@@ -66,25 +64,24 @@ RUN composer install \
     --no-scripts \
     --no-dev
 
-# Baru copy semua source code
 COPY . .
 
-# composer dump-autoload setelah source ada (untuk classmap yang butuh app/)
 RUN composer dump-autoload --optimize
 
 # Copy hasil Vite build dari stage node-builder
-# INI yang fix masalah UI ngaco — public/build/ dijamin ada di image
 COPY --from=node-builder /app/public/build ./public/build
 
 # Setup SQLite database file
 RUN mkdir -p database && touch database/database.sqlite
 
-# Permissions — set dulu sebagai root sebelum switch user
+# 3. MODIFIKASI: Tambahkan public/build ke dalam aturan chown & chmod 
+# agar NGINX tidak memunculkan error 403 Forbidden saat membaca file statis
 RUN chown -R www-data:www-data \
         /var/www/storage \
         /var/www/bootstrap/cache \
-        /var/www/database && \
-    chmod -R 775 /var/www/storage /var/www/bootstrap/cache && \
+        /var/www/database \
+        /var/www/public/build && \
+    chmod -R 775 /var/www/storage /var/www/bootstrap/cache /var/www/public/build && \
     chmod 664 /var/www/database/database.sqlite
 
 USER www-data
