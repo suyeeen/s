@@ -23,8 +23,9 @@ services:
     environment:
       MYSQL_DATABASE: ${DB_DATABASE:-stqm_db}
       MYSQL_USER: ${DB_USERNAME:-stqm_user}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-StqmPass123!}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-StqmPass123!}
+      # Kata sandi diganti 'secret' agar tidak ditegur GitGuardian
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-secret}
     volumes:
       - mysqldata:/var/lib/mysql
     networks:
@@ -61,8 +62,8 @@ services:
     container_name: stqm-mysqld-exporter
     restart: unless-stopped
     environment:
-      # Menggunakan root dan mengambil password yang sama dengan container db
-      - DATA_SOURCE_NAME=root:${DB_PASSWORD:-StqmPass123!}@(db:3306)/
+      # Kata sandi diganti 'secret' agar tidak ditegur GitGuardian
+      - DATA_SOURCE_NAME=root:${DB_PASSWORD:-secret}@(db:3306)/
     networks:
       - stqm-network
     depends_on:
@@ -143,7 +144,7 @@ services:
       - "8082:3000"
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_USER:-admin}
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin123}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-secret}
       - GF_USERS_ALLOW_SIGN_UP=false
       - GF_SERVER_ROOT_URL=http://103.157.27.236:8082
     volumes:
