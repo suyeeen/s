@@ -12,8 +12,9 @@ concurrency:
 
 jobs:
 
+  # ─── STAGE 1: TEST & VALIDATION ───────────────────────────────────────────
   test:
-    name: Code Logic Testing
+    name: "Stage 1 · Code Logic Testing"
     runs-on: ubuntu-latest
     services:
       mysql:
@@ -46,7 +47,7 @@ jobs:
           key: composer-${{ hashFiles('composer.lock') }}
           restore-keys: composer-
 
-      - name: The system installs third-party dependencies using the MySQL service.
+      - name: The system installs third-party dependencies and generates the application key.
         run: |
           cp .env.example .env
           composer install --no-interaction --prefer-dist --optimize-autoloader
@@ -64,31 +65,17 @@ jobs:
           php artisan migrate --force
           php artisan test --coverage-text --min=50
 
-  security:
-    name: Security Vulnerability Scanning
-    runs-on: ubuntu-latest
-    steps:
-      - name: The machine retrieves the unverified source code simultaneously.
-        uses: actions/checkout@v4
-
-      - name: The Trivy scanner inspects the codebase for exposed secrets and critical vulnerabilities.
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: fs
-          scan-ref: .
-          severity: CRITICAL,HIGH
-          exit-code: 0
-
+  # ─── STAGE 2: BUILD ARTIFACT ──────────────────────────────────────────────
   build:
-    name: Docker Image Building
+    name: "Stage 2 · Docker Image Building"
     runs-on: ubuntu-latest
-    needs: [test, security]
+    needs: [test]
     if: github.ref == 'refs/heads/main'
     permissions:
       contents: read
       packages: write
     steps:
-      - name: The machine retrieves the security-verified codebase.
+      - name: The machine retrieves the tested source code from the repository.
         uses: actions/checkout@v4
 
       - name: The system authenticates with the GitHub Container Registry.
@@ -98,25 +85,90 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Docker Buildx
+      - name: The system sets up Docker Buildx for multi-stage builds.
         uses: docker/setup-buildx-action@v3
 
-      - name: The system packages the application using aggressive layer caching and applies a SHA tag.
+      - name: The system compiles assets via multi-stage build and stores the image locally without pushing.
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
-          push: true
+          push: false
+          load: true
           tags: |
             ghcr.io/suyeeen/stqm-app:latest
             ghcr.io/suyeeen/stqm-app:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  deploy:
-    name: Deployment to VPS
+      - name: The system exports the built image as a tar archive for the next stage.
+        run: docker save ghcr.io/suyeeen/stqm-app:${{ github.sha }} -o /tmp/stqm-image.tar
+
+      - name: The system uploads the image artifact for use in subsequent jobs.
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-image
+          path: /tmp/stqm-image.tar
+          retention-days: 1
+
+  # ─── STAGE 3: SECURITY SCANNING ───────────────────────────────────────────
+  security:
+    name: "Stage 3 · Security Vulnerability Scanning"
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build]
+    steps:
+      - name: The machine downloads the built Docker image artifact.
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-image
+          path: /tmp
+
+      - name: The system loads the Docker image from the tar archive.
+        run: docker load -i /tmp/stqm-image.tar
+
+      - name: The Trivy scanner inspects the Docker image for exposed secrets and critical vulnerabilities.
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: image
+          image-ref: ghcr.io/suyeeen/stqm-app:${{ github.sha }}
+          severity: CRITICAL,HIGH
+          exit-code: 1
+
+  # ─── STAGE 4: PUBLISH ARTIFACT ────────────────────────────────────────────
+  publish:
+    name: "Stage 4 · Publish Image to Registry"
+    runs-on: ubuntu-latest
+    needs: [security]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: The machine downloads the security-verified Docker image artifact.
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-image
+          path: /tmp
+
+      - name: The system loads the verified Docker image from the tar archive.
+        run: docker load -i /tmp/stqm-image.tar
+
+      - name: The system authenticates with the GitHub Container Registry.
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: The system pushes the security-verified image to the GitHub Container Registry.
+        run: |
+          docker push ghcr.io/suyeeen/stqm-app:${{ github.sha }}
+          docker push ghcr.io/suyeeen/stqm-app:latest
+
+  # ─── STAGE 5: DEPLOYMENT TO VPS ───────────────────────────────────────────
+  deploy:
+    name: "Stage 5 · Deployment to VPS"
+    runs-on: ubuntu-latest
+    needs: [publish]
     if: github.ref == 'refs/heads/main'
     steps:
       - name: The system executes the deployment sequence via SSH.
@@ -190,8 +242,9 @@ jobs:
           GH_PAT: ${{ secrets.GH_PAT }}
           APP_KEY: ${{ secrets.APP_KEY }}
 
+  # ─── STAGE 6: POST-DEPLOYMENT VERIFICATION ────────────────────────────────
   healthcheck:
-    name: Post-Deployment Health Check
+    name: "Stage 6 · Post-Deployment Health Check"
     runs-on: ubuntu-latest
     needs: deploy
     steps:
@@ -240,6 +293,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: docker compose -f /var/www/s/docker-compose.yml ps
 
+  # ─── NOTIFICATION ─────────────────────────────────────────────────────────
   notify:
     name: Deployment Notification
     runs-on: ubuntu-latest
