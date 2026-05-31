@@ -6,6 +6,7 @@ services:
     working_dir: /var/www
     volumes:
       - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./docker/php/zzz-status.conf:/usr/local/etc/php-fpm.d/zzz-status.conf  # <-- INI YANG TADI KELUPAAN
       - ./.env:/var/www/.env
       - ./storage:/var/www/storage
     networks:
@@ -37,6 +38,40 @@ services:
       - ./docker/nginx/conf.d:/etc/nginx/conf.d
       - ./storage:/var/www/storage:ro
       - ./public:/var/www/public:ro
+    networks:
+      - stqm-network
+    depends_on:
+      - app
+
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter:latest
+    container_name: stqm-nginx-exporter
+    restart: unless-stopped
+    command:
+      - -nginx.scrape-uri=http://nginx:80/nginx_status
+    networks:
+      - stqm-network
+    depends_on:
+      - nginx
+
+  mysqld-exporter:
+    image: prom/mysqld-exporter:latest
+    container_name: stqm-mysqld-exporter
+    restart: unless-stopped
+    environment:
+      - DATA_SOURCE_NAME=${DB_USERNAME:-stqm_user}:${DB_PASSWORD:-StqmPass123!}@(db:3306)/${DB_DATABASE:-stqm_db}
+    networks:
+      - stqm-network
+    depends_on:
+      - db
+
+  php-fpm-exporter:
+    image: hipages/php-fpm_exporter:latest
+    container_name: stqm-php-fpm-exporter
+    restart: unless-stopped
+    environment:
+      - PHP_FPM_SCRAPE_URI=tcp://app:9000/status
+      - PHP_FPM_FIX_PROCESS_COUNT=true
     networks:
       - stqm-network
     depends_on:
@@ -107,6 +142,7 @@ services:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_USER:-admin}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin123}
       - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_ROOT_URL=http://103.157.27.236:8082
     volumes:
       - grafanadata:/var/lib/grafana
       - ./docker/grafana/provisioning:/etc/grafana/provisioning
