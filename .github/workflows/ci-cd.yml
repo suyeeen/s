@@ -129,6 +129,10 @@ jobs:
           script: |
             cd /var/www/s
 
+            echo "Sinkronisasi file konfigurasi terbaru dari GitHub..."
+            git fetch origin main
+            git reset --hard origin/main
+
             echo "Login ke GHCR..."
             echo "${GH_PAT}" | docker login ghcr.io -u "suyeeen" --password-stdin
 
