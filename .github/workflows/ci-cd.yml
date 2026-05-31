@@ -1,4 +1,4 @@
-name: Enterprise CI/CD Pipeline - STQM
+name:  CI/CD Pipeline - STQM
 
 on:
   push:
