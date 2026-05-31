@@ -161,9 +161,20 @@ jobs:
               OLD_TAG=$(grep "^OLD_IMAGE_TAG=" .env 2>/dev/null | cut -d '=' -f2 || echo "latest")
               sed -i "s|^IMAGE_TAG=.*|IMAGE_TAG=${OLD_TAG}|" .env
               docker-compose up -d --force-recreate app
+              
+              # --- FIX 1: Reload Nginx saat rollback ---
+              echo "Reload DNS Cache Nginx setelah rollback..."
+              docker-compose exec -T nginx nginx -s reload
+              # -----------------------------------------
+              
               exit 1
             }
 
+            # --- FIX 2: Reload Nginx saat sukses recreate ---
+            echo "Reload DNS Cache Nginx agar mendeteksi IP Laravel yang baru..."
+            docker-compose exec -T nginx nginx -s reload
+            # ------------------------------------------------
+            
             echo "Migrate dan cache..."
             docker-compose exec -T app php artisan migrate --force
             docker-compose exec -T app php artisan config:cache
@@ -191,7 +202,12 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             cd /var/www/s
+            
+            # --- FIX 3: Tetap gunakan sleep 45 untuk booting PHP-FPM ---
+            echo "Menunggu 45 detik agar aplikasi siap (termasuk migrate & cache)..."
             sleep 45
+            # -----------------------------------------------------------
+            
             STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.VPS_HOST }}:8080)
             if [ "$STATUS" != "200" ] && [ "$STATUS" != "302" ]; then
               echo "Health check failed! Initiating rollback..."
@@ -199,6 +215,11 @@ jobs:
               sed -i "s|^IMAGE_TAG=.*|IMAGE_TAG=${OLD_TAG}|" .env
               docker-compose pull app
               docker-compose up -d --force-recreate app
+              
+              # --- FIX 4: Reload Nginx di Healthcheck Rollback ---
+              docker-compose exec -T nginx nginx -s reload
+              # ---------------------------------------------------
+              
               exit 1
             fi
             echo "Health check passed!"
