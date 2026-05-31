@@ -125,7 +125,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          envs: IMAGE_SHA,GH_PAT
+          envs: IMAGE_SHA,GH_PAT,APP_KEY
           script: |
             cd /var/www/s
 
@@ -137,6 +137,11 @@ jobs:
             grep -q "^OLD_IMAGE_TAG=" .env && \
               sed -i "s|^OLD_IMAGE_TAG=.*|OLD_IMAGE_TAG=${OLD_TAG}|" .env || \
               echo "OLD_IMAGE_TAG=${OLD_TAG}" >> .env
+
+            echo "Inject APP_KEY ke .env..."
+            grep -q "^APP_KEY=" .env && \
+              sed -i "s|^APP_KEY=.*|APP_KEY=${APP_KEY}|" .env || \
+              echo "APP_KEY=${APP_KEY}" >> .env
 
             echo "Update IMAGE_TAG ke versi baru..."
             grep -q "^IMAGE_TAG=" .env && \
@@ -167,6 +172,7 @@ jobs:
         env:
           IMAGE_SHA: ${{ github.sha }}
           GH_PAT: ${{ secrets.GH_PAT }}
+          APP_KEY: ${{ secrets.APP_KEY }}
 
   healthcheck:
     name: Post-Deployment Health Check
