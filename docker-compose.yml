@@ -59,7 +59,10 @@ services:
     container_name: stqm-mysqld-exporter
     restart: unless-stopped
     environment:
-      - DATA_SOURCE_NAME=${DB_USERNAME:-stqm_user}:${DB_PASSWORD:-StqmPass123!}@(db:3306)/${DB_DATABASE:-stqm_db}
+      - MYSQLD_EXPORTER_PASSWORD=${DB_PASSWORD:-StqmPass123!}
+    command:
+      - "--mysqld.username=${DB_USERNAME:-stqm_user}"
+      - "--mysqld.address=db:3306"
     networks:
       - stqm-network
     depends_on:
