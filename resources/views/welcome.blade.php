@@ -1852,7 +1852,6 @@
                     Evaluasi guru<br>
                     yang <span>terukur</span><br>
                     dan transparan
-                    test lagi
                 </h1>
                 <p class="hero-sub">
                     Integrasikan penilaian kuesioner, kehadiran, dan prestasi guru dalam satu sistem berbasis web —
