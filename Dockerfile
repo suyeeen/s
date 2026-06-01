@@ -23,14 +23,14 @@ FROM python:3.11-slim AS python-builder
 
 WORKDIR /venv
 
-RUN python3 -m venv /venv
-RUN /venv/bin/pip install --upgrade pip --no-cache-dir && \
+RUN python3 -m venv /venv && \
+    /venv/bin/pip install --upgrade pip setuptools "wheel>=0.46.2" --no-cache-dir && \
+    /venv/bin/pip install --upgrade "jaraco.context>=6.1.0" --no-cache-dir && \
     /venv/bin/pip install --no-cache-dir \
-        "jaraco.context>=6.1.0" \
-        "wheel>=0.46.2" \
         numpy \
         scikit-learn \
-        pandas
+        pandas && \
+    /venv/bin/pip install --upgrade "jaraco.context>=6.1.0" "wheel>=0.46.2" --no-cache-dir
 
 # ============================================================
 # Stage 3: PHP — Final production image
