@@ -126,6 +126,9 @@ jobs:
       - name: The system loads the Docker image from the tar archive.
         run: docker load -i /tmp/stqm-image.tar
 
+      - name: The machine downloads the repository to access the .trivyignore file.
+        uses: actions/checkout@v4
+
       - name: The Trivy scanner inspects the Docker image for exposed secrets and critical vulnerabilities.
         uses: aquasecurity/trivy-action@master
         with:
@@ -133,6 +136,7 @@ jobs:
           image-ref: ghcr.io/suyeeen/stqm-app:${{ github.sha }}
           severity: CRITICAL,HIGH
           exit-code: 1
+          trivyignores: .trivyignore
 
   # ─── STAGE 4: PUBLISH ARTIFACT ────────────────────────────────────────────
   publish:
