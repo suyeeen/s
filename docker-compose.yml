@@ -158,7 +158,7 @@ services:
     networks:
       - stqm-network
     depends_on:
-      - loki # <-- SUDAH DI-FIX (Menggunakan huruf L kecil, bukan i)
+      - loki 
 
   grafana:
     image: grafana/grafana:latest
