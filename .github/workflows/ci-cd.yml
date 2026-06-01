@@ -102,7 +102,11 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: The system exports the built image as a tar archive for the next stage.
-        run: docker save ghcr.io/suyeeen/stqm-app:${{ github.sha }} -o /tmp/stqm-image.tar
+        run: |
+          docker save \
+            ghcr.io/suyeeen/stqm-app:${{ github.sha }} \
+            ghcr.io/suyeeen/stqm-app:latest \
+            -o /tmp/stqm-image.tar
 
       - name: The system uploads the image artifact for use in subsequent jobs.
         uses: actions/upload-artifact@v4
