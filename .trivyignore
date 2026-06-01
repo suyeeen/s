@@ -1,0 +1,72 @@
+# CVEs in base image (php:8.3-fpm / debian 13.5) with no fix available.
+# These are NOT from application code or installed packages.
+# To be reviewed when upstream patches are released.
+
+# python3.13 / libpython3.13 - xml entropy issue
+CVE-2026-7210
+
+# perl / perl-base / perl-modules-5.40 / libperl5.40
+CVE-2026-42496
+CVE-2026-42497
+CVE-2026-8376
+CVE-2026-48962
+CVE-2026-9538
+
+# curl / libcurl
+CVE-2026-5773
+CVE-2026-6276
+
+# libexpat1
+CVE-2025-59375
+CVE-2026-25210
+CVE-2026-45186
+
+# libssh2
+CVE-2026-7598
+
+# libxml2 / libxml2-dev
+CVE-2026-6732
+
+# ncurses
+CVE-2025-69720
+
+# linux-libc-dev (kernel headers - not running kernel)
+CVE-2013-7445
+CVE-2019-19449
+CVE-2019-19814
+CVE-2021-3847
+CVE-2021-3864
+CVE-2024-21803
+CVE-2024-58015
+CVE-2024-58093
+CVE-2025-22104
+CVE-2025-38137
+CVE-2025-38187
+CVE-2025-38204
+CVE-2025-38206
+CVE-2025-38421
+CVE-2025-38636
+CVE-2025-39859
+CVE-2025-39862
+CVE-2025-39958
+CVE-2026-23102
+CVE-2026-23171
+CVE-2026-23208
+CVE-2026-23327
+CVE-2026-31493
+CVE-2026-31568
+CVE-2026-31663
+CVE-2026-31688
+CVE-2026-43198
+CVE-2026-43494
+CVE-2026-43503
+CVE-2026-45932
+CVE-2026-46054
+CVE-2026-46117
+CVE-2026-46181
+CVE-2026-46209
+CVE-2026-46227
+CVE-2026-46300
+
+# krb5 - has fix but in base image, not directly installable
+CVE-2026-40356
