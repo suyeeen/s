@@ -26,6 +26,8 @@ WORKDIR /venv
 RUN python3 -m venv /venv
 RUN /venv/bin/pip install --upgrade pip --no-cache-dir && \
     /venv/bin/pip install --no-cache-dir \
+        "jaraco.context>=6.1.0" \
+        "wheel>=0.46.2" \
         numpy \
         scikit-learn \
         pandas
