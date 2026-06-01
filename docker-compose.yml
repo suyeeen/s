@@ -175,7 +175,7 @@ services:
     networks:
       - stqm-network
     depends_on:
-      - ioki
+      - loki # <-- SUDAH DI-FIX (Menggunakan huruf L kecil, bukan i)
 
   grafana:
     image: grafana/grafana:latest
