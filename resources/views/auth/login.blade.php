@@ -433,7 +433,7 @@
 
         {{-- Greeting --}}
         <div class="card-greeting">
-            <h1>Halo, selamat datang! </h1>
+            <h1>Halo, selamat datang! 👋</h1>
             <p>Masuk untuk melanjutkan ke sistem evaluasi guru.</p>
         </div>
 
