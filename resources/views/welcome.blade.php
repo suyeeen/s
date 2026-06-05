@@ -1849,12 +1849,13 @@
                     Sistem Standar Mutu Guru
                 </div>
                 <h1 class="hero-h1">
-                    Evaluasi siswa<br>
+                    Evaluasi guru<br>
                     yang <span>terukur</span><br>
                     dan transparan
                 </h1>
                 <p class="hero-sub">
-                  sedang di test
+                    Integrasikan penilaian kuesioner, kehadiran, dan prestasi guru dalam satu sistem berbasis web —
+                    dengan klasterisasi kinerja otomatis menggunakan algoritma K-Means.
                 </p>
                 <div class="hero-btns">
                     <a href="/login" class="btn-primary">
