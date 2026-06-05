@@ -70,3 +70,6 @@ CVE-2026-46300
 
 # krb5 - has fix but in base image, not directly installable
 CVE-2026-40356
+
+CVE-2026-46243
+CVE-2026-46244
